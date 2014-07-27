@@ -1,0 +1,299 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+/*
+Neon Green: #6FFF00
+Neon Pink: #FF00FF
+Neon Yellow: #FFFF00
+Neon Blue: #4D4DFF
+Neon Red: #FE0001
+Neon Orange: #FF4105
+Neon Purple: #993CF3
+*/
+body {
+  background-color:#FF00FF;
+  font-family: sans-serif;
+  text-align: justify;
+  font-size: 1em;
+}
+
+div#headerbox, div#menubox, div#mainbox, div#footerbox {
+  margin: 0 auto;
+  width: 1000px;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  background-color: #f9f9f9;
+}
+
+div#headerbox {
+  height: 400px;
+  background-image: url(header.jpg);
+  border-bottom: 1px solid black;
+}
+
+div#menubox {
+  border-bottom: 1px solid black;
+  /*height: 40px;*/
+}
+
+div#menubox a {
+  padding-left: 10px;
+  padding-right: 10px;
+  line-height: 40px;
+  text-decoration: none;
+  color: black;
+  display: block;
+  float: left;
+}
+
+div#menubox a:hover {
+  font-weight: bold;
+  background-color: #4e7dac;
+  color: white;
+}
+
+div#mainbox {
+  padding: 10px 0 20px 0;
+}
+
+div#footerbox {
+  background-color: #4e7dac;
+  border-bottom: 1px solid black;
+  padding: 5px 0 5px 0;
+  text-align: center;
+  font-size: 10px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+input, textarea, select {
+  border: 1px solid black;
+  padding: 1px;
+}
+select option { padding-right: 10px; }
+textarea.textfield { width: 100%; max-width: 350px; height: 100px; }
+
+ul {
+  margin-left: 20px;
+  list-style-type: circle;
+}
+
+li {
+  margin-left: 20px;
+}
+
+.hidden { display: none; }
+
+th { padding: 0 1px 0 1px; }
+
+h1 {
+  padding-top: 10px;
+  margin-left: 20px;
+  color: white;
+  font-size: 3.3em;
+  font-family: sans-serif;
+}
+
+div#headerbox p {
+  color: white;
+  margin-top: 0px;
+  margin-left: 20px;
+  font-size: 1.5em;
+  font-family: sans-serifl;
+}
+
+h2 {
+  margin: 5px;
+  margin-bottom: 15px;
+  border-bottom: 1px dotted black;
+}
+
+h3 {
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+
+p { margin: 15px; }
+div.event_info { margin: 0 15px 5px 15px; }
+p.event_date { background: url(event_date_icon.png) left center no-repeat; line-height: 20px; padding-left: 25px; }
+
+a { color: black; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+a.email_all {
+  margin-left: 70px;
+  padding-left: 30px;
+  line-height: 25px;
+  background: white url(mail_all.jpg) no-repeat left center;
+}
+a.csv_download { margin-left: 70px; padding-left: 30px; line-height: 25px; background: url(csv_icon.gif) no-repeat left center; display: block; }
+
+ul.user_list {
+  list-style-image: url(user_small.gif);
+}
+
+.event_name {
+  background: url(event.jpg) no-repeat left center;
+  padding-left: 40px;
+}
+h2.event_name { line-height: 50px; }
+h3.event_name { line-height: 40px; }
+
+h3.signup {
+  background: url(signup.gif) no-repeat left center;
+  padding-left: 45px;
+  line-height: 45px;
+}
+
+table.fieldset { margin-left: 30px; }
+div.asterisk { margin-left: 30px; font-size: 10px; }
+
+h3.signup_people {
+  background: url(group.jpg) no-repeat left center;
+  padding-left: 55px;
+  line-height: 50px;
+  margin-top: 15px;
+}
+
+table.signups, div.signups { width: 90%; margin: 30px auto;}
+table.signups tr th { }
+table.signups tr th, tr td { text-align: left; padding: 1px 4px 1px 4px; }
+
+p.edit_link {
+  padding: 10px;
+  border: 1px dotted black;
+  padding-left: 30px;
+  background: url(edit.jpg) no-repeat 10px center;
+}
+
+.add_event {
+  line-height: 50px;
+  padding-left: 50px;
+  background: url(add_event.png) no-repeat left center;
+}
+
+.edit_event {
+  padding-left: 20px;
+  background: url(edit.jpg) no-repeat left center;
+}
+
+.login {
+  line-height: 50px;
+  padding-left: 50px;
+  background: url(login.gif) no-repeat left center;
+}
+
+.password_forgotten {
+  line-height: 42px;
+  padding-left: 50px;
+  background: url(password_forgotten.gif) no-repeat left center;
+}
+
+.edit_user {
+  line-height: 50px;
+  padding-left: 50px;
+  background: url(edit_user.png) no-repeat left center;
+}
+
+.settings {
+  line-height: 50px;
+  padding-left: 50px;
+  background: url(settings.jpg) no-repeat left center;
+}
+
+.user {
+  line-height: 50px;
+  padding-left: 50px;
+  background: url(group.jpg) no-repeat left center;
+}
+
+a.editenum { display: block; height: 20px; line-height: 20px; width: 20px; font-size: 0px; padding: 8px; background: url(edit.jpg) left center no-repeat; color: #FFF; }
+
+.fahrt{
+    padding: 30px;
+}
+
+.fahrt a{
+    margin-bottom: 15px;
+    border-bottom: 1px dotted black;
+    margin-left: -10px;
+    float: none !important;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.message{
+    margin: 5px;
+    padding: 5px;
+    font-size: 10pt;
+    border: 1px solid;
+    text-align:left;
+    color: #4F8A10;
+    background-color: #DFF2BF;
+}
+.error{
+    color: #D8000C;
+    background-color: #FFBABA;
+}
+
+/* ----------- My Form ----------- */
+.myform{
+    margin:0 auto;
+    width:400px;
+    padding:14px;
+}
+
+/* ----------- stylized ----------- */
+#stylized{
+    border:solid 2px #b7ddf2;
+    background:#ebf4fb;
+}
+#stylized h1 {
+    font-size:1.5em;
+    color:black;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+#stylized p{
+    font-size:11px;
+    color:#666666;
+    margin-bottom:20px;
+    border-bottom:solid 1px #b7ddf2;
+    padding-bottom:10px;
+}
+#stylized label{
+    display:block;
+    font-weight:bold;
+    text-align:right;
+    width:140px;
+    float:left;
+}
+#stylized .small{
+    color:#666666;
+    display:block;
+    font-size:11px;
+    font-weight:normal;
+    text-align:right;
+    width:140px;
+}
+#stylized input, #stylized select, #stylized textarea{
+    float:left;
+    font-size:12px;
+    padding:4px 2px;
+    border:solid 1px #aacfe4;
+    width:200px;
+    margin:2px 0 20px 10px;
+}
+#stylized button{
+    clear:both;
+    margin-left:150px;
+    width:125px;
+    height:31px;
+    background:#666666 url(img/button.png) no-repeat;
+    text-align:center;
+    line-height:31px;
+    color:#FFFFFF;
+    font-size:11px;
+    font-weight:bold;
+}
