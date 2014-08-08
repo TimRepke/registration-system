@@ -5,7 +5,7 @@ $config_verbose_level = 2; // 0 = nothing, 1 = important, 2 = somewhat important
 $config_db = array(
     "name" => "fsfahrt",
     "user" => "fsfahrt",
-    "pass" => "password",
+    "pass" => "9Lug*96q",
     "host" => "localhost",
     "type" => "mysql"
 );
