@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+    <script type="text/javascript" src="sha256.js"></script>
+    <script type="text/javascript">
+        function init() {
+            res = document.getElementById('res');
+            pass1 = document.getElementById('pass1');
+            pass2 = document.getElementById('pass2');
+            btn = document.getElementById('btn');
+            check();
+        }
+
+        function crypt() {
+            if (pass1.value != pass2.value)
+            {
+                alert("Beide Passwörter stimmen nicht miteinander überein.");
+                return;
+            }
+            salt = CryptoJS.lib.WordArray.random(128/8);
+            res.value = "{SHA-256}" + salt + "$" + CryptoJS.SHA256(pass1.value + salt);
+        }
+
+        function check() {
+            if (pass1.value.length > 7)
+                btn.disabled='';
+            else
+                btn.disabled='disabled';
+
+            if (pass1.value.length > 7 && pass1.value == pass2.value)
+                btn.style.color = '#0c0';
+            else
+                btn.style.color = '#c00';
+        }
+    </script>
+    <style type="text/css">
+        html,body{margin:20px;}
+    </style>
+</head>
+<body onload="init()">
+1. Passwort zwei mal eingeben, mindestens 8 Stellen:<br />
+<input id="pass1" type="password" style="width: 100%" onkeyup="check()" /><br />
+<input id="pass2" type="password" style="width: 100%" onkeyup="check()" />
+<br />
+2. <input id="btn" type="button" onclick="crypt()" value="Verschlüsseln" />
+<br />
+<input id="res" type="text" style="width: 100%" />
+</body>
+</html>
