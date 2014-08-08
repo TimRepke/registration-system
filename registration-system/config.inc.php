@@ -2,7 +2,7 @@
 // https://repke.eu:8443
 // passwort manu:kuzerPenis666!
 
-$config_verbose_level = 2; // 0 = nothing, 1 = important, 2 = somewhat important, 3 = detailed verbose
+$config_verbose_level = 3; // 0 = nothing, 1 = important, 2 = somewhat important, 3 = detailed verbose
 
 $config_db = array(
     "name" => "fsfahrt",

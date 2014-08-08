@@ -43,10 +43,12 @@ function index_show_content(){
         // --- Formular
         if(isset($_REQUEST['submit'])){ // Formular auswerten
             comm_verbose(1,"Formular bekommen");
-            index_check_form();
-        } elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen TODO: Anmeldung noch offen?
+            $data = index_check_form();
+            if(!is_null($data))
+                index_form_to_db($data);
+        } /*elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen, Anmeldung noch offen?
             index_show_formular($fid, $_REQUEST['bid']);
-        } else {                       // leeres Formular anzeigen
+        } */ else {                       // leeres Formular anzeigen
             index_show_formular($fid);
         }
 
@@ -61,6 +63,13 @@ function index_show_content(){
 
 }
 
+function index_form_to_db($data){
+    global $index_db;
+    $data['version'] = 1;
+    $data['bachelor_id'] = comm_generate_key($index_db, "bachelor", "bachelor_id", array('fahrt_id'=>$data['fahrt_id']));
+    $index_db->insert("bachelor", $data);
+}
+
 /**
  * validates the sent form
  * on failure: repost form with prefilled data and errors
@@ -68,10 +77,17 @@ function index_show_content(){
  *
  */
 function index_check_form(){
-    global $config_studitypen, $config_essen, $config_reisearten;
+    global $config_studitypen, $config_essen, $config_reisearten, $index_db;
     $errors = array();
+    $data   = array();
+
     $fid  = $_REQUEST['fid'];
-    $data = array();
+    $data['fahrt_id'] = $fid;
+    if(!comm_isopen_fid($index_db, $fid)){
+        $errors = array("Ungültige Fahrt!");
+        goto index_check_form_skip;
+    }
+
     $possible_dates = comm_get_possible_dates($fid);
 
     index_check_field('forname', '/^[a-zA-Z]{2,50}$/', $data, $errors, "Fehlerhafter oder fehlender Vorname!");
@@ -88,12 +104,13 @@ function index_check_form(){
     index_check_field('virgin', array("Ja","Nein"), $data, $errors, 'Bitte Altersbereich wählen!');
     index_check_field('comment', "comment", $data, $errors, 'Trollololol');
 
+    index_check_form_skip:
     if(count($errors)>0){
         index_show_errors($errors);
         index_show_formular($fid, NULL, $data);
+        return NULL;
     } else {
-
-        // put in DB
+        return $data;
 
     }
 
