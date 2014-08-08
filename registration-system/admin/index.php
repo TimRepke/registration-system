@@ -12,6 +12,7 @@ require_once("pages.php");
 
 $template = file_get_contents("../view/admin_template.html");
 $navigation = "";
+$headers = "";
 $text = "";
 
 checkIfLogin();
@@ -27,6 +28,11 @@ if (isLoggedIn())
 
     $page = isset($_GET['page']) ? $_GET['page'] : "";
     $navigation = generateNavigationItems($page, $menu);
+    $headers =<<<END
+    <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
+    <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../view/js/jquery.dataTables.min.js"></script>
+END;
 
     switch($page)
     {
@@ -48,4 +54,4 @@ else
     $text .= file_get_contents("../view/admin_login_form.html");
 }
 
-echo str_replace("{text}", $text, str_replace("{navigation}", $navigation, $template));
+echo str_replace("{headers}", $headers, str_replace("{text}", $text, str_replace("{navigation}", $navigation, $template)));
