@@ -63,6 +63,11 @@ function index_show_content(){
 
 }
 
+/**
+ * puts the dataarray into DB
+ * adds version = 1 and generates a unique hash for entry
+ * @param $data
+ */
 function index_form_to_db($data){
     global $index_db;
     $data['version'] = 1;
@@ -320,12 +325,12 @@ function index_show_fahrtHeader($fahrt){
  * show table of public registrations
  */
 function index_show_signupTable($fid){
-    global $index_db;
-    $data = $index_db->select('bachelor',array('pseudo','antyp','abtyp','antag','abtag','comment','studityp'),
+    global $index_db, $config_studitypen;
+
+    $data = $index_db->select('bachelor',array("pseudo","antyp","abtyp","anday","abday","comment","studityp"),
         array("AND" => array(
-            "fahrt_id" => $fid,
-            "public"   => 1,
-            "valid_version" => 1
+            'fahrt_id' => (int) $fid,
+            'public'   => 1
         )));
 
     if(!$data) echo'<div class="signups">Noch keine (sichtbaren) Anmeldungen!</div>';
@@ -336,20 +341,20 @@ function index_show_signupTable($fid){
                     <tr>
                         <th></th>
                         <th>Anzeigename</th>
-                        <th>Anreiseart</th>
                         <th>Anreisetag</th>
-                        <th>Abreiseart</th>
+                        <th>Anreiseart</th>
                         <th>Abreisetag</th>
+                        <th>Abreiseart</th>
                         <th>Kommentar</th>
                     </tr>
                 </thead>';
         foreach($data as $d){
             echo '<tr>
-                <td>'.$d["studityp"].'</td>
+                <td>'.$config_studitypen[$d["studityp"]].'</td>
                 <td>'.$d["pseudo"].'</td>
-                <td>'.$d["antag"].'</td>
+                <td>'.$d["anday"].'</td>
                 <td>'.$d["antyp"].'</td>
-                <td>'.$d["abtag"].'</td>
+                <td>'.$d["abday"].'</td>
                 <td>'.$d["abtyp"].'</td>
                 <td>'.$d["comment"].'</td>
             </tr>';
