@@ -16,7 +16,7 @@ $config_studitypen = array(
     "Ersti",       // 0
     "Wechsli",     // 1 - woanders/was anderes studiert, jetzt hier
     "MasterErsti", // 2
-    "Hörsti",      // 3 - länger an der HU
+    "Hoersti",      // 3 - länger an der HU
     "Tutti",       // 4 - Tutor
     "Fachi"        // 5 - FS Ini
 );

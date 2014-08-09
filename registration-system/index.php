@@ -95,9 +95,9 @@ function index_check_form(){
 
     $possible_dates = comm_get_possible_dates($fid);
 
-    index_check_field('forname', '/^[a-zA-Z]{2,50}$/', $data, $errors, "Fehlerhafter oder fehlender Vorname!");
-    index_check_field('sirname', '/^[a-zA-Z]{2,50}$/', $data, $errors, "Fehlerhafter oder fehlender Nachname!");
-    index_check_field('pseudo', '/^\w{2,50}$/', $data, $errors, "Fehlerhafter oder fehlender Anzeigename!");
+    index_check_field('forname', '/^[a-z-äüöß]{2,50}$/ui', $data, $errors, "Fehlerhafter oder fehlender Vorname!");
+    index_check_field('sirname', '/^[a-z-äüöß]{2,50}$/ui', $data, $errors, "Fehlerhafter oder fehlender Nachname!");
+    index_check_field('pseudo', '/^\w{2,50}$/u', $data, $errors, "Fehlerhafter oder fehlender Anzeigename!");
     index_check_field('mehl', 'mail', $data, $errors, "Fehlerhafte oder fehlende E-Mail-Adresse!");
     index_check_field('anday', array_slice($possible_dates,0, -1), $data, $errors, 'Hilfe beim Ausfüllen: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
     index_check_field('antyp', $config_reisearten, $data, $errors, 'Trolle hier lang: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
@@ -162,19 +162,19 @@ function index_check_field($index, $check, &$datarr, &$errarr, $errmess){
         if(is_array($check)){
             if(!in_array($tmp,$check)){
                 array_push($errarr, $errmess);
-                $tmp = "";
+                //$tmp = "";
             }
         } else {
             if($check == "mail"){
                 if (!filter_var($tmp, FILTER_VALIDATE_EMAIL)) {
                     array_push($errarr, $errmess);
-                    $tmp = "";
+                    //$tmp = "";
                 }
             } elseif($check == "comment"){
                 // do nothing? maybe some graphical joke, is somebody tries to drop DB
             } elseif(!(preg_match($check, $tmp)==1)){
                 array_push($errarr, $errmess);
-                $tmp = "";
+                //$tmp = "";
             }
         }
         $datarr[$index] = $tmp;
@@ -350,7 +350,7 @@ function index_show_signupTable($fid){
                 </thead>';
         foreach($data as $d){
             echo '<tr>
-                <td>'.$config_studitypen[$d["studityp"]].'</td>
+                <td>'.$d["studityp"].'</td>
                 <td>'.$d["pseudo"].'</td>
                 <td>'.$d["anday"].'</td>
                 <td>'.$d["antyp"].'</td>
