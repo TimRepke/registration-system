@@ -23,7 +23,8 @@ if (isLoggedIn())
         "Übersicht" => "stuff",
         "Meldeliste" => "list",
         "Kosten" => "cost",
-        "Rundmail" => "mail"
+        "Rundmail" => "mail",
+        "Notitzen" => "notes"
     );
 
     $page = isset($_GET['page']) ? $_GET['page'] : "";
@@ -45,6 +46,8 @@ END;
             //page_cost(); break;
         //case "mail":
             //page_mail(); break;
+        case "notes":
+            page_notes(); break;
         default:
             page_404($page);
     }

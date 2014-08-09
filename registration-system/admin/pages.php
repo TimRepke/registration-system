@@ -51,4 +51,8 @@ function page_404($pag)
 
 }
 
+function page_notes(){
+    require_once "pages_notes.php";
+}
+
 ?>
