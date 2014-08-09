@@ -39,10 +39,16 @@ END;
 
 }
 
-function page_404()
+function page_404($pag)
 {
     global $text;
-    $text .= "404 Seite nicht gefunden...";
+    $text .='
+        <div style="background-color:black; color:antiquewhite; font-family: \'Courier New\', Courier, monospace;height: 100%; width: 100%;position:fixed; top:0; padding-top:40px;">
+            $ get-page '.$pag.'<br />
+            404 - page not found ('.$pag.')<br />
+            $ <blink>&#9611;</blink>
+        </div>';
+
 }
 
 ?>

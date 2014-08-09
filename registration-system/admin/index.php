@@ -46,7 +46,7 @@ END;
         //case "mail":
             //page_mail(); break;
         default:
-            page_404();
+            page_404($page);
     }
 }
 else

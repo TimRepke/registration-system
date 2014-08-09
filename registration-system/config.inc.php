@@ -41,7 +41,7 @@ $config_reisearten = array(
 $config_admins = array(
     // username => password
     "george" => "peter",
-    "tim"    => "meter",
+    "tim"    => '{SHA-256}8013a101f26fd8dcc8c40d0eb1dcb513$c3a97d44e67564ed79a60fa0de6ea4193bb18932a8d08b5e8d664bd14b32a4f5', // broetchen
     "manu"   => '{SHA-256}12c9b021c42741545f9f01e2afd67aa2$7112be28c0c11f987de4401798a2ba041e518bb3f22bcb8cf4f3bf3f590b65b9' // mepmepmep
 );
 
