@@ -9,6 +9,8 @@
 session_start();
 require_once("commons_admin.php");
 require_once("pages.php");
+require_once("../config.inc.php");
+require_once("../frameworks/medoo.php");
 
 $template = file_get_contents("../view/admin_template.html");
 $navigation = "";
@@ -24,16 +26,19 @@ if (isLoggedIn())
         "Meldeliste" => "list",
         "Kosten" => "cost",
         "Rundmail" => "mail",
-        "Notitzen" => "notes"
+        "Notizen" => "notes"
     );
+
+    $admin_db = new medoo(array(
+        'database_type' => $config_db["type"],
+        'database_name' => $config_db["name"],
+        'server'        => $config_db["host"],
+        'username'      => $config_db["user"],
+        'password'      => $config_db["pass"]
+    ));
 
     $page = isset($_GET['page']) ? $_GET['page'] : "";
     $navigation = generateNavigationItems($page, $menu);
-    $headers =<<<END
-    <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
-    <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="../view/js/jquery.dataTables.min.js"></script>
-END;
 
     switch($page)
     {

@@ -80,4 +80,7 @@ function comm_admin_verbose($level, $text){
     if($config_admin_verbose_level >= $level) echo $text.'<br />';
 }
 
-
+function comm_verbose($level, $text){
+    global $config_verbose_level;
+    if($config_verbose_level >= $level) echo $text.'<br />';
+}

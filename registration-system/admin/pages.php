@@ -8,7 +8,12 @@ function page_stuff()
 
 function page_list()
 {
-    global $text;
+    global $text, $headers;
+    $headers =<<<END
+    <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
+    <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../view/js/jquery.dataTables.min.js"></script>
+END;
     $text .= "Meldeliste";
 
     $text .=<<<END
