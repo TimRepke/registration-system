@@ -16,7 +16,7 @@
 <div id="menubox">
 
     <?php
-        index_show_content();
+        show_content();
     ?>
 
 

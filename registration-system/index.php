@@ -63,6 +63,9 @@ function index_show_content(){
     }
 
 }
+function show_content(){
+    index_show_content();
+}
 
 /**
  * puts the dataarray into DB
