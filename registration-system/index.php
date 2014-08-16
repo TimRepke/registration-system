@@ -4,6 +4,7 @@ error_reporting(E_ALL || E_STRICT);
 require 'config.inc.php';
 require 'frameworks/medoo.php';
 require 'frameworks/commons.php';
+require 'lang.php';
 
 
 $index_db = new medoo(array(
@@ -69,10 +70,14 @@ function index_show_content(){
  * @param $data
  */
 function index_form_to_db($data){
-    global $index_db;
+    global $index_db, $config_baseurl, $lang_regmail, $config_current_fahrt_id;
     $data['version'] = 1;
     $data['bachelor_id'] = comm_generate_key($index_db, "bachelor", "bachelor_id", array('fahrt_id'=>$data['fahrt_id']));
     $index_db->insert("bachelor", $data);
+    $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$config_current_fahrt_id));
+    $mail = comm_get_lang("lang_regmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['bachelor_id'],
+                                                 "{{organisator}}" => $from['leiter']));
+    comm_send_mail($index_db, $data['mehl'], $mail, $from['kontakt']);
 }
 
 /**
