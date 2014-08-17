@@ -57,7 +57,23 @@ function page_404($pag)
 }
 
 function page_notes(){
-    require_once "pages_notes.php";
+    require_page("pages_notes.php");
+}
+
+function page_mail(){
+    require_page("pages_mail.php");
+}
+
+function page_cost(){
+    require_page("pages_cost.php");
+}
+
+function require_page($page){
+    if(!@file_exists($page) ) {
+        page_404($page);
+    } else {
+        require_once $page;
+    }
 }
 
 ?>
