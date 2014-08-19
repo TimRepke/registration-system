@@ -11,7 +11,12 @@ function comm_convert_mail($mail){
 
 function comm_verbose($level, $text){
     global $config_verbose_level;
-    if($config_verbose_level >= $level) echo $text.'<br />';
+    if($config_verbose_level >= $level) {
+        if(is_array($text)){
+            echo "<pre>"; print_r($text); echo "</pre>";
+        } else
+            echo $text.'<br />';
+    }
 }
 
 function comm_format_date($date){

@@ -6,10 +6,32 @@
  * Time: 11:05 PM
  */
 
-global $config_studitypen, $config_reisearten, $config_essen, $admin_db, $config_current_fahrt_id, $config_verbose_level;
+// ENHANCEMENT: simplified presets (Alle,	gezahlt,	nicht gezahlt,	Anreise individuell)
 
-echo '
-<form method="POST">
+global $config_studitypen, $config_reisearten, $config_essen, $admin_db, $config_current_fahrt_id, $config_admin_verbose_level, $config_verbose_level, $text, $headers, $ajax;
+$config_verbose_level = 0;
+$config_admin_verbose_level = 0;
+
+$headers .= '<script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
+             <script type="text/javascript" src="../view/js/jquery-ui.min.js"></script>';
+$text .= '
+<script type="text/javascript">
+$(function(){
+
+    $("#mform").submit(function(event){
+        event.preventDefault();
+        var str = $("#mform").serialize();
+        str += "&submit=submit&ajax=ajax";
+        $.post(document.url, str, function(data){
+                $("#mails").html(data);
+            }, "text");
+
+        $("#mails").fadeOut().delay(50).fadeIn();
+
+    });
+});
+</script>
+<form method="POST" id="mform">
     <table>
         <tr>
             <td>Studityp</td>
@@ -37,37 +59,37 @@ echo '
             <td>
                 <select multiple name="val_studityp[]">';
                     foreach($config_studitypen as $typ)
-                        echo'<option value="'.$typ.'">'.$typ.'</option>';
-                    echo'
+                        $text .= '<option value="'.$typ.'">'.$typ.'</option>';
+                    $text .= '
                 </select>
             </td>
             <td>
                 <select multiple name="val_antyp[]">';
                     foreach($config_reisearten as $typ)
-                        echo'<option value="'.$typ.'">'.$typ.'</option>';
-                    echo'
+                        $text .= '<option value="'.$typ.'">'.$typ.'</option>';
+                    $text .= '
                 </select>
             </td>
             <td>
                 <select multiple name="val_abtyp[]">';
                     foreach($config_reisearten as $typ)
-                        echo'<option value="'.$typ.'">'.$typ.'</option>';
-                    echo'
+                        $text .= '<option value="'.$typ.'">'.$typ.'</option>';
+                    $text .= '
                 </select>
             </td>
             <td>
                 <select multiple name="val_nights[]">';
                     $tage = $admin_db->query("SELECT DATEDIFF(bis, von) AS diff FROM fahrten WHERE fahrt_id=".$config_current_fahrt_id)->fetch(0);
                         for($cnt = $tage['diff']; $cnt>=0; $cnt--)
-                            echo '<option value="'.$cnt.'">'.$cnt.'</option>';
-                    echo'
+                            $text .=  '<option value="'.$cnt.'">'.$cnt.'</option>';
+                    $text .= '
                 </select>
             </td>
             <td>
                 <select multiple name="val_essen[]">';
                     foreach($config_essen as $typ)
-                        echo'<option value="'.$typ.'">'.$typ.'</option>';
-                    echo'
+                        $text .= '<option value="'.$typ.'">'.$typ.'</option>';
+                    $text .= '
                 </select>
             </td>
             <td>
@@ -101,28 +123,30 @@ echo '
 
 $query = "SELECT mehl, forname, sirname FROM bachelor";
 $where = array();
-
+$dsa = "";
 if(!isset($_REQUEST['submit'])){
     // not submitted
+    //$dsa = "nosubmit";
 } else {
+    //$dsa = "submit";
     if(isset($_REQUEST['check_studityp'])){
         $tmp = "";
         foreach($_REQUEST['val_studityp'] as $st){
-            $tmp.= "studityp = \"".$st."\" OR ";
+            $tmp.= "studityp = '".$st."' OR ";
         }
         array_push($where,substr($tmp,0,-3));
     }
     if(isset($_REQUEST['check_antyp'])){
         $tmp = "";
         foreach($_REQUEST['val_antyp'] AS $st){
-            $tmp.= "antyp = ".$st." OR ";
+            $tmp.= "antyp = '".$st."' OR ";
         }
         array_push($where,substr($tmp,0,-3));
     }
     if(isset($_REQUEST['check_abtyp'])){
         $tmp = "";
         foreach($_REQUEST['val_abtyp'] AS $st){
-            $tmp.= "abtyp = ".$st." OR ";
+            $tmp.= "abtyp = '".$st."' OR ";
         }
         array_push($where,substr($tmp,0,-3));
     }
@@ -132,7 +156,7 @@ if(!isset($_REQUEST['submit'])){
     if(isset($_REQUEST['check_essen'])){
         $tmp = "";
         foreach($_REQUEST['val_essen'] AS $st){
-            $tmp.= "essen = ".$st." OR ";
+            $tmp.= "essen = '".$st."' OR ";
         }
         array_push($where,substr($tmp,0,-3));
     }
@@ -170,18 +194,23 @@ if(!isset($_REQUEST['submit'])){
     }
 }
 
-$config_verbose_level = 4;
+//$config_verbose_level = 4;
 $tmp = $admin_db->query($query.";");
+
 if($tmp)
     $mails = $tmp->fetchAll(PDO::FETCH_ASSOC);
-else
+else{
+    comm_admin_verbose(3,$admin_db->error());
     $mails = array();
+}
 
-echo '<textarea style="height:300px; width:800px">';
-foreach($mails as $mehl)
-    echo "<".$mehl['forname']." ".$mehl['sirname']."> ".$mehl['mehl']."; ";
-echo '</textarea>';
+$text .=  '<textarea style="height:300px; width:800px" id="mails">'.$dsa;
+foreach($mails as $mehl){
+    $text .=  "<".$mehl['forname']." ".$mehl['sirname']."> ".$mehl['mehl']."; ";
+    $ajax .=  "<".$mehl['forname']." ".$mehl['sirname']."> ".$mehl['mehl']."; ";
+}
+$text .=  '</textarea>';
 
 
-echo"<pre>";print_r($_REQUEST);echo"</pre>";
+comm_admin_verbose(3,$_REQUEST);
 ?>

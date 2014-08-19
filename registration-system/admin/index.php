@@ -25,6 +25,7 @@ $template = file_get_contents("../view/admin_template.html");
 $navigation = "";
 $headers = "";
 $text = "";
+$ajax = "";
 
 checkIfLogin();
 
@@ -71,4 +72,7 @@ else
     $text .= file_get_contents("../view/admin_login_form.html");
 }
 
-echo str_replace("{headers}", $headers, str_replace("{text}", $text, str_replace("{navigation}", $navigation, $template)));
+if(isset($_REQUEST['ajax']))
+    echo $ajax;
+else
+    echo str_replace("{headers}", $headers, str_replace("{text}", $text, str_replace("{navigation}", $navigation, $template)));
