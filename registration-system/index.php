@@ -5,6 +5,7 @@ require 'config.inc.php';
 require 'frameworks/medoo.php';
 require 'frameworks/commons.php';
 require 'lang.php';
+require 'frameworks/soft_protect.php';
 
 
 $index_db = new medoo(array(
@@ -90,7 +91,7 @@ function index_form_to_db($data){
  *
  */
 function index_check_form(){
-    global $config_studitypen, $config_essen, $config_reisearten, $index_db;
+    global $config_studitypen, $config_essen, $config_reisearten, $index_db, $invalidCharsRegEx;
     $errors = array();
     $data   = array();
 
@@ -103,9 +104,9 @@ function index_check_form(){
 
     $possible_dates = comm_get_possible_dates($fid);
 
-    index_check_field('forname', '/^[a-z-äüöß]{2,50}$/ui', $data, $errors, "Fehlerhafter oder fehlender Vorname!");
-    index_check_field('sirname', '/^[a-z-äüöß]{2,50}$/ui', $data, $errors, "Fehlerhafter oder fehlender Nachname!");
-    index_check_field('pseudo', '/^\w{2,50}$/u', $data, $errors, "Fehlerhafter oder fehlender Anzeigename!");
+    index_check_field('forname', $invalidCharsRegEx, $data, $errors, "Fehlerhafter oder fehlender Vorname!");
+    index_check_field('sirname', $invalidCharsRegEx, $data, $errors, "Fehlerhafter oder fehlender Nachname!");
+    index_check_field('pseudo', $invalidCharsRegEx, $data, $errors, "Fehlerhafter oder fehlender Anzeigename!");
     index_check_field('mehl', 'mail', $data, $errors, "Fehlerhafte oder fehlende E-Mail-Adresse!");
     index_check_field('anday', array_slice($possible_dates,0, -1), $data, $errors, 'Hilfe beim Ausfüllen: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
     index_check_field('antyp', $config_reisearten, $data, $errors, 'Trolle hier lang: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
@@ -197,7 +198,7 @@ function index_check_field($index, $check, &$datarr, &$errarr, $errmess){
  * @param null $bachelor - if not null: prefill form with these data (take care, keys have to exist!)
  */
 function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
-    global $index_db, $config_studitypen, $config_essen, $config_reisearten;
+    global $index_db, $config_studitypen, $config_essen, $config_reisearten, $invalidCharsRegEx;
 
     $possible_dates = comm_get_possible_dates($fid);
 
@@ -226,6 +227,9 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
                                              ,"antyp",$config_reisearten, $bachelor["antyp"],"");
     index_show_formular_helper_sel2("Abreise","abday", array_slice($possible_dates,1), $bachelor["abday"]
                                              ,"abtyp",$config_reisearten,$bachelor["abtyp"],"");
+
+    $soft_prot = new soft_protect();
+    echo $soft_prot->add(array('forname', 'sirname', 'pseudo'), $invalidCharsRegEx)->write();
 
     echo'
         <label>Anmerkung</label>
@@ -275,7 +279,7 @@ function index_show_formular_helper_sel2($name, $id, $values, $selected, $id2, $
     echo '<label style="text-align:left">'.$name.'
         <span class="small">'.$subtext.'</span>
         </label><table><tr><td>
-        <select name="'.$id.'" id="'.$id.'" style="width:90px">';
+        <select name="'.$id.'" id="'.$id.'" style="width:110px; text-align: center">';
     foreach($values as $val){
         echo '<option value="'.$val.'"';
         if($val == $selected) echo ' selected';
