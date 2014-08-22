@@ -14,11 +14,16 @@ function generateNavigationItems($page, $menu)
 
 function checkIfLogin()
 {
+
+    if(isset($_GET['logout']))
+        setLoggedIn("");
+
     if(!isset($_POST['user']) || !isset($_POST['password']))
         return;
 
     $user = $_POST['user'];
     $password = $_POST['password'];
+
 
     if (isValidUser($user, $password))
         setLoggedIn($user);
@@ -59,13 +64,33 @@ function isLoggedIn()
 
 function setLoggedIn($user)
 {
-    if ($user != "")
+    if ($user != ""){
+        comm_admin_verbose(2,"login");
         $_SESSION['loggedIn'] = $user;
-    else
+    }else
     {
+        comm_admin_verbose(2,"logout");
         session_destroy();
         header("location: ..");
     }
 }
 
+function comm_admin_verbose($level, $text){
+    global $config_admin_verbose_level;
+    if($config_admin_verbose_level >= $level)  {
+        if(is_array($text)){
+            echo "<pre>"; print_r($text); echo "</pre>";
+        } else
+            echo $text.'<br />';
+    }
+}
 
+function comm_verbose($level, $text){
+    global $config_verbose_level;
+    if($config_verbose_level >= $level) {
+        if(is_array($text)){
+            echo "<pre>"; print_r($text); echo "</pre>";
+        } else
+            echo $text.'<br />';
+    }
+}

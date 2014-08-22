@@ -129,14 +129,14 @@ class medoo
 	public function query($query)
 	{
 		$this->queryString = $query;
-        comm_verbose(3,$query);
+        comm_verbose(4,$query);
 		return $this->pdo->query($query);
 	}
 
 	public function exec($query)
 	{
 		$this->queryString = $query;
-        comm_verbose(3,$query);
+        comm_verbose(4,$query);
 		return $this->pdo->exec($query);
 	}
 

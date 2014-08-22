@@ -28,7 +28,7 @@ div#headerbox, div#menubox, div#mainbox, div#footerbox {
 
 div#headerbox {
   height: 400px;
-  background-image: url(header.jpg);
+  background-image: url(graphics/header.jpg);
   border-bottom: 1px solid black;
 }
 

@@ -8,7 +8,12 @@ function page_stuff()
 
 function page_list()
 {
-    global $text;
+    global $text, $headers;
+    $headers =<<<END
+    <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
+    <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../view/js/jquery.dataTables.min.js"></script>
+END;
     $text .= "Meldeliste";
 
     $text .=<<<END
@@ -39,10 +44,36 @@ END;
 
 }
 
-function page_404()
+function page_404($pag)
 {
     global $text;
-    $text .= "404 Seite nicht gefunden...";
+    $text .='
+        <div style="background-color:black; color:antiquewhite; font-family: \'Courier New\', Courier, monospace;height: 100%; width: 100%;position:fixed; top:0; padding-top:40px;">
+            $ get-page '.$pag.'<br />
+            404 - page not found ('.$pag.')<br />
+            $ <blink>&#9611;</blink>
+        </div>';
+
+}
+
+function page_notes(){
+    require_page("pages_notes.php");
+}
+
+function page_mail(){
+    require_page("pages_mail.php");
+}
+
+function page_cost(){
+    require_page("pages_cost.php");
+}
+
+function require_page($page){
+    if(!@file_exists($page) ) {
+        page_404($page);
+    } else {
+        require_once $page;
+    }
 }
 
 ?>

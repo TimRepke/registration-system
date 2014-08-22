@@ -7,13 +7,25 @@
  */
 
 session_start();
+
+mb_internal_encoding('UTF-8');
+mb_http_output('UTF-8');
+mb_http_input('UTF-8');
+mb_language('uni');
+mb_regex_encoding('UTF-8');
+ob_start('mb_output_handler');
+date_default_timezone_set("Europe/Berlin");
+
 require_once("commons_admin.php");
 require_once("pages.php");
+require_once("../config.inc.php");
+require_once("../frameworks/medoo.php");
 
 $template = file_get_contents("../view/admin_template.html");
 $navigation = "";
 $headers = "";
 $text = "";
+$ajax = "";
 
 checkIfLogin();
 
@@ -23,16 +35,21 @@ if (isLoggedIn())
         "Übersicht" => "stuff",
         "Meldeliste" => "list",
         "Kosten" => "cost",
-        "Rundmail" => "mail"
+        "Rundmail" => "mail",
+        "Notizen" => "notes",
+        "Deadlink" => "dead"
     );
+
+    $admin_db = new medoo(array(
+        'database_type' => $config_db["type"],
+        'database_name' => $config_db["name"],
+        'server'        => $config_db["host"],
+        'username'      => $config_db["user"],
+        'password'      => $config_db["pass"]
+    ));
 
     $page = isset($_GET['page']) ? $_GET['page'] : "";
     $navigation = generateNavigationItems($page, $menu);
-    $headers =<<<END
-    <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
-    <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="../view/js/jquery.dataTables.min.js"></script>
-END;
 
     switch($page)
     {
@@ -41,12 +58,14 @@ END;
             page_stuff(); break;
         case "list":
             page_list(); break;
-        //case "cost":
-            //page_cost(); break;
-        //case "mail":
-            //page_mail(); break;
+        case "cost":
+            page_cost(); break;
+        case "mail":
+            page_mail(); break;
+        case "notes":
+            page_notes(); break;
         default:
-            page_404();
+            page_404($page);
     }
 }
 else
@@ -54,4 +73,7 @@ else
     $text .= file_get_contents("../view/admin_login_form.html");
 }
 
-echo str_replace("{headers}", $headers, str_replace("{text}", $text, str_replace("{navigation}", $navigation, $template)));
+if(isset($_REQUEST['ajax']))
+    echo $ajax;
+else
+    echo str_replace("{headers}", $headers, str_replace("{text}", $text, str_replace("{navigation}", $navigation, $template)));

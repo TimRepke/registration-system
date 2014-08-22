@@ -4,6 +4,7 @@ error_reporting(E_ALL || E_STRICT);
 require 'config.inc.php';
 require 'frameworks/medoo.php';
 require 'frameworks/commons.php';
+require 'lang.php';
 
 
 $index_db = new medoo(array(
@@ -62,6 +63,9 @@ function index_show_content(){
     }
 
 }
+function show_content(){
+    index_show_content();
+}
 
 /**
  * puts the dataarray into DB
@@ -69,10 +73,14 @@ function index_show_content(){
  * @param $data
  */
 function index_form_to_db($data){
-    global $index_db;
+    global $index_db, $config_baseurl, $lang_regmail, $config_current_fahrt_id;
     $data['version'] = 1;
     $data['bachelor_id'] = comm_generate_key($index_db, "bachelor", "bachelor_id", array('fahrt_id'=>$data['fahrt_id']));
     $index_db->insert("bachelor", $data);
+    $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$config_current_fahrt_id));
+    $mail = comm_get_lang("lang_regmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['bachelor_id'],
+                                                 "{{organisator}}" => $from['leiter']));
+    comm_send_mail($index_db, $data['mehl'], $mail, $from['kontakt']);
 }
 
 /**
@@ -95,9 +103,9 @@ function index_check_form(){
 
     $possible_dates = comm_get_possible_dates($fid);
 
-    index_check_field('forname', '/^[a-zA-Z]{2,50}$/', $data, $errors, "Fehlerhafter oder fehlender Vorname!");
-    index_check_field('sirname', '/^[a-zA-Z]{2,50}$/', $data, $errors, "Fehlerhafter oder fehlender Nachname!");
-    index_check_field('pseudo', '/^\w{2,50}$/', $data, $errors, "Fehlerhafter oder fehlender Anzeigename!");
+    index_check_field('forname', '/^[a-z-äüöß]{2,50}$/ui', $data, $errors, "Fehlerhafter oder fehlender Vorname!");
+    index_check_field('sirname', '/^[a-z-äüöß]{2,50}$/ui', $data, $errors, "Fehlerhafter oder fehlender Nachname!");
+    index_check_field('pseudo', '/^\w{2,50}$/u', $data, $errors, "Fehlerhafter oder fehlender Anzeigename!");
     index_check_field('mehl', 'mail', $data, $errors, "Fehlerhafte oder fehlende E-Mail-Adresse!");
     index_check_field('anday', array_slice($possible_dates,0, -1), $data, $errors, 'Hilfe beim Ausfüllen: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
     index_check_field('antyp', $config_reisearten, $data, $errors, 'Trolle hier lang: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
@@ -162,19 +170,19 @@ function index_check_field($index, $check, &$datarr, &$errarr, $errmess){
         if(is_array($check)){
             if(!in_array($tmp,$check)){
                 array_push($errarr, $errmess);
-                $tmp = "";
+                //$tmp = "";
             }
         } else {
             if($check == "mail"){
                 if (!filter_var($tmp, FILTER_VALIDATE_EMAIL)) {
                     array_push($errarr, $errmess);
-                    $tmp = "";
+                    //$tmp = "";
                 }
             } elseif($check == "comment"){
                 // do nothing? maybe some graphical joke, is somebody tries to drop DB
             } elseif(!(preg_match($check, $tmp)==1)){
                 array_push($errarr, $errmess);
-                $tmp = "";
+                //$tmp = "";
             }
         }
         $datarr[$index] = $tmp;
@@ -350,7 +358,7 @@ function index_show_signupTable($fid){
                 </thead>';
         foreach($data as $d){
             echo '<tr>
-                <td>'.$config_studitypen[$d["studityp"]].'</td>
+                <td>'.$d["studityp"].'</td>
                 <td>'.$d["pseudo"].'</td>
                 <td>'.$d["anday"].'</td>
                 <td>'.$d["antyp"].'</td>
