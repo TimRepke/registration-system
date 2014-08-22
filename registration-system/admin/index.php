@@ -36,7 +36,8 @@ if (isLoggedIn())
         "Meldeliste" => "list",
         "Kosten" => "cost",
         "Rundmail" => "mail",
-        "Notizen" => "notes"
+        "Notizen" => "notes",
+        "Deadlink" => "dead"
     );
 
     $admin_db = new medoo(array(
