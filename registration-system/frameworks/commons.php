@@ -1,5 +1,7 @@
 <?php
 
+$invalidCharsRegEx = "/^[^0-9<>!?.::,#*@^_$\\\"'%;()&+]{2,50}$/"; // d©_©b
+
 /**
  * converts mail into safe for web format
  * @param $mail - mail to convert

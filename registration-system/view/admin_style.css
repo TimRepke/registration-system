@@ -1,0 +1,72 @@
+html,body {
+    font-family:Verdana,Helvetica,sans-serif;
+    font-size:12pt;
+    padding: 0;
+    margin:0;
+    height:100%
+}
+body{
+    margin-top: 40px;
+    height:100%;
+}
+a:link, a:visited {
+    background-color:inherit;
+    color:#ff8400;;
+    text-decoration:none;
+}
+a:active, a:hover {
+    background-color:inherit;
+    color:#ff6000;
+    text-decoration:none;
+}
+#linkbar{
+    border-bottom: 1px dashed coral;
+    width: 100%;
+    position: fixed;
+    top:0;
+    left: 0;
+    right: 0;
+    padding: 5px;
+    background: #f5f5f5;
+}
+#linkbar a{
+    border-left: 1px dotted #d3d3d3;
+    padding: 0 5px;
+}
+
+#admin-content{
+
+}
+#logout{
+    float:right;
+    height:20px;
+    width: 25px;
+    background: #f5f5f5;
+    color:#f5f5f5;
+    border:0 !important;
+}
+form table tr td{
+    border-left: 1px dotted #d3d3d3;
+    padding: 0 5px;
+}
+
+.cost-table{
+
+}
+.cost-table td{
+	padding-left: 12px;
+	padding-right: 12px;
+}
+.cost-table tr{
+
+}
+.cost-table tfoot{
+	border-top: 1px dashed #222;
+	border-bottom: 1px double
+}
+.cost-table-numeric{
+	text-align:right;
+}
+.cost-table-invisible{
+	border: 0;
+}

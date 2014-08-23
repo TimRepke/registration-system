@@ -34,54 +34,35 @@ function show_content(){
     if(!$data)
         die("Kein gültiger Hash gegeben!");
 
+    $infolist = Array(
+    	'Anmelde ID' => $data['bachelor_id'],
+    	'Vor-/Nachname' => $data['forname'].' '.$data['sirname'].(strlen($data['pseudo']) > 0 ? ' ('.$data['pseudo'].')' : ""),
+    	'eMail-Adresse' => $data['mehl'],
+    	'Anreisetag &amp; Art' => $data["anday"].' ('.$data["antyp"].')',
+    	'Abreisetag &amp; Art' => $data["abday"].' ('.$data["abtyp"].')',
+    	'Essenswunsch' => $data["essen"],
+    	'Zahlung erhalten' => ((is_null($data["paid"])) ? "nein" : date('d.m.Y',$data["paid"])),
+    	'Rückzahlung gesendet' => ((is_null($data["repaid"])) ? "nein" : date('d.m.Y',$data["repaid"])),
+    	//'Zurückgetreten' => (($data["backstepped"]==1) ? "ja" : "nein"),
+    	'Kommentar' => $data["comment"]
+    );
+
     echo '
-    <table>
-        <tr>
-            <td>Melde-ID</td>
-            <td>'.$data["bachelor_id"].'</td>
-        </tr>
-        <tr>
-            <td>Name</td>
-            <td>'.$data["forname"].' '.$data["sirname"].' ('.$data["pseudo"].')</td>
-        </tr>
-        <tr>
-            <td>E-Mail-Adresse</td>
-            <td>'.$data["mehl"].'</td>
-        </tr>
-        <tr>
-            <td>Anreisetag + Art</td>
-            <td>'.$data["anday"].' ('.$data["antyp"].')</td>
-        </tr>
-        <tr>
-            <td>Abreisetag + Art</td>
-            <td>'.$data["abday"].' ('.$data["abtyp"].')</td>
-        </tr>
-        <tr>
-            <td>Essenswunsch</td>
-            <td>'.$data["essen"].'</td>
-        </tr>
-        <tr>
-            <td>Zahlung erhalten</td>
-            <td>'.((is_null($data["paid"])) ? "nein" : date('d.m.Y',$data["paid"])).'</td>
-        </tr>
-        <tr>
-            <td>Rückzahlung gesendet</td>
-            <td>'.((is_null($data["repaid"])) ? "nein" : date('d.m.Y',$data["repaid"])).'</td>
-        </tr>
-        <!--tr>
-            <td>Zurückgetreten</td>
-            <td>'.(($data["backstepped"]==1) ? "ja" : "nein").'</td>
-        </tr-->
-        <tr>
-            <td>Kommentar</td>
-            <td>'.$data["comment"].'</td>
-        </tr>
-    </table>';
+    <div class="fahrt"><div class="fahrttitle">Anmeldedaten</div>
+    <div class="fahrttable">';
+
+    foreach($infolist as $key => $value)
+    {
+    	echo '<div>'; // (invisible(magic(style))) table row
+       	echo "<div style='display:table-cell; font-weight: bold; padding: 3px 40px 3px 0'>$key</div><div style='display:table-cell'>$value</div>";
+        echo '</div>';
+    }
+    echo '</div></div>';
 
     $mailto = $status_db->get("fahrten", "kontakt", array("fahrt_id"=>$config_current_fahrt_id));
     $subject= $config_mailtag.'Änderung zu '.$data["forname"].' '.$data["sirname"].' ('.$data["pseudo"].')';
 
-    echo '<a style="float:none" href="mailto:'.$mailto.'?subject='.str_replace(" ", "%20",$subject).'">Änderung melden</a>';
+    echo '<a style="float:none;font-weight:bold" href="mailto:'.$mailto.'?subject='.str_replace(" ", "%20",$subject).'">Änderung melden</a>';
 
 }
 

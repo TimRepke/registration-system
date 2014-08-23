@@ -1,5 +1,8 @@
 <?php
 
+require_once("../frameworks/medoo.php");
+require_once("../config.inc.php");
+
 function page_stuff()
 {
     global $text;
@@ -8,7 +11,7 @@ function page_stuff()
 
 function page_list()
 {
-    global $text, $headers;
+    global $text, $headers, $admin_db;
     $headers =<<<END
     <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
     <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
@@ -16,23 +19,58 @@ function page_list()
 END;
     $text .= "Meldeliste";
 
+    $columns = array(
+        "bachelor_id",
+        "fahrt_id",
+        "forname",
+        "sirname",
+        "pseudo",
+        "antyp",
+        "abtyp",
+        "anday",
+        "abday",
+        "comment",
+        "studityp"
+    );
+    $columnFunctions = array(
+        "Anmelde-ID" => function($person) { return $person["bachelor_id"]; },
+        "FahrtID" => function($person) { return $person["fahrt_id"]; },
+        "Name" => function($person) { return $person["forname"]." ".$person["sirname"]." (".$person["pseudo"].")"; },
+        "Anreisetyp" => function($person) { return ""; },
+        "Abreisetyp" => function($person) { return ""; },
+        "Anreisetag" => function($person) { return ""; },
+        "Abreisetag" => function($person) { return ""; },
+        "Kommentar" => function($person) { return ""; },
+        "StudiTyp" => function($person) { return ""; }
+    );
+
     $text .=<<<END
     <table id="mlist">
         <thead>
             <tr>
-                <th>Column 1</th>
-                <th>Column 2</th>
+END;
+    foreach($columnFunctions as $key => $value)
+    {
+        $text .= "<th>".$key."</th>";
+    }
+    $text .=<<<END
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Row 1 Data 1</td>
-                <td>Row 1 Data 2</td>
-            </tr>
-            <tr>
-                <td>Row 2 Data 1</td>
-                <td>Row 2 Data 2</td>
-            </tr>
+END;
+    // TODO: generate table content
+
+    $people = $admin_db->select('bachelor',$columns);
+    foreach($people as $person) {
+    	$text .= "<tr>";
+    	foreach($columnFunctions as $key => $value)
+        {
+            $text .= "<td>".$value($person)."</td>";
+        }
+    	$text .= "</tr>";
+    }
+
+    $text .=<<<END
         </tbody>
     </table>
     <script type='text/javascript'>
