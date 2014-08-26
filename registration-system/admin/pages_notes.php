@@ -88,4 +88,3 @@ var editor = new wysihtml5.Editor("wysihtml5-editor", {
         }
       });
 </script>';
-

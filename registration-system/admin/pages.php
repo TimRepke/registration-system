@@ -24,24 +24,30 @@ END;
         "fahrt_id",
         "forname",
         "sirname",
+        "mehl",
         "pseudo",
         "antyp",
         "abtyp",
         "anday",
         "abday",
         "comment",
-        "studityp"
+        "studityp",
+        "paid",
+        "repaid",
+        "backstepped"
     );
+
     $columnFunctions = array(
         "Anmelde-ID" => function($person) { return $person["bachelor_id"]; },
         "FahrtID" => function($person) { return $person["fahrt_id"]; },
-        "Name" => function($person) { return $person["forname"]." ".$person["sirname"]." (".$person["pseudo"].")"; },
-        "Anreisetyp" => function($person) { return ""; },
-        "Abreisetyp" => function($person) { return ""; },
-        "Anreisetag" => function($person) { return ""; },
-        "Abreisetag" => function($person) { return ""; },
-        "Kommentar" => function($person) { return ""; },
-        "StudiTyp" => function($person) { return ""; }
+        "Name" => function($person) { return "<a href='mailto:".$person["mehl"]."?subject=FS-Fahrt'>".$person["forname"]." ".$person["sirname"]." (".$person["pseudo"].")</a>"; },
+        "Anreisetyp" => function($person) { return $person["antyp"]; },
+        "Abreisetyp" => function($person) { return $person["abtyp"]; },
+        "Anreisetag" => function($person) { return $person["anday"]; },
+        "Abreisetag" => function($person) { return $person["abday"]; },
+        "Kommentar" => function($person) { return $person["comment"]; },
+        "StudiTyp" => function($person) { return $person["studityp"]; },
+        "PaidReBack" => function($person) { return ($person["paid"] ? "1" : "0") . ($person["repaid"] ? "1" : "0") . ($person["backstepped"] ? "1" : "0"); }
     );
 
     $text .=<<<END

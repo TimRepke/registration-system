@@ -8,15 +8,27 @@
 
 global $config_studitypen, $config_reisearten, $config_essen, $admin_db, $config_current_fahrt_id, $config_admin_verbose_level, $config_verbose_level, $text, $headers, $ajax;
 
+$text .= "<h2>Unterkunft</h2>";
 $h = array("Position", "Anzahl", "Satz", "Summe");
-$d = array(array("Mett", 100, 3.2),
-           array("Zwiebel", 300, 5),
-           array("Brötchen", 200, 0.2));
 $s[3] = array(1,2);
 $t[2] = " €"; 
 $t[3] = " €";
+
+$text .= "<h3>Kalkulation</h3>";
+$d = array(array("Übernachtung", 2, 10.50),
+           array("Zwiebel", 300, 5),
+           array("Brötchen", 200, 0.2));
+
+
+$text .= html_table($h, $d, $s, $t);
+$text .= "<h3>Rechnung</h3>";
 $text .= html_table($h, $d, $s, $t);
 
+$text .= "<h2>Einkaufen</h2>";
+$text .= html_table($h, $d, $s, $t);
+
+$text .= "<h2>Money In/Out</h2>";
+$text .= html_table($h, $d, $s, $t);
 
 
 /**
