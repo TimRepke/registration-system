@@ -8,45 +8,87 @@
 
 global $config_studitypen, $config_reisearten, $config_essen, $admin_db, $config_current_fahrt_id, $config_admin_verbose_level, $config_verbose_level, $text, $headers, $ajax;
 
-$text .= "<h2>Unterkunft</h2>";
-$h = array("Position", "Anzahl", "Satz", "Summe");
-$s[3] = array(1,2);
-$t[2] = " €"; 
-$t[3] = " €";
-
 $text .= "<h3>Kalkulation</h3>";
-$d = array(array("Übernachtung", 2, 10.50),
-           array("Zwiebel", 300, 5),
-           array("Brötchen", 200, 0.2));
-
-
-$text .= html_table($h, $d, $s, $t);
-$text .= "<h3>Rechnung</h3>";
-$text .= html_table($h, $d, $s, $t);
+$h1 = array("Position", "Anzahl (normal)", "Satz", "Summe");
+$s1[3] = array(1,2);
+$t1[2] = " €";
+$t1[3] = " €";
+$d1 = array(array("Reisekosten", 2, 1.9),
+           array("Übernachtung (HP)", 2, 17.8),
+           array("Bettwäsche", 1, 4),
+           array("Grillen", 1, 0.3),
+           array("Kurzreisezuschlag", 1, 2));
+$text .= html_table($h1, $d1, $s1, $t1);
 
 $text .= "<h2>Einkaufen</h2>";
-$text .= html_table($h, $d, $s, $t);
+$h2 = array("Position", "Anzahl", "Satz", "Summe");
+$s2[3] = array(1,2);
+$t2[2] = " €";
+$t2[3] = " €";
+$d2 = array(array("Club Mate", 120, 0.69),
+    array("Chips", 15,0.5),
+    array("Flips", 15, 0.5),
+    array("Fanta", 24, 0.39),
+    array("Wasser", 42, 0.3));
+$text .= html_table($h2, $d2, $s2, $t2);
+
+$text .= "<h3>Rechnung</h3>";
+$h3 = array("Position", "Menge", "Anzahl", "Satz", "Summe");
+$s3[4] = array(1,2,3);
+$t3[3] = " €";
+$t3[4] = " €";
+$d3 = array(
+    array("Übernachtung", 2, 69, 10.5),
+    array("Bettwäsche", 1, 75, 4),
+    array("Grillnutzung", 1, 69, 0.3),
+    array("Kurzreisezuschlag", 1, 69, 2),
+    array("Halbpension", 2, 69, 7.3));
+$text .= html_table($h3, $d3, $s3, $t3);
 
 $text .= "<h2>Money In/Out</h2>";
-$text .= html_table($h, $d, $s, $t);
+$text .= '<div style="float:left">';
+$h4 = array("Position", "Summe");
+$s4 = array();
+$t4[1] = " €";
+$d4_out = array(
+    array("Frauensee", 2815.1),
+    array("Einkauf", 590.13),
+    array("Busfahrt", 216),
+    array("Bäcker", 22.4),
+    array("Kaution", 100)
+);
+$d4_in = array(
+    array("Pfand1", 82.17),
+    array("Pfand2", 10),
+    array("Pfand3", 15),
+    array("Fachschaft (Reste)", 76),
+    array("Kollekte", 4620),
+    array("Förderung", 2200),
+    array("Kaution", 100)
+);
+$text .= html_table($h4, $d4_out, $s4, $t4);
+$text .= '</div><div style="float:left">';
+$text .= html_table($h4, $d4_in, $s4, $t4);
+$text .= '</div><div style="clear:both"></div>';
+
 
 
 /**
- * $headers 
+ * $headers
  *    is an array of the headers
  * $data
  *    is an array with the data to output
- * $sum 
- *    is an array declaring which cols should be summed up and put below the table, 
+ * $sum
+ *    is an array declaring which cols should be summed up and put below the table,
  *    second dimension declares which cols need to be multiplied (if no second dimension, just sum at the end)
- * $type 
+ * $type
  *    is an array declaring type of data to put behind the value (i.e. €), not all cols need to be declared
  *
  * return value: variable containing the html code for echo
  */
 function html_table($header, $data, $sum = array(), $type = array()){
 	$summy = array();
-	
+
 	$ret = "<table class=\"cost-table\">
 			<thead>
 				<tr>\n";
@@ -74,7 +116,7 @@ function html_table($header, $data, $sum = array(), $type = array()){
 									$tmp = (is_null($tmp)) ? $row[$s] : $tmp*$row[$s];
 								}
 								$ret .= prepval($tmp,(isset($type[$i]) ? $type[$i] : ""));
-								
+
 								if(!isset($summy[$i]))
 									$summy[$i] = $tmp;
 								else
@@ -102,7 +144,7 @@ function html_table($header, $data, $sum = array(), $type = array()){
 				</tfoot>\n";
 	}
 	$ret.= "</table>";
-	
+
 	return $ret;
 }
 

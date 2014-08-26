@@ -37,6 +37,7 @@ if (isLoggedIn())
         "Kosten" => "cost",
         "Rundmail" => "mail",
         "Notizen" => "notes",
+        "Listenexport" => "export",
         "Deadlink" => "dead"
     );
 
@@ -64,6 +65,8 @@ if (isLoggedIn())
             page_mail(); break;
         case "notes":
             page_notes(); break;
+        case "export":
+            page_export(); break;
         default:
             page_404($page);
     }

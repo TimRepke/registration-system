@@ -19,6 +19,12 @@ a:active, a:hover {
     color:#ff6000;
     text-decoration:none;
 }
+a[href ^= "http"]:after {
+    content: " " url("graphics/outlonk.png");
+}
+table {
+    border-collapse: collapse;
+}
 #linkbar{
     border-bottom: 1px dashed coral;
     width: 100%;
@@ -51,7 +57,7 @@ form table tr td{
 }
 
 .cost-table{
-
+    padding: 5px;
 }
 .cost-table td{
 	padding-left: 12px;
@@ -69,4 +75,8 @@ form table tr td{
 }
 .cost-table-invisible{
 	border: 0;
+}
+.cost-table tfoot td{
+    border-bottom: 1px solid #0c0c0c;
+    border-top: 1px dashed #0c0c0c;
 }
