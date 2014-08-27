@@ -8,6 +8,12 @@
 
 global $config_studitypen, $config_reisearten, $config_essen, $admin_db, $config_current_fahrt_id, $config_admin_verbose_level, $config_verbose_level, $text, $headers, $ajax;
 
+
+$headers .= '<script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
+             <script src="../view/js/jquery.tabletojson.js"></script>
+             <script src="../view/js/jquery.jeditable.js"></script>';
+
+
 $text .= "<h3>Kalkulation</h3>";
 $h1 = array("Position", "Anzahl (normal)", "Satz", "Summe");
 $s1[3] = array(1,2);
@@ -18,7 +24,9 @@ $d1 = array(array("Reisekosten", 2, 1.9),
            array("Bettwäsche", 1, 4),
            array("Grillen", 1, 0.3),
            array("Kurzreisezuschlag", 1, 2));
-$text .= html_table($h1, $d1, $s1, $t1);
+$text .= html_table($h1, $d1, $s1, $t1, "test");
+$text .= '<span id="anc_add">add</span> - <span id="anc_rem">rem</span>';
+
 
 $text .= "<h2>Einkaufen</h2>";
 $h2 = array("Position", "Anzahl", "Satz", "Summe");
@@ -71,7 +79,46 @@ $text .= '</div><div style="float:left">';
 $text .= html_table($h4, $d4_in, $s4, $t4);
 $text .= '</div><div style="clear:both"></div>';
 
+$text .="<script type='text/javascript'>
+$('#testy').click( function() {
+  var table = $('#test').tableToJSON(); // Convert the table into a javascript object
+  console.log(table);
+  alert(JSON.stringify(table));
+});
 
+function ref_editable(){
+    $('.edita').editable(function(value, settings){return(value);},
+        {
+            indicator : '<img src=\'img/indicator.gif\'>',
+            tooltip   : 'Click to edit...',
+            style  : 'inherit',
+            callback : function(value, settings){
+                            var table = $('#test').tableToJSON(); // Convert the table into a javascript object
+                            console.log(JSON.stringify(table));
+                        }
+        }
+    );
+}
+
+$(function(){
+    ref_editable();
+    
+    var cnt = 2;
+    $('#anc_add').click(function(){
+        $('#test>tbody tr').last().after('<tr><td class=\'edita\'>Static Content ['+cnt+']</td><td class=\'edita\'></td><td class=\'edita\'></td><td class=\'edita\'></td></tr>');
+        cnt++;
+        ref_editable();
+    });
+    
+    $('#anc_rem').click(function(){
+        if($('#test>tbody tr').size()>1){
+            $('#test>tbody tr:last-child').remove();
+        }else{
+            alert('One row should be present in table');
+        }
+    });
+});
+</script>";
 
 /**
  * $headers
@@ -86,10 +133,10 @@ $text .= '</div><div style="clear:both"></div>';
  *
  * return value: variable containing the html code for echo
  */
-function html_table($header, $data, $sum = array(), $type = array()){
+function html_table($header, $data, $sum = array(), $type = array(), $id=""){
 	$summy = array();
 
-	$ret = "<table class=\"cost-table\">
+	$ret = "<table class=\"cost-table\" id=\"".$id."\">
 			<thead>
 				<tr>\n";
 					foreach($header as $h)
@@ -97,10 +144,12 @@ function html_table($header, $data, $sum = array(), $type = array()){
 	$ret.="		</tr>
 			</thead>
 			<tbody>\n";
+                $cnt = 0;
 				foreach($data as $row){
 					$ret.="<tr>";
 					for($i = 0; $i < count($header); $i++){
-						$ret.= "<td".numeric_class($row, $sum, $i).">";
+                        $cnt++;
+						$ret.= "<td".numeric_class($row, $sum, $i)." id='cell".$id.$cnt."'>";
 						if(isset($row[$i])){
 							$ret .= prepval($row[$i],(isset($type[$i]) ? $type[$i] : ""));
 							if(isset($sum[$i])){
@@ -155,11 +204,12 @@ function prepval($val, $post){
 }
 
 function numeric_class($a,$b,$c){
-	$d = ' class="cost-table-numeric"';
+	$d = ' class="cost-table-numeric edita"';
 	if(isset($a[$c])){
 		if(is_numeric($a[$c]))
 			return $d;
 	}
 	if(isset($b[$c]))
 		return $d;
+    return ' class="edita"';
 }
