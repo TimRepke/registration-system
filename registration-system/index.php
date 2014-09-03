@@ -77,6 +77,9 @@ function index_form_to_db($data){
     global $index_db, $config_baseurl, $lang_regmail, $config_current_fahrt_id;
     $data['version'] = 1;
     $data['bachelor_id'] = comm_generate_key($index_db, "bachelor", "bachelor_id", array('fahrt_id'=>$data['fahrt_id']));
+    $data['anm_time'] = time();
+    $data['anday'] = DateTime::createFromFormat('d.m.Y',$data['anday'])->getTimestamp();
+    $data['abday'] = DateTime::createFromFormat('d.m.Y',$data['abday'])->getTimestamp();
     $index_db->insert("bachelor", $data);
     $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$config_current_fahrt_id));
     $mail = comm_get_lang("lang_regmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['bachelor_id'],
@@ -351,7 +354,7 @@ function index_show_signupTable($fid){
             <table class="signups">
                 <thead>
                     <tr>
-                        <th></th>
+                        <!--th></th-->
                         <th>Anzeigename</th>
                         <th>Anreisetag</th>
                         <th>Anreiseart</th>
@@ -362,11 +365,11 @@ function index_show_signupTable($fid){
                 </thead>';
         foreach($data as $d){
             echo '<tr>
-                <td>'.$d["studityp"].'</td>
+                <!--td>'.$d["studityp"].'</td-->
                 <td>'.$d["pseudo"].'</td>
-                <td>'.$d["anday"].'</td>
+                <td>'.date('d.m.Y', $d["anday"]).'</td>
                 <td>'.$d["antyp"].'</td>
-                <td>'.$d["abday"].'</td>
+                <td>'.date('d.m.Y', $d["abday"]).'</td>
                 <td>'.$d["abtyp"].'</td>
                 <td>'.$d["comment"].'</td>
             </tr>';

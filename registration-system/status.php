@@ -36,10 +36,11 @@ function show_content(){
 
     $infolist = Array(
     	'Anmelde ID' => $data['bachelor_id'],
+        'Anmeldetag' => date('d.m.Y', $data['anm_time']),
     	'Vor-/Nachname' => $data['forname'].' '.$data['sirname'].(strlen($data['pseudo']) > 0 ? ' ('.$data['pseudo'].')' : ""),
     	'eMail-Adresse' => $data['mehl'],
-    	'Anreisetag &amp; Art' => $data["anday"].' ('.$data["antyp"].')',
-    	'Abreisetag &amp; Art' => $data["abday"].' ('.$data["abtyp"].')',
+    	'Anreisetag &amp; Art' => date('d.m.Y', $data["anday"]).' ('.$data["antyp"].')',
+    	'Abreisetag &amp; Art' => date('d.m.Y', $data["abday"]).' ('.$data["abtyp"].')',
     	'Essenswunsch' => $data["essen"],
     	'Zahlung erhalten' => ((is_null($data["paid"])) ? "nein" : date('d.m.Y',$data["paid"])),
     	'Rückzahlung gesendet' => ((is_null($data["repaid"])) ? "nein" : date('d.m.Y',$data["repaid"])),
