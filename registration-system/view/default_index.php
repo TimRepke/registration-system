@@ -11,7 +11,8 @@
 </head>
 <body>
 <div id="headerbox">
-    <h1>Fachschaftsfahrt</h1>
+    <div class="headerboxshade"><h1>Fachschaftsfahrt</h1></div>
+	<div class="headerboxshade"><h2>Informatik</h2></div>
     <p></p>
 </div>
 <div id="menubox">

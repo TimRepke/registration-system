@@ -96,6 +96,18 @@ h1 {
   font-family: sans-serif;
 }
 
+div.headerboxshade {
+  background-color: rgba(20,20,20,0.5);
+}
+
+div#headerbox h2 {
+  padding-top: 10px;
+  margin-left: 60px;
+  color: white;
+  font-size: 2.8em;
+  font-family: sans-serif;
+}
+
 div#headerbox p {
   color: white;
   margin-top: 0px;
