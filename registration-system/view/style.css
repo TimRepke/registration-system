@@ -100,6 +100,12 @@ div.headerboxshade {
   background-color: rgba(20,20,20,0.5);
 }
 
+div#storybox {
+	position:relative;
+	margin: 0 auto;
+	width:900px;
+}
+
 div#headerbox h2 {
   padding-top: 10px;
   margin-left: 60px;
@@ -107,6 +113,8 @@ div#headerbox h2 {
   font-size: 2.8em;
   font-family: sans-serif;
 }
+
+.ui-effects-transfer { border: 2px solid black; }
 
 div#headerbox p {
   color: white;

@@ -7,7 +7,9 @@
 
     <link rel="stylesheet" href="view/style.css" />
     <script type="text/javascript" src="view/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="view/js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="view/js/soft_protect.js"></script>
+    <script type="text/javascript" src="view/js/story.js"></script>
 </head>
 <body>
 <div id="headerbox">

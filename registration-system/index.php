@@ -203,6 +203,9 @@ function index_check_field($index, $check, &$datarr, &$errarr, $errmess){
 function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
     global $index_db, $config_studitypen, $config_essen, $config_reisearten, $invalidCharsRegEx;
 
+	if (!isset($_GET['noscript']))
+		echo '<noscript>';
+
     $possible_dates = comm_get_possible_dates($fid);
 
     if(is_null($bachelor))
@@ -241,7 +244,13 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
         <button type="submit" name="submit" id="submit" value="submit">Anmelden!</button>
         <div class="spacer"></div>
         </form>
-        </div>'; 
+        </div>';
+	if (!isset($_GET['noscript']))
+	{
+		echo '</noscript>';
+		echo '<div id="storybox"></div>';
+		echo '<div style="text-align:center;font-weight:bold"><a style="float:none;margin:0 auto;" href="'.$_SERVER['REQUEST_URI'].'&noscript">Seite funktioniert nicht?</a></div>';
+	}
 }
 
 /**
