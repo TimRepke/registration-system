@@ -26,7 +26,7 @@ function comm_format_date($date){
 }
 
 function comm_get_possible_dates($fid){
-    return array("12.03.2014","13.03.2014","14.03.2014");
+    return array("12.03.2014","13.03.2014","14.03.2014"); // FIXME dynamisch machen!
 }
 
 function comm_isopen_fid($db_handle, $fid){
