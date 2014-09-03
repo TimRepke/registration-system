@@ -1,5 +1,5 @@
-var debug = true;
-//var debug = false;
+//var debug = true;
+var debug = false;
 
 var story;
 var form_variables = {};
