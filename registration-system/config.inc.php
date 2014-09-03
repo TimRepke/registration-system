@@ -15,8 +15,8 @@ $config_db = array(
 
 $config_studitypen = array(
     "Ersti",       // 0
-    "Wechsli",     // 1 - woanders/was anderes studiert, jetzt hier
-    "MasterErsti", // 2
+    //"Wechsli",     // 1 - woanders/was anderes studiert, jetzt hier
+    //"MasterErsti", // 2
     "Hoersti",      // 3 - länger an der HU
     "Tutti",       // 4 - Tutor
     "Fachi"        // 5 - FS Ini
@@ -25,18 +25,18 @@ $config_studitypen = array(
 $config_essen = array(
     "Alles",
     "Vegetarisch",
-    "Vegan",
-    "Frutarisch",
-    "Grießbrei",
-    "Carnivore",
-    "Extrawurst"
+    "Vegan"
+    //,"Frutarisch",
+    //"Grießbrei",
+    //"Carnivore",
+    //"Extrawurst"
 );
 
 $config_reisearten = array(
     "gemeinsam mit Bus/Bahn",
     "gemeinsam mit Rad",
-    "individuell",
-    "mit Kamel"
+    "individuell"
+    //,"mit Kamel"
 );
 
 $config_admins = array(
