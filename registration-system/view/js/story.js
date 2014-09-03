@@ -10,7 +10,7 @@ function storyImage(filename)
 }
 function storyImageDiv(filename)
 {
-	return $('<div style="width:900px; height:500px; background: url(view/graphics/story/'+filename+');"></div>');
+	return $('<div style="position:absolute; width:900px; height:500px; background: url(view/graphics/story/'+filename+');"></div>');
 	addFormText(bell, "eMail", "mehl", 150, 215);
 }
 
@@ -32,13 +32,43 @@ function Story(_storybox)
 	this.basicData = null;
 	this.travelStart = null;
 }
+Story.prototype.next = function(bPrev)
+{
+	if (bPrev)
+	{
+		this.state -= 1;
+		if (this.state < 1)
+			this.state = 1;
+	}
+
+	switch(this.state)
+	{
+	case 0:
+		this.initBasicData();
+		break;
+	case 1:
+		this.initTravelStart();
+		this.travelStart.animate({left:bPrev?'900px':'0px'}, 1000);
+		this.basicData.animate({left:bPrev?'0px':'-900px'}, 1000);
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	}
+	if (!bPrev)
+		this.state += 1;
+}
 Story.prototype.initTravelStart = function()
 {
-	this.travelStart = storyImageDiv('travelStart.png');
+	if (this.travelStart) return;
+	this.travelStart = storyImageDiv('travelBegin.png');
+	this.travelStart.animate({left:'900px'}, 0);
 	this.storybox.append(this.travelStart);
 }
 Story.prototype.initBasicData = function()
 {
+	if (this.basicData) return;
 	this.basicData = storyImageDiv('begin.png');
 	this.storybox.append(this.basicData);
 	var bell = storyImageDiv('bell.png');
@@ -66,24 +96,6 @@ Story.prototype.initBasicData = function()
 			bell.fadeIn(1200);
 			orig_bell.effect("transfer", {to: bell}, 800);
 		}, 600);
-}
-Story.prototype.next = function()
-{
-	switch(this.state)
-	{
-	case 0:
-		this.initBasicData();
-		break;
-	case 1:
-		this.basicData.remove();
-		this.initTravelStart();
-		break;
-	case 2:
-		break;
-	case 3:
-		break;
-	}
-	this.state += 1;
 }
 Story.prototype.begin = function()
 {
