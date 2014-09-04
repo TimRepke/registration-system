@@ -249,8 +249,8 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
 	{
 		echo '</noscript>';
 		echo '<h2>Anmeldeformular</h2>';
-		echo '<div style="margin:0 auto; position:relative; width:900px; height:500px"><div id="storybox"></div>';
-		echo '<div style="position:absolute; left:20px; bottom:20px; background:#f0f; cursor:pointer" onclick="story.next(true)">ZUR&Uuml;CK</div></div>';
+		echo '<div style="margin:0 auto; position:relative; width:900px; height:500px; overflow:hidden"><div id="storybox"></div>';
+		echo '<div id="story_umleitung" style="position:absolute; left:0px; bottom:-70px; background:#f0f; cursor:pointer; background:url(view/graphics/story/umleitung.png); width:120px; height: 70px" onclick="story.next(true)">&nbsp;</div></div>';
 		echo '<div style="text-align:center;font-weight:bold"><a style="float:none;margin:0 auto;" href="'.$_SERVER['REQUEST_URI'].'&noscript">Seite funktioniert nicht / zu bunt?</a></div>';
 	}
 }

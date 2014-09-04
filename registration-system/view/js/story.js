@@ -27,6 +27,7 @@ function addFormText(parentNode, label, fieldName, x, y)
 function Story(_storybox)
 {
 	this.storybox = _storybox;
+	this.umleitung = $('#story_umleitung');
 	this.state = 0;
 
 	this.basicData = null;
@@ -58,6 +59,10 @@ Story.prototype.next = function(bPrev)
 	}
 	if (!bPrev)
 		this.state += 1;
+	if (bPrev && this.state == 1)
+		this.umleitung.animate({bottom:'-70px'}, 500);
+	else if (!bPrev && this.state == 2)
+		this.umleitung.animate({bottom:'0px'}, 500);
 }
 Story.prototype.initTravelStart = function()
 {
