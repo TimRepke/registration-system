@@ -12,11 +12,18 @@ Neon Orange: #FF4105
 Neon Purple: #993CF3
 */
 body {
-  /*background-color:#FF00FF;*/
-  background: url(http://rasputin.de/CF/Jugend/p/anibg.gif);
+  background: #cfdee7;
   font-family: sans-serif;
   text-align: justify;
   font-size: 1em;
+}
+
+.shadowbox {
+	-webkit-box-shadow: 7px 7px 20px 0px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    7px 7px 20px 0px rgba(50, 50, 50, 0.75);
+	box-shadow:         7px 7px 20px 0px rgba(50, 50, 50, 0.75);
+	width:1000px;
+	margin: 0 auto;
 }
 
 div#headerbox, div#menubox, div#mainbox, div#footerbox {
@@ -35,6 +42,9 @@ div#headerbox {
 
 div#menubox {
   border-bottom: 1px solid black;
+  -webkit-box-shadow: inset 0px 6px 6px 0px rgba(150, 150, 150, 0.75);
+	-moz-box-shadow:    inset 0px 6px 6px 0px rgba(150, 150, 150, 0.75);
+	box-shadow:         inset 0px 6px 6px 0px rgba(150, 150, 150, 0.75);
   /*height: 40px;*/
 }
 

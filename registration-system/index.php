@@ -248,9 +248,10 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
 	if (!isset($_GET['noscript']))
 	{
 		echo '</noscript>';
+		echo '<h2>Anmeldeformular</h2>';
 		echo '<div style="margin:0 auto; position:relative; width:900px; height:500px"><div id="storybox"></div>';
 		echo '<div style="position:absolute; left:20px; bottom:20px; background:#f0f; cursor:pointer" onclick="story.next(true)">ZUR&Uuml;CK</div></div>';
-		echo '<div style="text-align:center;font-weight:bold"><a style="float:none;margin:0 auto;" href="'.$_SERVER['REQUEST_URI'].'&noscript">Seite funktioniert nicht?</a></div>';
+		echo '<div style="text-align:center;font-weight:bold"><a style="float:none;margin:0 auto;" href="'.$_SERVER['REQUEST_URI'].'&noscript">Seite funktioniert nicht / zu bunt?</a></div>';
 	}
 }
 
@@ -351,6 +352,8 @@ function index_show_fahrtHeader($fahrt){
  */
 function index_show_signupTable($fid){
     global $index_db, $config_studitypen;
+
+echo '<h2>Angemeldet</h2>';
 
     $data = $index_db->select('bachelor',array("pseudo","antyp","abtyp","anday","abday","comment","studityp"),
         array("AND" => array(

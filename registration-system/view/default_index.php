@@ -12,6 +12,7 @@
     <script type="text/javascript" src="view/js/story.js"></script>
 </head>
 <body>
+<div class="shadowbox">
 <div id="headerbox">
     <div class="headerboxshade"><h1>Fachschaftsfahrt</h1></div>
 	<div class="headerboxshade"><h2>Informatik</h2></div>
@@ -28,5 +29,6 @@
 <div id="footerbox">&copy; 2014 Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin.</div>
 <img src="view/graphics/studityp_5.gif" style="position: fixed;bottom: 5px;left:0px" />
 
+</div>
 </body>
 </html>
