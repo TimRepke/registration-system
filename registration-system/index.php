@@ -381,12 +381,19 @@ echo '<h2>Angemeldet</h2>';
                 <!--td>'.$d["studityp"].'</td-->
                 <td>'.$d["pseudo"].'</td>
                 <td>'.date('d.m.Y', $d["anday"]).'</td>
-                <td>'.$d["antyp"].'</td>
+                <td>'.index_show_signupTable_destroyTypes($d["antyp"]).'</td>
                 <td>'.date('d.m.Y', $d["abday"]).'</td>
-                <td>'.$d["abtyp"].'</td>
+                <td>'.index_show_signupTable_destroyTypes($d["abtyp"]).'</td>
                 <td>'.$d["comment"].'</td>
             </tr>';
         }
         echo '</table>';
     }
+}
+
+function index_show_signupTable_destroyTypes($anabtyp){
+    global $config_reisearten, $config_reisearten_destroyed;
+    if(array_search($anabtyp, $config_reisearten)>=2)
+        return $config_reisearten_destroyed[array_rand($config_reisearten_destroyed)];
+    return $anabtyp;
 }
