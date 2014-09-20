@@ -18,8 +18,8 @@ $config_studitypen = array(
     //"Wechsli",     // 1 - woanders/was anderes studiert, jetzt hier
     //"MasterErsti", // 2
     "Hoersti",      // 3 - länger an der HU
-    "Tutti",       // 4 - Tutor
-    "Fachi"        // 5 - FS Ini
+    "Tutor"       // 4 - Tutor
+    //"Fachi"        // 5 - FS Ini
 );
 
 $config_essen = array(

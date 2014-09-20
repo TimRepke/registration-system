@@ -5,8 +5,9 @@ require_once("../config.inc.php");
 
 function page_stuff()
 {
-    global $text;
-    $text .= "Übersichtsseite";
+    //global $text;
+    //$text .= "Übersichtsseite";
+    require_page("pages_overview.php");
 }
 
 function page_list(){
