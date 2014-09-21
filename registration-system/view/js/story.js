@@ -1,4 +1,4 @@
-var debug = true;
+var debug = false;
 
 var story;
 
@@ -69,7 +69,10 @@ Story.prototype.next = function(bGoBack)
 		break;
 	case 3:
 		this.initAge();
-		this.age.animate({left:bGoBack?'900px':'0px'}, 1000);
+		this.age.animate({left:bGoBack?'900px':'0px'}, {duration: 1000, complete: function()
+		{
+			self.initAgeAnimation();
+		}});
 		this.eat.animate({left:bGoBack?'0px':'-900px'}, 1000);
 		break;
 	case 4:
@@ -145,6 +148,9 @@ Story.prototype.initTravelStart = function()
 			self.travelStartTypeButtons[i].click(function()
 			{
 				self.form_variables.travelStartTyp = i;
+				for (var j in self.travelStartTypeButtons)
+					self.travelStartTypeButtons[j].css({border:'1px solid #000'});
+				self.travelStartTypeButtons[i].css({border:'2px solid #f00'});
 				$('#travelStartTyp').html(travelFormNames[i]);
 			});
 		})(i);
@@ -216,9 +222,52 @@ Story.prototype.addTicketButton = function(ticket, funcstring)
 Story.prototype.initTravelEnd = function()
 {
 	if (this.travelEnd) return;
+
+	var self = this;
+
 	this.travelEnd = this.storyImageDiv('travelBegin.png');
 	this.travelEnd.animate({left:'-900px'}, 0);
 	this.storybox.append(this.travelEnd);
+	
+	this.travelEndTicket = this.storyImageDiv('ticket.png');
+	this.travelEndTicket.css({left: '560px', top: '100px', width: '329px', height: '161px'});
+	this.travelEnd.append(this.travelEndTicket);
+
+	this.addTicketTitle(this.travelEndTicket, "Abreise");
+	this.travelEndTicketButton = this.addTicketButton(this.travelEndTicket, "story.next()");
+	this.travelEndTicketButton.mouseenter(function(event) {
+		$(this).stop(true, true).effect("highlight");
+	});
+
+	this.addComboBox(this.travelEndTicket, "Datum", "abday", ["", "22.12.2100", "23.12.2100"], 105, 70); // @TODO: get date options from php
+	this.travelEndTicket.append('<div style="position: absolute; left: 55px; top: 95px">Typ</div>');
+	this.travelEndTicket.append('<div style="position: absolute; left: 105px; top: 95px" id="travelEndTyp">------</div>');
+
+	this.travelEndTypeButtons = this.addTravelTypeButtons(this.travelEnd);
+
+	var travelFormNames = {
+	car:
+		"Auto",
+	bike:
+		"Fahrrad",
+	oeffi:
+		"&Ouml;ffentlich",
+	camel:
+		"Individuell"
+	};
+	for (var i in this.travelEndTypeButtons)
+	{
+		(function(i) { // i - scope issues -> would remember last i in for loop
+			self.travelEndTypeButtons[i].click(function()
+			{
+				self.form_variables.travelEndTyp = i;
+				for (var j in self.travelEndTypeButtons)
+					self.travelEndTypeButtons[j].css({border:'1px solid #000'});
+				self.travelEndTypeButtons[i].css({border:'2px solid #f00'});
+				$('#travelEndTyp').html(travelFormNames[i]);
+			});
+		})(i);
+	}
 }
 Story.prototype.initEat = function()
 {
@@ -239,9 +288,7 @@ Story.prototype.initEat = function()
 			{
 				self.form_variables.eat = i;
 				for (var j in self.foodTypeButtons)
-				{
 					self.foodTypeButtons[j].css({border: '1px solid #000'});
-				}
 				self.foodTypeButtons[i].css({border: '2px solid #f00'});
 			});
 		})(i);
@@ -264,6 +311,14 @@ Story.prototype.addFoodTypeButtons = function(page)
 	wheat:
 		$('<div style="position: absolute; border: 1px solid; left: 604px; top: 214px; width: 112px; height: 127px; cursor: pointer;">&nbsp;</div>')
 	};
+	var tips = {
+	cow:
+		$('<div class="storyTip" style="left: 175px; top: 237px; display:none">Ziemlich alles:<br/>Vegan, Vegetarisch und Fleisch</div>'),
+	cheese:
+		$('<div class="storyTip" style="left: 427px; top: 298px; display:none">Vegetarisch</div>'),
+	wheat:
+		$('<div class="storyTip" style="left: 632px; top: 346px; display:none">Vegan</div>')
+	};
 
 	for (var i in buttons)
 	{
@@ -272,16 +327,69 @@ Story.prototype.addFoodTypeButtons = function(page)
 		button.mouseenter(function(event) {
 			$(this).stop(true, true).effect("highlight");
 		});
+		page.append(tips[i]);
+		(function(tip) {
+			button.hover(function () // in
+			{
+				tip.stop(true, true).fadeIn(200);
+			},
+			function () // out
+			{
+				tip.stop(true, true).fadeOut(200);
+			});
+		})(tips[i]);
 	}
 
 	return buttons;
 }
+Story.prototype.initAgeAnimation = function()
+{
+	var self = this;
+	setTimeout(function()
+	{
+		for (var j in self.ageButtons)
+			self.ageButtons[j].effect("highlight");
+	}, 800);
+}
 Story.prototype.initAge = function()
 {
 	if (this.age) return;
+
+	var self = this;
+
 	this.age = this.storyImageDiv('age.png');
 	this.age.animate({left:'900px'}, 0);
 	this.storybox.append(this.age);
+
+	this.ageButtonContinue = $('<div style="position: absolute; left: 675px; top: 354px; width: 28px; height: 21px; cursor: pointer;" onclick="story.next()">&nbsp;</div>');
+	this.age.append(this.ageButtonContinue);
+	this.ageButtonContinue.mouseenter(function() {
+		$(this).stop(true, true).effect("highlight");
+	});
+
+	this.ageButtons = {
+	eighteenplus:
+		$('<div style="position: absolute; left: 468px; top: 232px; width: 35px; height: 20px; cursor: pointer;">&nbsp;</div>'),
+	below:
+		$('<div style="position: absolute; left: 38px; top: 285px; width: 88px; height: 33px; cursor: pointer;">&nbsp;</div>')
+	};
+	for (var i in this.ageButtons)
+	{
+		(function(i) { // std::scope_issue<i>, own scope fixes reference
+			self.age.append(self.ageButtons[i]);
+			self.ageButtons[i].click(function()
+			{
+				self.form_variables.age = i;
+				for (var j in self.ageButtons)
+					self.ageButtons[j].css({border:'none'});
+				self.ageButtons[i].css({border:'2px solid #f00'});
+				self.ageButtonContinue.effect("highlight");
+			});
+			self.ageButtons[i].mouseenter(function() {
+				$(this).stop(true, true).effect("highlight");
+			});
+		})(i);
+	}
 }
 Story.prototype.initBasicDataAnimation = function()
 {
