@@ -269,7 +269,12 @@ Story.prototype.addFormText = function(parentNode, label, fieldName, x, y)
 	this.form_variables[fieldName] = null;
 }
 
-$(function() {
-	story = new Story($('#storyhead'), $('#storycanvas'), $('#storybox'));
-	story.begin();
+$(function()
+{
+	var storybox = $('#storybox');
+	if (storybox)
+	{
+		story = new Story($('#storyhead'), $('#storycanvas'), storybox);
+		story.begin();
+	}
 });
