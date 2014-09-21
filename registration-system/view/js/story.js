@@ -105,6 +105,9 @@ Story.prototype.initTravelStartAnimation = function()
 Story.prototype.initTravelStart = function()
 {
 	if (this.travelStart) return;
+
+	var self = this;
+
 	this.travelStart = this.storyImageDiv('travelBegin.png');
 	this.travelStart.animate({left:'900px'}, 0);
 	this.storybox.append(this.travelStart);
@@ -122,9 +125,30 @@ Story.prototype.initTravelStart = function()
 
 	this.addComboBox(this.travelStartTicket, "Datum", "anday", ["", "21.12.2100", "22.12.2100"], 105, 70); // @TODO: get date options from php
 	this.travelStartTicket.append('<div style="position: absolute; left: 55px; top: 95px">Typ</div>');
-	this.travelStartTicket.append('<div style="position: absolute; left: 105px; top: 95px">------</div>');
+	this.travelStartTicket.append('<div style="position: absolute; left: 105px; top: 95px" id="travelStartTyp">------</div>');
 
 	this.travelStartTypeButtons = this.addTravelTypeButtons(this.travelStart);
+
+	var travelFormNames = {
+	car:
+		"Auto",
+	bike:
+		"Fahrrad",
+	oeffi:
+		"&Ouml;ffentlich",
+	camel:
+		"Individuell"
+	};
+	for (var i in this.travelStartTypeButtons)
+	{
+		(function(i) { // i - scope issues -> would remember last i in for loop
+			self.travelStartTypeButtons[i].click(function()
+			{
+				self.form_variables.travelStartTyp = i;
+				$('#travelStartTyp').html(travelFormNames[i]);
+			});
+		})(i);
+	}
 }
 Story.prototype.addTravelTypeButtons = function(page)
 {
@@ -148,7 +172,6 @@ Story.prototype.addTravelTypeButtons = function(page)
 	camel:
 		$('<div class="storyTip" style="left: 391px; top: 190px; display:none">Anritt mit Kamel / Individuell</div>')
 	};
-	var help = {};
 
 	for (var i in buttons)
 	{
@@ -200,11 +223,29 @@ Story.prototype.initTravelEnd = function()
 Story.prototype.initEat = function()
 {
 	if (this.eat) return;
+
+	var self = this;
+
 	this.eat = this.storyImageDiv('eat.png');
 	this.eat.animate({left:'900px'}, 0);
 	this.storybox.append(this.eat);
 
 	this.foodTypeButtons = this.addFoodTypeButtons(this.eat);
+	for (var i in this.foodTypeButtons)
+	{
+		(function (i)
+		{
+			self.foodTypeButtons[i].click(function()
+			{
+				self.form_variables.eat = i;
+				for (var j in self.foodTypeButtons)
+				{
+					self.foodTypeButtons[j].css({border: '1px solid #000'});
+				}
+				self.foodTypeButtons[i].css({border: '2px solid #f00'});
+			});
+		})(i);
+	}
 	
 	this.eatContinueButton = $('<div style="position: absolute; left: 799px; top: 412px; width: 32px; height: 27px; cursor: pointer;" onclick="story.next()">&nbsp;</div>');
 	this.eatContinueButton.mouseenter(function(event) {
