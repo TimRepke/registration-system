@@ -48,9 +48,11 @@ Story.prototype.next = function(bGoBack)
 		break;
 	case 0:
 		if (previousState == -1)
+		{
 			this.storybox.children().remove();
-		if (debug)
-			this.storybox.append('(debug) <div style="cursor:pointer; text-decoration: underline" onclick="story.next()">NEXT</a>');
+			if (debug)
+				this.storybox.append('(debug) <div style="cursor:pointer; text-decoration: underline" onclick="story.next()">NEXT</a>');
+		}
 		this.initBasicData();
 		break;
 	case 1:
