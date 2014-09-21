@@ -1,5 +1,4 @@
-//var debug = true;
-var debug = false;
+var debug = true;
 
 var story;
 var form_variables = {};
@@ -32,6 +31,9 @@ function Story(_storybox)
 
 	this.basicData = null;
 	this.travelStart = null;
+	this.eat = null;
+	this.age = null;
+	this.travelEnd = null;
 }
 Story.prototype.next = function(bGoBack)
 {
@@ -47,12 +49,29 @@ Story.prototype.next = function(bGoBack)
 	case 0:
 		if (previousState == -1)
 			this.storybox.children().remove();
+		if (debug)
+			this.storybox.append('(debug) <div style="cursor:pointer; text-decoration: underline" onclick="story.next()">NEXT</a>');
 		this.initBasicData();
 		break;
 	case 1:
 		this.initTravelStart();
 		this.travelStart.animate({left:bGoBack?'900px':'0px'}, 1000);
 		this.basicData.animate({left:bGoBack?'0px':'-900px'}, 1000);
+		break;
+	case 2:
+		this.initEat();
+		this.eat.animate({left:bGoBack?'900px':'0px'}, 1000);
+		this.travelStart.animate({left:bGoBack?'0px':'-900px'}, 1000);
+		break;
+	case 3:
+		this.initAge();
+		this.age.animate({left:bGoBack?'900px':'0px'}, 1000);
+		this.eat.animate({left:bGoBack?'0px':'-900px'}, 1000);
+		break;
+	case 4:
+		this.initTravelEnd();
+		this.travelEnd.animate({left:bGoBack?'-900px':'0px'}, 1000);
+		this.age.animate({left:bGoBack?'0px':'900px'}, 1000);
 		break;
 	default:
 		if (bGoBack)
@@ -81,6 +100,27 @@ Story.prototype.initTravelStart = function()
 	this.travelStart = storyImageDiv('travelBegin.png');
 	this.travelStart.animate({left:'900px'}, 0);
 	this.storybox.append(this.travelStart);
+}
+Story.prototype.initTravelEnd = function()
+{
+	if (this.travelEnd) return;
+	this.travelEnd = storyImageDiv('travelBegin.png');
+	this.travelEnd.animate({left:'-900px'}, 0);
+	this.storybox.append(this.travelEnd);
+}
+Story.prototype.initEat = function()
+{
+	if (this.eat) return;
+	this.eat = storyImageDiv('eat.png');
+	this.eat.animate({left:'900px'}, 0);
+	this.storybox.append(this.eat);
+}
+Story.prototype.initAge = function()
+{
+	if (this.age) return;
+	this.age = storyImageDiv('age.png');
+	this.age.animate({left:'900px'}, 0);
+	this.storybox.append(this.age);
 }
 Story.prototype.initBasicData = function()
 {
