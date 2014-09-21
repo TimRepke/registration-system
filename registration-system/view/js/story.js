@@ -1,4 +1,4 @@
-var debug = false;
+var debug = true;
 
 var story;
 
@@ -120,12 +120,15 @@ Story.prototype.initTravelStart = function()
 		$(this).stop(true, true).effect("highlight");
 	});
 
+	this.addComboBox(this.travelStartTicket, "Datum", "anday", ["", "21.12.2100", "22.12.2100"], 105, 70); // @TODO: get date options from php
+	this.travelStartTicket.append('<div style="position: absolute; left: 55px; top: 95px">Typ</div>');
+	this.travelStartTicket.append('<div style="position: absolute; left: 105px; top: 95px">------</div>');
+
 	this.travelStartTypeButtons = this.addTravelTypeButtons(this.travelStart);
 }
 Story.prototype.addTravelTypeButtons = function(page)
 {
-	var buttons =
-	{
+	var buttons = {
 	car:
 		$('<div style="position: absolute; border: 1px solid; left: 23px; top: 222px; width: 129px; height: 87px; cursor: pointer;">&nbsp;</div>'),
 	bike:
@@ -135,14 +138,44 @@ Story.prototype.addTravelTypeButtons = function(page)
 	camel:
 		$('<div style="position: absolute; border: 1px solid; left: 461px; top: 114px; width: 78px; height: 71px; cursor: pointer;">&nbsp;</div>')
 	};
+	var tips = {
+	car:
+		$('<div class="storyTip" style="left: 8px; top: 314px; display:none">Anfahrt mit dem Auto</div>'),
+	bike:
+		$('<div class="storyTip" style="left: 127px; top: 444px; display:none">Anfahrt mit dem Fahrrad</div>'),
+	oeffi:
+		$('<div class="storyTip" style="left: 206px; top: 286px; display:none">Anfahrt gemeinsam mit den &Ouml;ffentlichen</div>'),
+	camel:
+		$('<div class="storyTip" style="left: 391px; top: 190px; display:none">Anritt mit Kamel / Individuell</div>')
+	};
+	var help = {};
 
 	for (var i in buttons)
 	{
+		if (i.indexOf('Tip') == i.length - 3)
+			continue;
+
 		var button = buttons[i];
+		var tip = tips[i];
 		page.append(button);
-		button.mouseenter(function(event) {
+		page.append(tip);
+
+		button.mouseenter(function ()
+		{
 			$(this).stop(true, true).effect("highlight");
 		});
+		function setHover(tip) // function to keep 'tip' from changing (scope issue)
+		{
+			button.hover(function () // in
+			{
+				tip.stop(true, true).fadeIn(200);
+			},
+			function () // out
+			{
+				tip.stop(true, true).fadeOut(200);
+			});
+		}
+		setHover(tip);
 	}
 
 	return buttons;
@@ -255,6 +288,20 @@ Story.prototype.storyImageDiv = function(filename)
 {
 	return $('<div style="position:absolute; width:900px; height:500px; background: url(view/graphics/story/'+filename+');"></div>');
 	this.addFormText(bell, "eMail", "mehl", 150, 215);
+}
+
+Story.prototype.addComboBox = function(parentNode, label, fieldName, options, x, y)
+{
+	var form_label = $('<div>'+label+'</div>');
+	var form = $('<select name="'+fieldName+'"></select>');
+	for(var i = 0; i < options.length; ++i)
+		form.append('<option>' + options[i] + '</option>');
+	form_label.css({position:'absolute', top: y + 'px',left: (x - 60) + 'px'});
+	form.css({position:'absolute', top: y + 'px',left: x + 'px'});
+	parentNode.append(form_label);
+	parentNode.append(form);
+
+	this.form_variables[fieldName] = null;
 }
 
 Story.prototype.addFormText = function(parentNode, label, fieldName, x, y)

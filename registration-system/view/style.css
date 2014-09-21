@@ -126,6 +126,12 @@ div#storycanvas {
 	height:500px;
 	overflow:hidden;
 }
+div.storyTip {
+	position: absolute;
+	border: 1px solid; 
+	background: #fff;
+	padding: 2px;
+}
 
 div#headerbox h2 {
   padding-top: 10px;
