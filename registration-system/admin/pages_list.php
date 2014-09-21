@@ -108,10 +108,10 @@ END;
 
 $people = $admin_db->select('bachelor',$columns, array("fahrt_id"=>$config_current_fahrt_id));
 foreach($people as $person) {
-    $text .= "<tr>";
+    $text .= "<tr>"; //".((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? "" : "class='list-backstepped'")."
     foreach($columnFunctions as $key => $value)
     {
-        $text .= "<td class='".$key."'>".$value($person)."</td>";
+        $text .= "<td class='".$key.((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? '' : ' list-backstepped')."'>".$value($person)."</td>";
     }
     $text .= "</tr>";
 }

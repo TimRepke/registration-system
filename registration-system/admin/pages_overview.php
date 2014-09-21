@@ -6,7 +6,7 @@
  * Time: 8:04 PM
  */
 
-global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_admin_verbose_level, $config_verbose_level;
+global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_admin_verbose_level, $config_verbose_level, $config_essen;
 $config_admin_verbose_level = 4;
 $config_verbose_level = 4;
 $text .= "<h1>Übersichtsseite</h1>";
@@ -15,6 +15,7 @@ $text .= "<h1>Übersichtsseite</h1>";
 $mitfahrer['gesam'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id]]);
+$mitfahrer['gesaa'] = $admin_db->count("bachelor", ["fahrt_id"    => $config_current_fahrt_id]);
 
 $antag = $admin_db->query("SELECT date_format(von, '%j') as von FROM fahrten WHERE fahrt_id=$config_current_fahrt_id")->fetchAll()[0]['von'];
 $abtag = date('z', DateTime::createFromFormat('Y-m-d',$admin_db->get("fahrten","bis", ["fahrt_id"=>$config_current_fahrt_id]))->getTimestamp());
@@ -29,7 +30,7 @@ $mitfahrer['zweit'] = $admin_db->count("bachelor", ["AND"=>
 $mitfahrer['veget'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id,
-                                         ""]]);
+                                         "essen[!]" => $config_essen[0]]]);
 $mitfahrer['backs'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped[!]" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id]]);
@@ -41,7 +42,7 @@ $mitfahrer['treff'] = $admin_db->count("bachelor", ["AND" =>
 
 $text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
         <ul class='list-nodeco'>
-            <li>Gesamt: ".$mitfahrer['gesam']."</li>
+            <li>Gesamt: ".$mitfahrer['gesam']." (".$mitfahrer['gesaa'].")</li>
             <ul>
                 <li>Erste Nacht: ".$mitfahrer['erste']."</li>
                 <li>Zweite Nacht: ".$mitfahrer['zweit']."</li>

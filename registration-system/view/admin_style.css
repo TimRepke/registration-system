@@ -56,6 +56,12 @@ form table tr td{
     padding: 0 5px;
 }
 
+.list-backstepped{
+    color: #d3d3d3 !important;
+}
+.list-backstepped a{
+    color: #d3d3d3 !important;
+}
 .cost-table{
     padding: 5px;
 }

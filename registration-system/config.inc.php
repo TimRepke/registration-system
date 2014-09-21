@@ -39,6 +39,12 @@ $config_reisearten = array(
     //,"mit Kamel"
 );
 
+$config_reisearten_destroyed = array(
+    "mit Kamel",
+    "mit Esel",
+    "mit Schlauchboot"
+);
+
 $config_admins = array(
     // username => password
     "george" => "peter",
