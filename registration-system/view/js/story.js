@@ -28,41 +28,52 @@ function Story(_storybox)
 {
 	this.storybox = _storybox;
 	this.umleitung = $('#story_umleitung');
-	this.state = 0;
+	this.state = -2;
 
 	this.basicData = null;
 	this.travelStart = null;
 }
-Story.prototype.next = function(bPrev)
+Story.prototype.next = function(bGoBack)
 {
-	if (bPrev)
-	{
-		this.state -= 1;
-		if (this.state < 1)
-			this.state = 1;
-	}
+	var previousState = this.state;
+	if (!bGoBack)
+		this.state += 1;
 
 	switch(this.state)
 	{
+	case -1:
+		this.initBeginButton();
+		break;
 	case 0:
+		if (previousState == -1)
+			this.storybox.children().remove();
 		this.initBasicData();
 		break;
 	case 1:
 		this.initTravelStart();
-		this.travelStart.animate({left:bPrev?'900px':'0px'}, 1000);
-		this.basicData.animate({left:bPrev?'0px':'-900px'}, 1000);
+		this.travelStart.animate({left:bGoBack?'900px':'0px'}, 1000);
+		this.basicData.animate({left:bGoBack?'0px':'-900px'}, 1000);
 		break;
-	case 2:
-		break;
-	case 3:
-		break;
+	default:
+		if (bGoBack)
+			this.state += 1;
+		else
+			this.state -= 1;
 	}
-	if (!bPrev)
-		this.state += 1;
-	if (bPrev && this.state == 1)
+	if (bGoBack)
+	{
+		this.state -= 1;
+		if (this.state < 0)
+			this.state = 0;
+	}
+	if (bGoBack && this.state == 0)
 		this.umleitung.animate({bottom:'-70px'}, 500);
-	else if (!bPrev && this.state == 2)
+	else if (!bGoBack && this.state == 1)
 		this.umleitung.animate({bottom:'0px'}, 500);
+}
+Story.prototype.initBeginButton = function()
+{
+	this.storybox.append('<div style="cursor:pointer; text-decoration: underline" onclick="story.next()">Anmeldung starten (Story mode)</a>');
 }
 Story.prototype.initTravelStart = function()
 {
