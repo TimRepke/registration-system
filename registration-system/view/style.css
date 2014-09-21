@@ -119,6 +119,13 @@ div#storybox {
 	height:500px;
 	overflow:hidden;
 }
+div#storycanvas {
+	margin:0 auto;
+	position:relative;
+	width:900px;
+	height:500px;
+	overflow:hidden;
+}
 
 div#headerbox h2 {
   padding-top: 10px;
