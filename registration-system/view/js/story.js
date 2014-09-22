@@ -175,7 +175,7 @@ Story.prototype.initSummary = function()
 		this.summaryTable = $('<table class="story_summary"/>')
 		this.summary.append(this.summaryTable);
 
-		var rowOrder = ["forname", "name", "anzeig", "mehl"];
+		var rowOrder = ["forname", "name", "anzeig", "mehl", "andaytyp", "abdaytyp", "age"];
 		var rows = {
 			forname:
 				"Vorname",
@@ -184,9 +184,15 @@ Story.prototype.initSummary = function()
 			anzeig:
 				"Anzeigename",
 			mehl:
-				"eMail"
+				"eMail",
+			andaytyp:
+				"Anreise Tag/Typ",
+			abdaytyp:
+				"Abreise Tag/Typ",
+			age:
+				"Alter"
 		};
-		
+
 		for (var i = 0; i < rowOrder.length; ++i)
 		{
 			var rowName = rowOrder[i];
@@ -200,6 +206,9 @@ Story.prototype.initSummary = function()
 	$('#story_summary_name').text(this.form_variables.name);
 	$('#story_summary_anzeig').text(this.form_variables.anzeig);
 	$('#story_summary_mehl').text(this.form_variables.mehl);
+	$('#story_summary_andaytyp').text(this.form_variables.travelStartDate + ", " + this.form_variables.travelStartType);
+	$('#story_summary_abdaytyp').text(this.form_variables.travelEndDate + ", " + this.form_variables.travelEndType);
+	$('#story_summary_age').text(this.form_variables.age);
 }
 Story.prototype.initTravelStart = function()
 {
