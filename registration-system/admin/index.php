@@ -5,6 +5,7 @@
  * Date: 8/8/14
  * Time: 4:19 PM
  */
+error_reporting(E_ALL || E_STRICT);
 
 session_start();
 

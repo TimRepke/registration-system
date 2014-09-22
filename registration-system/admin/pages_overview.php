@@ -19,15 +19,8 @@ $mitfahrer['gesaa'] = $admin_db->count("bachelor", ["fahrt_id"    => $config_cur
 
 $antag = $admin_db->query("SELECT date_format(von, '%j') as von FROM fahrten WHERE fahrt_id=$config_current_fahrt_id")->fetchAll()[0]['von'];
 $abtag = $admin_db->query("SELECT date_format(bis, '%j') as von FROM fahrten WHERE fahrt_id=$config_current_fahrt_id")->fetchAll()[0]['bis'];
-$tmp = $admin_db->query("SELECT date_format(antag, '%j') as antag, SELECT date_format(abtag, '%j') as abtag  FROM bachelor WHERE fahrt_id=$config_current_fahrt_id")->fetchAll()[0]['bis'];
-$mitfahrer['erste'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id,
-                                         "anday"       => $antag]]);
-$mitfahrer['zweit'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id,
-                                         "abday"       => $abtag]]);
+$mitfahrer['erste'] = $admin_db->query("SELECT date_format(anday, '%j') as anday, COUNT(anday) as anday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY anday ORDER BY anday ASC LIMIT 1")->fetchAll()[0]['anday_cnt'];
+$mitfahrer['zweit'] = $admin_db->query("SELECT date_format(abday, '%j') as abday, COUNT(abday) as abday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY abday ORDER BY abday DESC LIMIT 1")->fetchAll()[0]['abday_cnt'];
 $mitfahrer['veget'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id,
@@ -46,7 +39,7 @@ $text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
             <li>Gesamt: ".$mitfahrer['gesam']." (".$mitfahrer['gesaa'].")</li>
             <ul>
                 <li>Erste Nacht: ".$mitfahrer['erste']."</li>
-                <li>Zweite Nacht: ".$mitfahrer['zweit']."</li>
+                <li>Letzte Nacht: ".$mitfahrer['zweit']."</li>
                 <li>Vegetarier: ".$mitfahrer['veget']."</li>
                 <li>Zurückgetreten: ".$mitfahrer['backs']."</li>
                 <li>Personen am Treffpunkt: ".$mitfahrer['treff']."</li>
