@@ -106,7 +106,7 @@ function index_check_form(){
         goto index_check_form_skip;
     }
 
-    $possible_dates = comm_get_possible_dates($fid);
+    $possible_dates = comm_get_possible_dates($index_db, $fid);
 
     index_check_field('forname', $invalidCharsRegEx, $data, $errors, "Fehlerhafter oder fehlender Vorname!");
     index_check_field('sirname', $invalidCharsRegEx, $data, $errors, "Fehlerhafter oder fehlender Nachname!");
