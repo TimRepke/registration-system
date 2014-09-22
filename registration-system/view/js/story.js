@@ -225,7 +225,7 @@ Story.prototype.initTravelEnd = function()
 
 	var self = this;
 
-	this.travelEnd = this.storyImageDiv('travelBegin.png');
+	this.travelEnd = this.storyImageDiv('travelEnd.png');
 	this.travelEnd.animate({left:'-900px'}, 0);
 	this.storybox.append(this.travelEnd);
 	
