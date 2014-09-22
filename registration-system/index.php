@@ -252,8 +252,8 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
 		echo<<<END
 		<div id="storyhead"></div>
 		<div id="storycanvas">
-		<div id="storybox"></div>
-		<div id="story_umleitung" style="position:absolute; left:0px; bottom:-70px; background:#f0f; cursor:pointer; background:url(view/graphics/story/umleitung.png); width:120px; height: 70px" onclick="story.next(true)">&nbsp;</div>
+			<div id="storybox"></div>
+			<div id="story_umleitung" style="position:absolute; left:0px; bottom:-70px; background:#f0f; cursor:pointer; background:url(view/graphics/story/umleitung.png); width:120px; height: 70px" onclick="story.next(true)">&nbsp;</div>
 		</div>
 		<div style="text-align:center;font-weight:bold"><a style="float:none;margin:0 auto;"
 END;

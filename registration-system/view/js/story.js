@@ -1,4 +1,4 @@
-var debug = false;
+var debug = true;
 
 var story;
 
@@ -22,6 +22,24 @@ Story.prototype.next = function(bGoBack)
 {
 	var self = this;
 
+	// validate
+
+	// get mail:
+	// angular.element(document.querySelector('[ng-controller="storyBasicData"]')).scope().mehl;
+	if (!bGoBack)
+	{
+		switch(this.state)
+		{
+		case 0:
+			var basicDataScope = angular.element(document.querySelector('[ng-controller="storyBasicData"]')).scope();
+			var mailOk = basicDataScope.mehl != null;
+			alert(mailOk);
+			return;
+			break;
+		}
+	}
+
+	// navigate
 	var previousState = this.state;
 	if (!bGoBack)
 		this.state += 1;
@@ -80,6 +98,11 @@ Story.prototype.next = function(bGoBack)
 		this.travelEnd.animate({left:bGoBack?'-900px':'0px'}, 1000);
 		this.age.animate({left:bGoBack?'0px':'900px'}, 1000);
 		break;
+	case 5:
+		this.initSummary();
+		this.summary.animate({left:bGoBack?'-900px':'0px'}, 1000);
+		this.travelEnd.animate({left:bGoBack?'0px':'900px'}, 1000);
+		break;
 	default:
 		if (bGoBack)
 			this.state += 1;
@@ -104,6 +127,37 @@ Story.prototype.initBeginButton = function()
 Story.prototype.initTravelStartAnimation = function()
 {
 	this.travelStartTicket.fadeIn(debug ? 0 : 1000);
+}
+Story.prototype.initSummary = function()
+{
+	if (!this.summary)
+	{
+		this.summary = $('<div style="position:absolute; left: 0px; top: 0px"/>');
+		this.summary.animate({left:'-900px'}, 0);
+		this.storybox.append(this.summary);
+
+		this.summary.append('<h2>Zusammenfassung</h2>');
+		this.summaryTable = $('<table/>')
+		this.summary.append(this.summaryTable);
+
+		var rowOrder = ["forname", "name", "mehl"];
+		var rows = {
+			forname:
+				"Vorname",
+			nachname:
+				"Nachname",
+			mehl:
+				"eMail"
+		};
+		
+		for (var i = 0; i < rowOrder.length; ++i)
+		{
+			var rowName = rowOrder[i];
+			var rowTitle = rows[rowName];
+			this.summaryTable.append('<tr><td>' + rowTitle + '</td><td id="story_summary_' + rowName + '"></td></tr>');
+		}
+	}
+	// @TODO: update table each time
 }
 Story.prototype.initTravelStart = function()
 {
@@ -402,6 +456,7 @@ Story.prototype.initBasicDataAnimation = function()
 Story.prototype.initBasicData = function()
 {
 	if (this.basicData) return;
+
 	this.basicData = this.storyImageDiv('begin.png');
 	this.storybox.append(this.basicData);
 	this.bd_bell = this.storyImageDiv('bell.png');
@@ -409,10 +464,17 @@ Story.prototype.initBasicData = function()
 	this.basicData.append(this.bd_bell);
 	this.bd_bell.fadeOut(0);
 
-	this.addFormText(this.bd_bell, "Vorname", "forname", 150, 60);
-	this.addFormText(this.bd_bell, "Nachname", "name", 150, 140);
-	this.addFormText(this.bd_bell, "Anzeigename", "anzeig", 150, 215);
-	this.addFormText(this.bd_bell, "eMail", "mehl", 150, 290);
+	this.bd_bellForm = $('<form name="storyBasicData" novalidate/>');
+	this.bd_bell.append(this.bd_bellForm);
+	this.addFormText(this.bd_bellForm, "Vorname", "forname", "text", "forname", 150, 60).attr('ng-minlength', '2');
+	this.bd_bell.append('<div style="position: absolute; left: 140px; top: 80px;" ng-show="storyBasicData.story_field_forname.$invalid && !storyBasicData.story_field_forname.$pristine">!</div>');
+	this.addFormText(this.bd_bellForm, "Nachname", "name", "text", "name", 150, 140).attr('ng-minlength', '2');
+	this.bd_bell.append('<div style="position: absolute; left: 140px; top: 160px;" ng-show="storyBasicData.story_field_name.$invalid && !storyBasicData.story_field_name.$pristine">!</div>');
+	this.addFormText(this.bd_bellForm, "Anzeigename", "anzeig", "text", "anzeig", 150, 215);
+	this.bd_bellMehl = this.addFormText(this.bd_bellForm, "eMail", "mehl", "email", "mehl", 150, 290);
+	this.bd_bellMehl.attr('ng-minlength', '5');
+	this.bd_bellMehl.attr('required', 'required');
+	this.bd_bell.append('<div style="position: absolute; left: 140px; top: 310px;" ng-show="storyBasicData.story_field_mehl.$invalid && !storyBasicData.story_field_mehl.$pristine">!</div>');
 	this.bd_bell.append($('<div style="position:absolute;top:380px;left:120px">Bitte klingeln, wenn fertig.</div>'))
 
 	this.bd_btn_continue = $('<div style="width:60px;height:67px;position:absolute;top:48px;left:48px;cursor:pointer;" onclick="story.next();" />');
@@ -423,6 +485,15 @@ Story.prototype.initBasicData = function()
 
 	this.bd_orig_bell = $('<div style="width:3px;height:3px;position:absolute;left:633px;top:193px" />');
 	this.basicData.append(this.bd_orig_bell);
+
+	this.basicData.attr('ng-controller', 'storyBasicData');
+
+	// manually start angular for the forms
+	angular.module('storyApp', []).controller('storyBasicData', function($scope)
+	{
+		
+	});
+	angular.bootstrap(document, ['storyApp']);
 }
 Story.prototype.begin = function()
 {
@@ -436,13 +507,12 @@ Story.prototype.storyImage = function(filename)
 Story.prototype.storyImageDiv = function(filename)
 {
 	return $('<div style="position:absolute; width:900px; height:500px; background: url(view/graphics/story/'+filename+');"></div>');
-	this.addFormText(bell, "eMail", "mehl", 150, 215);
 }
 
 Story.prototype.addComboBox = function(parentNode, label, fieldName, options, x, y)
 {
 	var form_label = $('<div>'+label+'</div>');
-	var form = $('<select name="'+fieldName+'"></select>');
+	var form = $('<select name="story_field_'+fieldName+'"></select>');
 	for(var i = 0; i < options.length; ++i)
 		form.append('<option>' + options[i] + '</option>');
 	form_label.css({position:'absolute', top: y + 'px',left: (x - 60) + 'px'});
@@ -453,16 +523,18 @@ Story.prototype.addComboBox = function(parentNode, label, fieldName, options, x,
 	this.form_variables[fieldName] = null;
 }
 
-Story.prototype.addFormText = function(parentNode, label, fieldName, x, y)
+Story.prototype.addFormText = function(parentNode, label, fieldName, type, model, x, y)
 {
 	var form_label = $('<div>'+label+':</div>');
-	var form = $('<input name="'+fieldName+'"/>');
+	var form = $('<input type="'+type+'" name="story_field_'+fieldName+'" ng-model="'+model+'"/>');
 	form_label.css({position:'absolute', top:y+'px',left:x+'px'});
 	form.css({position:'absolute', top:(y+20)+'px',left:x+'px'});
 	parentNode.append(form_label);
 	parentNode.append(form);
 
 	this.form_variables[fieldName] = null;
+
+	return form;
 }
 
 $(function()

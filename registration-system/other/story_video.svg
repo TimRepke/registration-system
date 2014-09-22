@@ -209,9 +209,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="8"
-     inkscape:cx="661.91318"
-     inkscape:cy="144.92527"
+     inkscape:zoom="1"
+     inkscape:cx="420.52854"
+     inkscape:cy="504.61108"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -5844,5 +5844,34 @@
        id="path4240"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="czzzczcc" />
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="730.91309"
+       y="148.125"
+       id="text6627"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6629"
+         x="730.91309"
+         y="148.125"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Sans;-inkscape-font-specification:Sans Bold">Bitte den</tspan><tspan
+         sodipodi:role="line"
+         x="730.91309"
+         y="165.625"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Sans;-inkscape-font-specification:Sans Bold"
+         id="tspan6633">Altersbereich</tspan><tspan
+         sodipodi:role="line"
+         x="730.91309"
+         y="183.125"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Sans;-inkscape-font-specification:Sans Bold"
+         id="tspan6631">auswählen</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 689,192.5 c -2,14.5 -10,18.5 -10,18.5 0,0 17.9974,-4.98959 20.5,-15.5 48.28861,8.31476 98.53581,-8.52837 100,-34.5 -0.5,-22 -32.5,-37 -67,-37 -34.5,0 -63.5,13.5 -64,33 -0.5,19.5 8.5,29 20.5,35.5 z"
+       id="path6635"
+       inkscape:connector-curvature="0"
+       transform="translate(-1.71875,0.625)"
+       sodipodi:nodetypes="ccccssc" />
   </g>
 </svg>
