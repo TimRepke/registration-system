@@ -679,13 +679,29 @@ function storySubmit()
 	{
 		form.append('<input name="' + name + '" value="' + value.replace(/[\r\n]/g, " ").replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"/>');
 	}
+
+	var eatMap = {
+	cow:
+		"Alles",
+	cheese:
+		"Vegetarisch",
+	wheat:
+		"Vegan"
+	};
+	var ageMap = {
+	eighteenplus:
+		"Nein",
+	below:
+		"Ja"
+	};
+
 	formAppendText('forname', story.form_variables.forname);
 	formAppendText('sirname', story.form_variables.name);
 	formAppendText('pseudo', story.form_variables.anzeig);
 	formAppendText('mehl', story.form_variables.mehl);
-	formAppendText('studityp', 'potato3D'); // ?
-	formAppendText('virgin', ''); // ?
-	formAppendText('essen', ''); // ?
+	formAppendText('studityp', 'Ersti'); // ?
+	formAppendText('virgin', ageMap[story.form_variables.age] || '');
+	formAppendText('essen', eatMap[story.form_variables.eat] || '');
 	formAppendText('anday', story.form_variables.travelStartDate);
 	formAppendText('antyp', story.form_variables.travelStartType);
 	formAppendText('abday', story.form_variables.travelEndDate);
