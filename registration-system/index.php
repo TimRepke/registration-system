@@ -43,7 +43,8 @@ function index_show_content(){
         index_show_fahrtHeader($fid);
 
         // --- Formular
-        if(isset($_REQUEST['submit'])){ // Formular auswerten
+        // storySubmit wg JQuery .submit() auf forms geht sonst nicht
+        if(isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit'])){ // Formular auswerten
             comm_verbose(1,"Formular bekommen");
             $data = index_check_form();
             if(!is_null($data))

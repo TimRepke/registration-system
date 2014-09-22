@@ -670,7 +670,32 @@ Story.prototype.toolTippedStoryWarning = function(page, x, y, field, toolTipText
 
 function storySubmit()
 {
-	// TODO: create hidden post form and submit
+	var formWrapper = $('<div style="display:none"/>');
+	var form = $('<form name="storySubmitForm" method="POST"/>');
+	formWrapper.append(form);
+	$('#storybox').append(formWrapper);
+
+	function formAppendText(name, value)
+	{
+		form.append('<input name="' + name + '" value="' + value.replace(/[\r\n]/g, " ").replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"/>');
+	}
+	formAppendText('forname', story.form_variables.forname);
+	formAppendText('sirname', story.form_variables.name);
+	formAppendText('pseudo', story.form_variables.anzeig);
+	formAppendText('mehl', story.form_variables.mehl);
+	formAppendText('studityp', 'potato3D'); // ?
+	formAppendText('virgin', ''); // ?
+	formAppendText('essen', ''); // ?
+	formAppendText('anday', story.form_variables.travelStartDate);
+	formAppendText('antyp', story.form_variables.travelStartType);
+	formAppendText('abday', story.form_variables.travelEndDate);
+	formAppendText('abtyp', story.form_variables.travelEndType);
+	formAppendText('comment', 'This form was created with VisualPotato3D'); // ?
+	// formAppendText('public', ''); // ?
+	// form.append('<input type="submit" name="submit" />');
+	formAppendText('storySubmit', 'storySubmit');
+
+	form.submit();
 }
 
 // === INIT ===
