@@ -1,6 +1,6 @@
 var debug = true;
 
-var story;
+var story; // global access for links
 
 function Story(_storyhead, _storycanvas, _storybox)
 {
@@ -22,24 +22,30 @@ Story.prototype.next = function(bGoBack)
 {
 	var self = this;
 
-	// validate
+	// === validate ===
 
-	// get mail:
+	// (e.g.) get mail:
 	// angular.element(document.querySelector('[ng-controller="storyBasicData"]')).scope().mehl;
+
 	if (!bGoBack)
 	{
 		switch(this.state)
 		{
 		case 0:
 			var basicDataScope = angular.element(document.querySelector('[ng-controller="storyBasicData"]')).scope();
-			var mailOk = basicDataScope.mehl != null;
-			alert(mailOk);
-			return;
+			if (basicDataScope.storyBasicData.$invalid)
+				return;
+
+			this.form_variables.forname = basicDataScope.forname;
+			this.form_variables.name = basicDataScope.name;
+			this.form_variables.anzeig = basicDataScope.anzeig;
+			this.form_variables.mehl = basicDataScope.mehl;
+
 			break;
 		}
 	}
 
-	// navigate
+	// === navigate ===
 	var previousState = this.state;
 	if (!bGoBack)
 		this.state += 1;
@@ -457,6 +463,7 @@ Story.prototype.initBasicData = function()
 {
 	if (this.basicData) return;
 
+	// == init view ==
 	this.basicData = this.storyImageDiv('begin.png');
 	this.storybox.append(this.basicData);
 	this.bd_bell = this.storyImageDiv('bell.png');
@@ -464,17 +471,31 @@ Story.prototype.initBasicData = function()
 	this.basicData.append(this.bd_bell);
 	this.bd_bell.fadeOut(0);
 
+	// == form ==
 	this.bd_bellForm = $('<form name="storyBasicData" novalidate/>');
 	this.bd_bell.append(this.bd_bellForm);
-	this.addFormText(this.bd_bellForm, "Vorname", "forname", "text", "forname", 150, 60).attr('ng-minlength', '2');
-	this.bd_bell.append('<div style="position: absolute; left: 140px; top: 80px;" ng-show="storyBasicData.story_field_forname.$invalid && !storyBasicData.story_field_forname.$pristine">!</div>');
-	this.addFormText(this.bd_bellForm, "Nachname", "name", "text", "name", 150, 140).attr('ng-minlength', '2');
-	this.bd_bell.append('<div style="position: absolute; left: 140px; top: 160px;" ng-show="storyBasicData.story_field_name.$invalid && !storyBasicData.story_field_name.$pristine">!</div>');
-	this.addFormText(this.bd_bellForm, "Anzeigename", "anzeig", "text", "anzeig", 150, 215);
-	this.bd_bellMehl = this.addFormText(this.bd_bellForm, "eMail", "mehl", "email", "mehl", 150, 290);
+
+	this.bd_bellForname = this.addFormText(this.bd_bellForm, "Vorname", "forname", "text", "forname", 160, 60);
+	this.bd_bellForname.attr('ng-minlength', '2');
+	this.bd_bellForname.attr('required', 'required');
+	this.bd_bell.append('<div class="storyWarn" style="position: absolute; left: 135px; top: 80px;" ng-show="!forname">&nbsp;</div>');
+
+	this.bd_bellName = this.addFormText(this.bd_bellForm, "Nachname", "name", "text", "name", 160, 140).attr('ng-minlength', '2');
+	this.bd_bellName.attr('ng-minlength', '2');
+	this.bd_bellName.attr('required', 'required');
+	this.bd_bell.append('<div class="storyWarn" style="position: absolute; left: 135px; top: 160px;" ng-show="!name">&nbsp;</div>');
+
+	this.bd_bellAnzeig = this.addFormText(this.bd_bellForm, "Anzeigename", "anzeig", "text", "anzeig", 160, 215);
+	this.bd_bellAnzeig.attr('ng-minlength', '2');
+	this.bd_bellAnzeig.attr('required', 'required');
+	this.bd_bell.append('<div class="storyWarn" style="position: absolute; left: 135px; top: 235px;" ng-show="!anzeig">&nbsp;</div>');
+
+	this.bd_bellMehl = this.addFormText(this.bd_bellForm, "eMail", "mehl", "email", "mehl", 160, 290);
 	this.bd_bellMehl.attr('ng-minlength', '5');
 	this.bd_bellMehl.attr('required', 'required');
-	this.bd_bell.append('<div style="position: absolute; left: 140px; top: 310px;" ng-show="storyBasicData.story_field_mehl.$invalid && !storyBasicData.story_field_mehl.$pristine">!</div>');
+	this.bd_bell.append('<div class="storyWarn" style="position: absolute; left: 135px; top: 310px;" ng-show="!mehl">&nbsp;</div>');
+
+	// == notice ==
 	this.bd_bell.append($('<div style="position:absolute;top:380px;left:120px">Bitte klingeln, wenn fertig.</div>'))
 
 	this.bd_btn_continue = $('<div style="width:60px;height:67px;position:absolute;top:48px;left:48px;cursor:pointer;" onclick="story.next();" />');
@@ -483,15 +504,17 @@ Story.prototype.initBasicData = function()
 		$(this).stop(true, true).effect("highlight");
 	});
 
+	// for transition animation
 	this.bd_orig_bell = $('<div style="width:3px;height:3px;position:absolute;left:633px;top:193px" />');
 	this.basicData.append(this.bd_orig_bell);
 
+	// == angularJS ==
 	this.basicData.attr('ng-controller', 'storyBasicData');
 
 	// manually start angular for the forms
 	angular.module('storyApp', []).controller('storyBasicData', function($scope)
 	{
-		
+		// for function decl.
 	});
 	angular.bootstrap(document, ['storyApp']);
 }

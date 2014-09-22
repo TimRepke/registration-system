@@ -132,6 +132,11 @@ div.storyTip {
 	background: #fff;
 	padding: 2px;
 }
+div.storyWarn {
+	width: 20px;
+	height: 20px;
+	background: url(graphics/story/warn.png);
+}
 
 div#headerbox h2 {
   padding-top: 10px;
