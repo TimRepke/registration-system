@@ -144,6 +144,9 @@ div.storyToolTip {
 	background: #fff;
 	border: 1px solid #000;
 }
+table.story_summary {
+	padding-right: 10px;
+}
 
 div#headerbox h2 {
   padding-top: 10px;

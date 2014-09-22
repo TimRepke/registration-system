@@ -164,6 +164,7 @@ Story.prototype.initTravelStartAnimation = function()
 }
 Story.prototype.initSummary = function()
 {
+	// === Init View ===
 	if (!this.summary)
 	{
 		this.summary = $('<div style="position:absolute; left: 0px; top: 0px"/>');
@@ -171,15 +172,17 @@ Story.prototype.initSummary = function()
 		this.storybox.append(this.summary);
 
 		this.summary.append('<h2>Zusammenfassung</h2>');
-		this.summaryTable = $('<table/>')
+		this.summaryTable = $('<table class="story_summary"/>')
 		this.summary.append(this.summaryTable);
 
-		var rowOrder = ["forname", "name", "mehl"];
+		var rowOrder = ["forname", "name", "anzeig", "mehl"];
 		var rows = {
 			forname:
 				"Vorname",
-			nachname:
+			name:
 				"Nachname",
+			anzeig:
+				"Anzeigename",
 			mehl:
 				"eMail"
 		};
@@ -191,7 +194,12 @@ Story.prototype.initSummary = function()
 			this.summaryTable.append('<tr><td>' + rowTitle + '</td><td id="story_summary_' + rowName + '"></td></tr>');
 		}
 	}
-	// @TODO: update table each time
+
+	// === Update View ===
+	$('#story_summary_forname').text(this.form_variables.forname);
+	$('#story_summary_name').text(this.form_variables.name);
+	$('#story_summary_anzeig').text(this.form_variables.anzeig);
+	$('#story_summary_mehl').text(this.form_variables.mehl);
 }
 Story.prototype.initTravelStart = function()
 {
