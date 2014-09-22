@@ -25,8 +25,20 @@ function comm_format_date($date){
     return date('d.m.Y', strtotime($date));
 }
 
-function comm_get_possible_dates($fid){
-    return array("12.03.2014","13.03.2014","14.03.2014"); // FIXME dynamisch machen!
+function comm_get_possible_dates($db, $fid){
+    $dates = $db->get("fahrten", ["von", "bis"], ["fahrt_id" => $fid]);
+    $end = new DateTime($dates['bis']);
+    $period = new DatePeriod(
+        new DateTime($dates['von']),
+        new DateInterval('P1D'),
+        $end->modify( '+1 day' )
+    );
+    $ret = [];
+    foreach($period as $d){
+        array_push($ret, $d->format("d.m.Y"));
+    }
+    return $ret;
+
 }
 
 function comm_isopen_fid($db_handle, $fid){
