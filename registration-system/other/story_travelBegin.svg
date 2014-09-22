@@ -170,9 +170,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="1198.1308"
-     inkscape:cy="358.38992"
+     inkscape:zoom="2.8284272"
+     inkscape:cx="1212.6058"
+     inkscape:cy="309.11855"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -3466,7 +3466,7 @@
          transform="translate(-1.71875,0.625)" />
     </g>
     <g
-       id="g5010"
+       id="g4241"
        inkscape:export-filename="/home/it/Other/regsys/registration-system/view/graphics/story/ticket.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
@@ -3528,12 +3528,12 @@
       <path
          inkscape:connector-curvature="0"
          id="path5149"
-         d="m 1135.8531,238.08737 95.813,1.41422"
+         d="m 1142.2281,238.08737 95.813,1.41422"
          style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
       <path
          inkscape:connector-curvature="0"
          id="path5151"
-         d="m 1135.146,257.53281 95.1059,1.76777"
+         d="m 1141.521,257.53281 95.1059,1.76777"
          style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
       <path
          inkscape:connector-curvature="0"
@@ -3553,17 +3553,16 @@
            id="tspan5214"
            sodipodi:role="line">science at work</tspan></text>
       <path
-         transform="translate(-1.71875,0.625)"
          inkscape:connector-curvature="0"
          id="path4238"
-         d="m 1307,269.75 -27.25,-1 -2,28.5 30.25,0.75 z"
+         d="m 1305.2813,270.375 -27.25,-1 -2,28.5 30.25,0.75 z"
          style="fill:#ffffff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
       <path
          sodipodi:nodetypes="czzzczcc"
          inkscape:connector-curvature="0"
          id="path4240"
          d="m 1283.5815,284.14149 c -0.7999,1.02201 1.398,1.28528 3.1105,3.64365 1.7125,2.35839 1.9357,4.35076 2.7356,4.35076 0.7998,0 1.3553,-4.32396 3.2365,-7.92773 1.8812,-3.60376 2.5875,-4.52812 6.0578,-7.75127 -2.6142,1.04088 -4.0079,2.03217 -5.6792,3.80599 -1.6714,1.77382 -3.0722,4.73836 -3.8685,6.97673 -1.7932,-2.62786 -3.993,-4.25344 -5.5927,-3.09813 z"
-         style="fill:#5aa02c;stroke:#000000;stroke-width:0.7;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+         style="fill:#5aa02c;stroke:#000000;stroke-width:0.69999999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     </g>
   </g>
 </svg>

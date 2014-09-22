@@ -42,6 +42,34 @@ Story.prototype.next = function(bGoBack)
 			this.form_variables.mehl = basicDataScope.mehl;
 
 			break;
+		case 1:
+			if (
+				this.form_variables.travelStartDate == null
+			||
+				this.form_variables.travelStartType == null
+			)
+				return;
+
+			break;
+		case 2:
+			if (this.form_variables.eat == null)
+				return;
+
+			break;
+		case 3:
+			if (this.form_variables.age == null)
+				return;
+
+			break;
+		case 4:
+			if (
+				this.form_variables.travelEndDate == null
+			||
+				this.form_variables.travelEndType == null
+			)
+				return;
+
+			break;
 		}
 	}
 
@@ -186,12 +214,24 @@ Story.prototype.initTravelStart = function()
 		$(this).stop(true, true).effect("highlight");
 	});
 
-	this.addComboBox(this.travelStartTicket, "Datum", "anday", ["", "21.12.2100", "22.12.2100"], 105, 70); // @TODO: get date options from php
-	this.travelStartTicket.append('<div style="position: absolute; left: 55px; top: 95px">Typ</div>');
-	this.travelStartTicket.append('<div style="position: absolute; left: 105px; top: 95px" id="travelStartTyp">------</div>');
-
+	this.travelStartDate = this.addComboBox(this.travelStartTicket, "Datum", "anday", ["", "21.12.2100", "22.12.2100"], 115, 70); // @TODO: get date options from php
+	this.travelStartTicket.append('<div style="position: absolute; left: 65px; top: 95px">Typ</div>');
+	this.travelStartTicket.append('<div style="position: absolute; left: 115px; top: 95px" id="travelStartType">------</div>');
+	this.travelStartDate.change(function()
+	{
+		var value = $(this).val();
+		if (value == '')
+		{
+			self.form_variables.travelStartDate = null;
+			self.travelStartDateWarning.show();
+		}
+		else
+		{
+			self.form_variables.travelStartDate = value;
+			self.travelStartDateWarning.hide();
+		}
+	});
 	this.travelStartTypeButtons = this.addTravelTypeButtons(this.travelStart);
-
 	var travelFormNames = {
 	car:
 		"Auto",
@@ -207,14 +247,19 @@ Story.prototype.initTravelStart = function()
 		(function(i) { // i - scope issues -> would remember last i in for loop
 			self.travelStartTypeButtons[i].click(function()
 			{
-				self.form_variables.travelStartTyp = i;
+				self.form_variables.travelStartType = i;
 				for (var j in self.travelStartTypeButtons)
 					self.travelStartTypeButtons[j].css({border:'1px solid #000'});
 				self.travelStartTypeButtons[i].css({border:'2px solid #f00'});
-				$('#travelStartTyp').html(travelFormNames[i]);
+				$('#travelStartType').html(travelFormNames[i]);
+				self.travelStartTypeWarning.hide();
 			});
 		})(i);
 	}
+
+	// warnings created at the end -> on top
+	this.travelStartTypeWarning = this.toolTippedStoryWarning(this.travelStartTicket, 32, 95, null, "Auf der linken Seite den<br/>Anreise Typ anklicken");
+	this.travelStartDateWarning = this.toolTippedStoryWarning(this.travelStartTicket, 32, 70, null, "Anreise Datum wählen");
 }
 Story.prototype.addTravelTypeButtons = function(page)
 {
@@ -350,6 +395,7 @@ Story.prototype.initEat = function()
 				for (var j in self.foodTypeButtons)
 					self.foodTypeButtons[j].css({border: '1px solid #000'});
 				self.foodTypeButtons[i].css({border: '2px solid #f00'});
+				self.eatWarning.hide();
 			});
 		})(i);
 	}
@@ -359,6 +405,8 @@ Story.prototype.initEat = function()
 		$(this).stop(true, true).effect("highlight");
 	});
 	this.eat.append(this.eatContinueButton);
+
+	this.eatWarning = this.toolTippedStoryWarning(this.eat, 386, 149, null, "Art des Essens auswählen");
 }
 Story.prototype.addFoodTypeButtons = function(page)
 {
@@ -444,12 +492,15 @@ Story.prototype.initAge = function()
 					self.ageButtons[j].css({border:'none'});
 				self.ageButtons[i].css({border:'2px solid #f00'});
 				self.ageButtonContinue.effect("highlight");
+				self.ageWarning.hide();
 			});
 			self.ageButtons[i].mouseenter(function() {
 				$(this).stop(true, true).effect("highlight");
 			});
 		})(i);
 	}
+
+	this.ageWarning = this.toolTippedStoryWarning(this.age, 678, 134, null, "Links ein Schild mit passendem<br/>Altersbereich anklicken");
 }
 Story.prototype.initBasicDataAnimation = function()
 {
@@ -477,42 +528,25 @@ Story.prototype.initBasicData = function()
 	this.bd_bellForm = $('<form name="storyBasicData" novalidate/>');
 	this.bd_bell.append(this.bd_bellForm);
 
-	function toolTippedStoryWarning(x, y, field, tooltip)
-	{
-		var warning = $('<div class="storyWarn" style="left: '+x+'px; top: '+y+'px;" ng-show="!'+field+'">&nbsp;</div>');
-		var toolTip = $('<div class="storyToolTip" style="left: '+x+'px; top: '+(y+25)+'px; display: none; text-align: left">'+tooltip+'</div>');
-		self.bd_bell.append(warning);
-		self.bd_bell.append(toolTip);
-
-		warning.hover(function() // over
-		{
-			toolTip.stop(true, true).fadeIn(200);
-		},
-		function() // out
-		{
-			toolTip.stop(true, true).fadeOut(200);
-		});
-	}
-
 	this.bd_bellForname = this.addFormText(this.bd_bellForm, "Vorname", "forname", "text", "forname", 160, 60);
 	this.bd_bellForname.attr('ng-minlength', '2');
 	this.bd_bellForname.attr('required', 'required');
-	toolTippedStoryWarning(135, 80, 'forname', "Bitte den Vornamen eingeben");
+	this.toolTippedStoryWarning(this.bd_bell, 135, 80, 'forname', "Bitte den Vornamen eingeben");
 
 	this.bd_bellName = this.addFormText(this.bd_bellForm, "Nachname", "name", "text", "name", 160, 140).attr('ng-minlength', '2');
 	this.bd_bellName.attr('ng-minlength', '2');
 	this.bd_bellName.attr('required', 'required');
-	toolTippedStoryWarning(135, 160, 'name', "Bitte den Nachnamen eingeben");
+	this.toolTippedStoryWarning(this.bd_bell, 135, 160, 'name', "Bitte den Nachnamen eingeben");
 
 	this.bd_bellAnzeig = this.addFormText(this.bd_bellForm, "Anzeigename", "anzeig", "text", "anzeig", 160, 215);
 	this.bd_bellAnzeig.attr('ng-minlength', '2');
 	this.bd_bellAnzeig.attr('required', 'required');
-	toolTippedStoryWarning(135, 235, 'anzeig', "Bitte einen Anzeige-Namen eingeben");
+	this.toolTippedStoryWarning(this.bd_bell, 135, 235, 'anzeig', "Bitte einen Anzeige-Namen eingeben");
 
 	this.bd_bellMehl = this.addFormText(this.bd_bellForm, "eMail", "mehl", "email", "mehl", 160, 290);
 	this.bd_bellMehl.attr('ng-minlength', '5');
 	this.bd_bellMehl.attr('required', 'required');
-	toolTippedStoryWarning(135, 310, 'mehl', "Bitte eine g&uuml;ltige eMail Addresse eingeben");
+	this.toolTippedStoryWarning(this.bd_bell, 135, 310, 'mehl', "Bitte eine g&uuml;ltige eMail Addresse eingeben");
 
 	// == notice ==
 	this.bd_bell.append($('<div style="position:absolute;top:380px;left:120px">Bitte klingeln, wenn fertig.</div>'))
@@ -563,8 +597,9 @@ Story.prototype.addComboBox = function(parentNode, label, fieldName, options, x,
 	parentNode.append(form);
 
 	this.form_variables[fieldName] = null;
-}
 
+	return form;
+}
 Story.prototype.addFormText = function(parentNode, label, fieldName, type, model, x, y)
 {
 	var form_label = $('<div>'+label+':</div>');
@@ -578,7 +613,26 @@ Story.prototype.addFormText = function(parentNode, label, fieldName, type, model
 
 	return form;
 }
+Story.prototype.toolTippedStoryWarning = function(page, x, y, field, toolTipText)
+{
+	var warning = $('<div class="storyWarn" style="left: '+x+'px; top: '+y+'px;"' + (field != null ? (' ng-show="!'+field+'"') : '') + '>&nbsp;</div>');
+	var toolTip = $('<div class="storyToolTip" style="left: '+x+'px; top: '+(y+25)+'px; display: none; text-align: left">'+toolTipText+'</div>');
+	page.append(warning);
+	page.append(toolTip);
 
+	warning.hover(function() // over
+	{
+		toolTip.stop(true, true).fadeIn(200);
+	},
+	function() // out
+	{
+		toolTip.stop(true, true).fadeOut(200);
+	});
+
+	return warning;
+}
+
+// === INIT ===
 $(function()
 {
 	var storybox = $('#storybox');
