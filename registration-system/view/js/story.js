@@ -199,6 +199,8 @@ Story.prototype.initSummary = function()
 			var rowTitle = rows[rowName];
 			this.summaryTable.append('<tr><td>' + rowTitle + '</td><td id="story_summary_' + rowName + '"></td></tr>');
 		}
+		this.summaryTable.append('<tr><td colspan="2">&nbsp;</td></tr>');
+		this.summaryTable.append('<tr><td colspan="2">Daten Ok? Dann <button onclick="storySubmit()">Anmelden</button>.</td></tr>');
 	}
 
 	// === Update View ===
@@ -664,6 +666,11 @@ Story.prototype.toolTippedStoryWarning = function(page, x, y, field, toolTipText
 	});
 
 	return warning;
+}
+
+function storySubmit()
+{
+	// TODO: create hidden post form and submit
 }
 
 // === INIT ===
