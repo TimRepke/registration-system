@@ -204,7 +204,8 @@ function index_check_field($index, $check, &$datarr, &$errarr, $errmess){
 function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
     global $index_db, $config_studitypen, $config_essen, $config_reisearten, $invalidCharsRegEx;
 
-	if (!isset($_GET['noscript']))
+	$withStoryMode = !isset($_GET['noscript']) && !isset($_REQUEST['submit']) && !isset($_REQUEST['storySubmit']);
+	if ($withStoryMode)
 		echo '<noscript>';
 
     $possible_dates = comm_get_possible_dates($index_db, $fid);
@@ -246,7 +247,7 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
         <div class="spacer"></div>
         </form>
         </div>';
-	if (!isset($_GET['noscript']))
+	if ($withStoryMode)
 	{
 		echo '</noscript>';
 		echo '<h2>Anmeldeformular</h2>';
