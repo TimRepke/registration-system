@@ -175,7 +175,7 @@ Story.prototype.initSummary = function()
 		this.summaryTable = $('<table class="story_summary"/>')
 		this.summary.append(this.summaryTable);
 
-		var rowOrder = ["forname", "name", "anzeig", "mehl", "andaytyp", "abdaytyp", "age"];
+		var rowOrder = ["forname", "name", "anzeig", "mehl", "andaytyp", "abdaytyp", "eat", "age"];
 		var rows = {
 			forname:
 				"Vorname",
@@ -186,11 +186,13 @@ Story.prototype.initSummary = function()
 			mehl:
 				"eMail",
 			andaytyp:
-				"Anreise Tag/Typ",
+				"Anreise Tag / Typ",
 			abdaytyp:
-				"Abreise Tag/Typ",
+				"Abreise Tag / Typ",
+			eat:
+				"Essenswahl",
 			age:
-				"Alter"
+				"Unter 18?"
 		};
 
 		for (var i = 0; i < rowOrder.length; ++i)
@@ -200,7 +202,7 @@ Story.prototype.initSummary = function()
 			this.summaryTable.append('<tr><td>' + rowTitle + '</td><td id="story_summary_' + rowName + '"></td></tr>');
 		}
 		this.summaryTable.append('<tr><td colspan="2">&nbsp;</td></tr>');
-		this.summaryTable.append('<tr><td colspan="2">Daten Ok? Dann <button onclick="storySubmit()">Anmelden</button>.</td></tr>');
+		this.summaryTable.append('<tr><td colspan="2">Daten Ok? Dann <button onclick="storySubmit()">anmelden</button>.</td></tr>');
 	}
 
 	// === Update View ===
@@ -208,9 +210,10 @@ Story.prototype.initSummary = function()
 	$('#story_summary_name').text(this.form_variables.name);
 	$('#story_summary_anzeig').text(this.form_variables.anzeig);
 	$('#story_summary_mehl').text(this.form_variables.mehl);
-	$('#story_summary_andaytyp').text(this.form_variables.travelStartDate + ", " + this.form_variables.travelStartType);
-	$('#story_summary_abdaytyp').text(this.form_variables.travelEndDate + ", " + this.form_variables.travelEndType);
-	$('#story_summary_age').text(this.form_variables.age);
+	$('#story_summary_andaytyp').text(this.form_variables.travelStartDate + ", " + Story.travelMapPhp[Story.travelMap[this.form_variables.travelStartType]]);
+	$('#story_summary_abdaytyp').text(this.form_variables.travelEndDate + ", " + Story.travelMapPhp[Story.travelMap[this.form_variables.travelEndType]]);
+	$('#story_summary_eat').text(Story.eatMap[this.form_variables.eat]);
+	$('#story_summary_age').text(Story.ageMap[this.form_variables.age]);
 }
 Story.prototype.initTravelStart = function()
 {
@@ -667,7 +670,34 @@ Story.prototype.toolTippedStoryWarning = function(page, x, y, field, toolTipText
 
 	return warning;
 }
-
+$(function()
+{
+	Story.eatMap = {
+	cow:
+		"Alles",
+	cheese:
+		"Vegetarisch",
+	wheat:
+		"Vegan"
+	};
+	Story.ageMap = {
+	eighteenplus:
+		"Nein",
+	below:
+		"Ja"
+	};
+	Story.travelMapPhp = config_get_travel_types();
+	Story.travelMap = {
+	car:
+		"AUTO",
+	oeffi:
+		"BUSBAHN",
+	bike:
+		"RAD",
+	camel:
+		"INDIVIDUELL"
+	};
+});
 function storySubmit()
 {
 	var formWrapper = $('<div style="display:none"/>');
@@ -680,43 +710,17 @@ function storySubmit()
 		form.append('<input name="' + name + '" value="' + value.replace(/[\r\n]/g, " ").replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"/>');
 	}
 
-	var eatMap = {
-	cow:
-		"Alles",
-	cheese:
-		"Vegetarisch",
-	wheat:
-		"Vegan"
-	};
-	var ageMap = {
-	eighteenplus:
-		"Nein",
-	below:
-		"Ja"
-	};
-	var travelMapPhp = config_get_travel_types();
-	travelMap = {
-	car:
-		"AUTO",
-	oeffi:
-		"BUSBAHN",
-    bike:
-		"RAD",
-	camel:
-		"INDIVIDUELL"
-	};
-
 	formAppendText('forname', story.form_variables.forname);
 	formAppendText('sirname', story.form_variables.name);
 	formAppendText('pseudo', story.form_variables.anzeig);
 	formAppendText('mehl', story.form_variables.mehl);
 	formAppendText('studityp', 'Ersti'); // ?
-	formAppendText('virgin', ageMap[story.form_variables.age] || '');
-	formAppendText('essen', eatMap[story.form_variables.eat] || '');
+	formAppendText('virgin', Story.ageMap[story.form_variables.age] || '');
+	formAppendText('essen', Story.eatMap[story.form_variables.eat] || '');
 	formAppendText('anday', story.form_variables.travelStartDate);
-	formAppendText('antyp', travelMapPhp[travelMap[story.form_variables.travelStartType]]);
+	formAppendText('antyp', Story.travelMapPhp[Story.travelMap[story.form_variables.travelStartType]]);
 	formAppendText('abday', story.form_variables.travelEndDate);
-	formAppendText('abtyp', travelMapPhp[travelMap[story.form_variables.travelEndType]]);
+	formAppendText('abtyp', Story.travelMapPhp[Story.travelMap[story.form_variables.travelEndType]]);
 	formAppendText('comment', 'This form was created with VisualPotato3D'); // ?
 	// formAppendText('public', ''); // ?
 	// form.append('<input type="submit" name="submit" />');
