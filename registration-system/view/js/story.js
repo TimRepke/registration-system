@@ -463,6 +463,8 @@ Story.prototype.initBasicData = function()
 {
 	if (this.basicData) return;
 
+	var self = this;
+
 	// == init view ==
 	this.basicData = this.storyImageDiv('begin.png');
 	this.storybox.append(this.basicData);
@@ -475,25 +477,42 @@ Story.prototype.initBasicData = function()
 	this.bd_bellForm = $('<form name="storyBasicData" novalidate/>');
 	this.bd_bell.append(this.bd_bellForm);
 
+	function toolTippedStoryWarning(x, y, field, tooltip)
+	{
+		var warning = $('<div class="storyWarn" style="left: '+x+'px; top: '+y+'px;" ng-show="!'+field+'">&nbsp;</div>');
+		var toolTip = $('<div class="storyToolTip" style="left: '+x+'px; top: '+(y+25)+'px; display: none; text-align: left">'+tooltip+'</div>');
+		self.bd_bell.append(warning);
+		self.bd_bell.append(toolTip);
+
+		warning.hover(function() // over
+		{
+			toolTip.stop(true, true).fadeIn(200);
+		},
+		function() // out
+		{
+			toolTip.stop(true, true).fadeOut(200);
+		});
+	}
+
 	this.bd_bellForname = this.addFormText(this.bd_bellForm, "Vorname", "forname", "text", "forname", 160, 60);
 	this.bd_bellForname.attr('ng-minlength', '2');
 	this.bd_bellForname.attr('required', 'required');
-	this.bd_bell.append('<div class="storyWarn" style="position: absolute; left: 135px; top: 80px;" ng-show="!forname">&nbsp;</div>');
+	toolTippedStoryWarning(135, 80, 'forname', "Bitte den Vornamen eingeben");
 
 	this.bd_bellName = this.addFormText(this.bd_bellForm, "Nachname", "name", "text", "name", 160, 140).attr('ng-minlength', '2');
 	this.bd_bellName.attr('ng-minlength', '2');
 	this.bd_bellName.attr('required', 'required');
-	this.bd_bell.append('<div class="storyWarn" style="position: absolute; left: 135px; top: 160px;" ng-show="!name">&nbsp;</div>');
+	toolTippedStoryWarning(135, 160, 'name', "Bitte den Nachnamen eingeben");
 
 	this.bd_bellAnzeig = this.addFormText(this.bd_bellForm, "Anzeigename", "anzeig", "text", "anzeig", 160, 215);
 	this.bd_bellAnzeig.attr('ng-minlength', '2');
 	this.bd_bellAnzeig.attr('required', 'required');
-	this.bd_bell.append('<div class="storyWarn" style="position: absolute; left: 135px; top: 235px;" ng-show="!anzeig">&nbsp;</div>');
+	toolTippedStoryWarning(135, 235, 'anzeig', "Bitte einen Anzeige-Namen eingeben");
 
 	this.bd_bellMehl = this.addFormText(this.bd_bellForm, "eMail", "mehl", "email", "mehl", 160, 290);
 	this.bd_bellMehl.attr('ng-minlength', '5');
 	this.bd_bellMehl.attr('required', 'required');
-	this.bd_bell.append('<div class="storyWarn" style="position: absolute; left: 135px; top: 310px;" ng-show="!mehl">&nbsp;</div>');
+	toolTippedStoryWarning(135, 310, 'mehl', "Bitte eine g&uuml;ltige eMail Addresse eingeben");
 
 	// == notice ==
 	this.bd_bell.append($('<div style="position:absolute;top:380px;left:120px">Bitte klingeln, wenn fertig.</div>'))

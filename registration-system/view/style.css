@@ -133,9 +133,16 @@ div.storyTip {
 	padding: 2px;
 }
 div.storyWarn {
+	position: absolute;
 	width: 20px;
 	height: 20px;
 	background: url(graphics/story/warn.png);
+}
+div.storyToolTip {
+	position: absolute;
+	padding: 2px;
+	background: #fff;
+	border: 1px solid #000;
 }
 
 div#headerbox h2 {
