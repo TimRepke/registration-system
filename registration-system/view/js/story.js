@@ -331,7 +331,7 @@ Story.prototype.initTravelEnd = function()
 	var self = this;
 
 	this.travelEnd = this.storyImageDiv('travelEnd.png');
-	this.travelEnd.animate({left:'-900px'}, 0);
+	this.travelEnd.animate({left:'900px'}, 0);
 	this.storybox.append(this.travelEnd);
 	
 	this.travelEndTicket = this.storyImageDiv('ticket.png');
@@ -344,12 +344,24 @@ Story.prototype.initTravelEnd = function()
 		$(this).stop(true, true).effect("highlight");
 	});
 
-	this.addComboBox(this.travelEndTicket, "Datum", "abday", ["", "22.12.2100", "23.12.2100"], 105, 70); // @TODO: get date options from php
-	this.travelEndTicket.append('<div style="position: absolute; left: 55px; top: 95px">Typ</div>');
-	this.travelEndTicket.append('<div style="position: absolute; left: 105px; top: 95px" id="travelEndTyp">------</div>');
-
+	this.travelEndDate = this.addComboBox(this.travelEndTicket, "Datum", "abday", ["", "21.12.2100", "22.12.2100"], 115, 70); // @TODO: get date options from php
+	this.travelEndTicket.append('<div style="position: absolute; left: 65px; top: 95px">Typ</div>');
+	this.travelEndTicket.append('<div style="position: absolute; left: 115px; top: 95px" id="travelEndType">------</div>');
+	this.travelEndDate.change(function()
+	{
+		var value = $(this).val();
+		if (value == '')
+		{
+			self.form_variables.travelEndDate = null;
+			self.travelEndDateWarning.show();
+		}
+		else
+		{
+			self.form_variables.travelEndDate = value;
+			self.travelEndDateWarning.hide();
+		}
+	});
 	this.travelEndTypeButtons = this.addTravelTypeButtons(this.travelEnd);
-
 	var travelFormNames = {
 	car:
 		"Auto",
@@ -365,14 +377,19 @@ Story.prototype.initTravelEnd = function()
 		(function(i) { // i - scope issues -> would remember last i in for loop
 			self.travelEndTypeButtons[i].click(function()
 			{
-				self.form_variables.travelEndTyp = i;
+				self.form_variables.travelEndType = i;
 				for (var j in self.travelEndTypeButtons)
 					self.travelEndTypeButtons[j].css({border:'1px solid #000'});
 				self.travelEndTypeButtons[i].css({border:'2px solid #f00'});
-				$('#travelEndTyp').html(travelFormNames[i]);
+				$('#travelEndType').html(travelFormNames[i]);
+				self.travelEndTypeWarning.hide();
 			});
 		})(i);
 	}
+
+	// warnings created at the end -> on top
+	this.travelEndTypeWarning = this.toolTippedStoryWarning(this.travelEndTicket, 32, 95, null, "Auf der linken Seite den<br/>Anreise Typ anklicken");
+	this.travelEndDateWarning = this.toolTippedStoryWarning(this.travelEndTicket, 32, 70, null, "Anreise Datum wählen");
 }
 Story.prototype.initEat = function()
 {
