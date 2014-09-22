@@ -260,12 +260,29 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
 				{
 					return [ 
 END;
-					$dates = comm_get_possible_dates();
+					$dates = comm_get_possible_dates($index_db, $fid);
 					foreach($dates as &$date)
 						$date = '"'.$date.'"';
 					echo implode(', ', $dates);
 		echo<<<END
  ];
+				}
+				function config_get_travel_types()
+				{
+					return { 
+END;
+					$first = true;
+					global $config_reisearten_o;
+					foreach($config_reisearten_o as $key => $value)
+					{
+						if ($first)
+							$first = false;
+						else
+							echo ', ';
+						echo '"'.$key.'":"'.$value.'"';
+					}
+		echo<<<END
+ };
 				}
 			</script>
 		</div>

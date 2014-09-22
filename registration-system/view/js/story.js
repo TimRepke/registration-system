@@ -694,6 +694,17 @@ function storySubmit()
 	below:
 		"Ja"
 	};
+	var travelMapPhp = config_get_travel_types();
+	travelMap = {
+	car:
+		"AUTO",
+	oeffi:
+		"BUSBAHN",
+    bike:
+		"RAD",
+	camel:
+		"INDIVIDUELL"
+	};
 
 	formAppendText('forname', story.form_variables.forname);
 	formAppendText('sirname', story.form_variables.name);
@@ -703,9 +714,9 @@ function storySubmit()
 	formAppendText('virgin', ageMap[story.form_variables.age] || '');
 	formAppendText('essen', eatMap[story.form_variables.eat] || '');
 	formAppendText('anday', story.form_variables.travelStartDate);
-	formAppendText('antyp', story.form_variables.travelStartType);
+	formAppendText('antyp', travelMapPhp[travelMap[story.form_variables.travelStartType]]);
 	formAppendText('abday', story.form_variables.travelEndDate);
-	formAppendText('abtyp', story.form_variables.travelEndType);
+	formAppendText('abtyp', travelMapPhp[travelMap[story.form_variables.travelEndType]]);
 	formAppendText('comment', 'This form was created with VisualPotato3D'); // ?
 	// formAppendText('public', ''); // ?
 	// form.append('<input type="submit" name="submit" />');
