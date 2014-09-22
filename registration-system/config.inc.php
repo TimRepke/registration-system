@@ -32,12 +32,14 @@ $config_essen = array(
     //"Extrawurst"
 );
 
-$config_reisearten = array(
-    "gemeinsam mit Bus/Bahn",
-    "gemeinsam mit Rad",
-    "individuell"
+$config_reisearten_o = array(
+    "BUSBAHN"=>"gemeinsam mit Bus/Bahn",
+    "RAD"=>"gemeinsam mit Rad",
+	"AUTO"=>"selbst mit Auto",
+    "INDIVIDUELL"=>"Kamel/Individuell"
     //,"mit Kamel"
 );
+$config_reisearten = array_values($config_reisearten_o);
 
 $config_reisearten_destroyed = array(
     "mit Kamel",
