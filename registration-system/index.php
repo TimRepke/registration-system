@@ -207,7 +207,7 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
 	if (!isset($_GET['noscript']))
 		echo '<noscript>';
 
-    $possible_dates = comm_get_possible_dates($fid);
+    $possible_dates = comm_get_possible_dates($index_db, $fid);
 
     if(is_null($bachelor))
         $bachelor = array('forname' => "", 'sirname' => "", 'anday' => $possible_dates[0], 'abday' => $possible_dates[count($possible_dates)-1], 'antyp' => "", 'abtyp' => "", 'pseudo' => "", 'mehl' => "", 'essen' => "", 'public' => "", 'virgin' => "", 'studityp' => "", 'comment'=>"");
@@ -400,9 +400,9 @@ echo '<h2>Angemeldet</h2>';
             echo '<tr>
                 <!--td>'.$d["studityp"].'</td-->
                 <td>'.$d["pseudo"].'</td>
-                <td>'.date('d.m.Y', $d["anday"]).'</td>
+                <td>'.comm_format_date($d["anday"]).'</td>
                 <td>'.index_show_signupTable_destroyTypes($d["antyp"]).'</td>
-                <td>'.date('d.m.Y', $d["abday"]).'</td>
+                <td>'.comm_format_date($d["abday"]).'</td>
                 <td>'.index_show_signupTable_destroyTypes($d["abtyp"]).'</td>
                 <td>'.$d["comment"].'</td>
             </tr>';
