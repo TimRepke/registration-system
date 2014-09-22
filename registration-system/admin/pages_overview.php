@@ -19,6 +19,7 @@ $mitfahrer['gesaa'] = $admin_db->count("bachelor", ["fahrt_id"    => $config_cur
 
 $antag = $admin_db->query("SELECT date_format(von, '%j') as von FROM fahrten WHERE fahrt_id=$config_current_fahrt_id")->fetchAll()[0]['von'];
 $abtag = $admin_db->query("SELECT date_format(bis, '%j') as von FROM fahrten WHERE fahrt_id=$config_current_fahrt_id")->fetchAll()[0]['bis'];
+$tmp = $admin_db->query("SELECT date_format(antag, '%j') as antag, SELECT date_format(abtag, '%j') as abtag  FROM bachelor WHERE fahrt_id=$config_current_fahrt_id")->fetchAll()[0]['bis'];
 $mitfahrer['erste'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id,
