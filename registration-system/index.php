@@ -122,6 +122,9 @@ function index_check_form(){
     index_check_field('virgin', array("Ja","Nein"), $data, $errors, 'Bitte Altersbereich wählen!');
     index_check_field('comment', "comment", $data, $errors, 'Trollololol');
 
+    if($data['anday'] == $data['abday'])
+        array_push($errors, "Anreisetag = Abreisetag -> Bitte prüfen!");
+
     index_check_form_skip:
     if(count($errors)>0){
         index_show_errors($errors);
