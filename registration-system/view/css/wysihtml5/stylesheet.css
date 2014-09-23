@@ -2,7 +2,7 @@
 html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,select,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,button,caption,cite,code,dfn,em,input,optgroup,option,select,strong,textarea,th,var{font:inherit}del,ins{text-decoration:none}li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:baseline}sub{vertical-align:baseline}legend{color:#000}
 
 /* wysihtml stuff */
-html {
+/*html {
     overflow: hidden;
     background: url(../../graphics/bg_pattern_r1.png);
     height: 100%;
@@ -18,7 +18,7 @@ body {
 
 body, textarea, input {
     font-family: Helvetica, Arial, Verdana;
-}
+}*/
 
 strong {
     font-weight: bold;
@@ -311,4 +311,37 @@ a.fork {
     top: 0;
     right: 0;
     border: 0;
+}
+
+.submit-button {
+    border-top: 1px solid #96d1f8;
+    background: #db7878;
+    background: -webkit-gradient(linear, left top, left bottom, from(#b00000), to(#db7878));
+    background: -webkit-linear-gradient(top, #b00000, #db7878);
+    background: -moz-linear-gradient(top, #b00000, #db7878);
+    background: -ms-linear-gradient(top, #b00000, #db7878);
+    background: -o-linear-gradient(top, #b00000, #db7878);
+    padding: 10px 20px;
+    -webkit-border-radius: 39px;
+    -moz-border-radius: 39px;
+    border-radius: 39px;
+    -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+    -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+    box-shadow: rgba(0,0,0,1) 0 1px 0;
+    text-shadow: rgba(0,0,0,.4) 0 1px 0;
+    color: white;
+    font-size: 14px;
+    font-family: Helvetica, Arial, Sans-Serif;
+    text-decoration: none;
+    vertical-align: middle;
+    margin:20px;
+}
+.submit-button:hover {
+    border-top-color: #5eff00;
+    background: #5eff00;
+    color: #ccc;
+}
+.submit-button:active {
+    border-top-color: #1b435e;
+    background: #1b435e;
 }

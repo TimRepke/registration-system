@@ -40,6 +40,9 @@ function page_cost(){
 function page_export(){
     require_page("pages_export.php");
 }
+function page_infos(){
+    require_page("pages_infos.php");
+}
 
 function require_page($page){
     if(!@file_exists($page) ) {

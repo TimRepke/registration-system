@@ -2,27 +2,34 @@
 /**
  * Created by PhpStorm.
  * User: tim
- * Date: 8/9/14
- * Time: 4:07 PM
+ * Date: 9/23/14
+ * Time: 11:14 AM
  */
-global $headers, $text, $admin_db, $config_current_fahrt_id, $config_admin_verbose_level, $config_verbose_level;
-$config_admin_verbose_level = 0;
-$config_verbose_level = 0;
+
+global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_reisearten_0, $config_studitypen_o, $config_admin_verbose_level, $config_verbose_level, $config_essen;
+//$config_admin_verbose_level = 4;
+//$config_verbose_level = 4;
+$text .= "<h1>Informationen</h1>";
 
 if(isset($_POST['note-content'])){
     comm_admin_verbose(2,"received submit");
     $cont = $_REQUEST['note-content'];
-    $admin_db->update("notes",array("note"=>$cont),array("fahrt_id"=>$config_current_fahrt_id));
+    $admin_db->update("fahrten",array("beschreibung"=>$cont),array("fahrt_id"=>$config_current_fahrt_id));
 }
 
-$content = $admin_db->get("notes", "note", array("fahrt_id"=>$config_current_fahrt_id));
+$data = $admin_db->get("fahrten", ["beschreibung", "titel", "von", "bis", "ziel", "map_pin", "leiter", "kontakt", "regopen"], array("fahrt_id"=>$config_current_fahrt_id));
 
 $headers .="<!-- wysihtml5 parser rules -->
 <script src=\"../view/js/wysihtml5-0.3.0_rc2.min.js\"></script>
 <!-- Library -->
 <script src=\"../view/js/wysihtml5-advanced.js\"></script>
+<script src=\"../view/js/jquery-1.11.1.min.js\"></script>
+<script src=\"../view/js/jquery-ui.min.js\"></script>
+<script type=\"text/javascript\" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script src=\"../view/js/locationpicker.jquery.js\"></script>
+<link type='text/css' rel='stylesheet' href='../view/jquery-ui/jquery-ui.min.css' />
 
-<link type='text/css' rel='stylesheet' href='../view/css/wysihtml5/editor.css' />
+<!--link type='text/css' rel='stylesheet' href='../view/css/wysihtml5/editor.css' /-->
 <link type='text/css' rel='stylesheet' href='../view/css/wysihtml5/stylesheet.css' />
 <style type='text/css'>
 body {
@@ -32,9 +39,64 @@ body {
     padding-top: 40px !important;
     padding-left: 10px !important;
 }
-</style>";
+section{
+    position: relative;
+    top: inherit;
+    bottom: inherit;
+    width: inherit;
+}
+.formlist li{
+    margin: 15px 5px;
+}
+</style> ";
 
 $text .= '
+<section>
+    <form method="POST" style="height:300px;">
+        <div style="float:left">
+            <input type="submit" name="submit" value="submit" class="submit-button" />
+            <p></p>
+            <ul class="formlist">
+                <li><label>Titel</label>
+                    <input type="text" name="titel" id="titel" value="'.$data["titel"].'" /></li>
+                <li><label>Ziel</label>
+                    <input type="text" name="ziel" id="ziel" value="'.$data["ziel"].'" /></li>
+                <li><label>Von</label>
+                    <input type="text" name="von" id="von" value="'.$data["von"].'" />
+                <label>Bis</label>
+                    <input type="text" name="bis" id="bis" value="'.$data["bis"].'" /></li>
+                <li><label>Registrierung offen</label>
+                    <input type="checkbox" name="titel" id="titel" value="'.$data["regopen"].'" /></li>
+                <li><label>Leiter</label>
+                    <input type="text" name="leiter" id="leiter" value="'.$data["leiter"].'" /></li>
+                <li><label>E-Mail-Adresse</label>
+                    <input type="text" name="kontakt" id="kontakt" value="'.$data["kontakt"].'" /></li>
+            </ul>
+        </div>
+        <div style="float:left">
+            <label>Map Pin</label>
+                Location: <input type="text" id="us2-address" style="width: 200px"/>
+                <div id="us2" style="width: 500px; height: 400px;"></div>
+                <input type="hidden" id="us2-lat" value="'.explode(" ",$data["map_pin"])[0].'" />
+                <input type="hidden" id="us2-lon" value="'.explode(" ",$data["map_pin"])[1].'" />
+                <script>
+                    $(\'#us2\').locationpicker({
+                        /*location: {latitude: 52.52, longitude: 13.38},*/
+                        radius:0,
+                        inputBinding: {
+                            latitudeInput: $(\'#us2-lat\'),
+                            longitudeInput: $(\'#us2-lon\'),
+                            locationNameInput: $(\'#us2-address\')
+                        }
+                    });
+                    $(function() {
+                        $( "#von" ).datepicker( { dateFormat: "yy-mm-dd"} );
+                        $( "#bis" ).datepicker( { dateFormat: "yy-mm-dd"} );
+                    });
+                </script>
+        </div>
+        <div style="clear:both"></div>
+<br />
     <div id="wysihtml5-editor-toolbar">
       <header>
         <ul class="commands">
@@ -79,8 +141,9 @@ $text .= '
         <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
       </div>
     </div>
-
-<section><form method="POST" style="height:100%"> <input type="submit" name="submit" value="submit" class="submit-button" /><textarea name="note-content" id="wysihtml5-editor" spellcheck="false" wrap="off" placeholder="Enter your text ...">'.$content.'</textarea></form></section>
+        <textarea name="note-content" id="wysihtml5-editor" spellcheck="false" wrap="off" placeholder="Enter your text ...">'.$data["beschreibung"].'</textarea>
+    </form>
+</section>
 
 <script>
 var editor = new wysihtml5.Editor("wysihtml5-editor", {
