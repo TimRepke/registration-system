@@ -6,9 +6,9 @@
  * Time: 8:04 PM
  */
 
-global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_admin_verbose_level, $config_verbose_level, $config_essen;
-$config_admin_verbose_level = 4;
-$config_verbose_level = 4;
+global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_reisearten_0, $config_studitypen_o, $config_admin_verbose_level, $config_verbose_level, $config_essen;
+//$config_admin_verbose_level = 4;
+//$config_verbose_level = 4;
 $text .= "<h1>Übersichtsseite</h1>";
 
 
@@ -16,9 +16,6 @@ $mitfahrer['gesam'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id]]);
 $mitfahrer['gesaa'] = $admin_db->count("bachelor", ["fahrt_id"    => $config_current_fahrt_id]);
-
-$antag = $admin_db->query("SELECT date_format(von, '%j') as von FROM fahrten WHERE fahrt_id=$config_current_fahrt_id")->fetchAll()[0]['von'];
-$abtag = $admin_db->query("SELECT date_format(bis, '%j') as von FROM fahrten WHERE fahrt_id=$config_current_fahrt_id")->fetchAll()[0]['bis'];
 $mitfahrer['erste'] = $admin_db->query("SELECT date_format(anday, '%j') as anday, COUNT(anday) as anday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY anday ORDER BY anday ASC LIMIT 1")->fetchAll()[0]['anday_cnt'];
 $mitfahrer['zweit'] = $admin_db->query("SELECT date_format(abday, '%j') as abday, COUNT(abday) as abday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY abday ORDER BY abday DESC LIMIT 1")->fetchAll()[0]['abday_cnt'];
 $mitfahrer['veget'] = $admin_db->count("bachelor", ["AND"=>
@@ -29,10 +26,21 @@ $mitfahrer['backs'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped[!]" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id]]);
 $mitfahrer['treff'] = $admin_db->count("bachelor", ["AND" =>
-                                        ["antyp"       => $config_reisearten[0],
+                                        ["antyp"       => $config_reisearten_o["BUSBAHN"],
                                          "backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id]]);
-
+$mitfahrer['ersti'] = $admin_db->count("bachelor", ["AND"=>
+                                        ["backstepped" => NULL,
+                                         "fahrt_id"    => $config_current_fahrt_id,
+                                         "studityp" => $config_studitypen_o["ERSTI"]]]);
+$mitfahrer['tutti'] = $admin_db->count("bachelor", ["AND"=>
+                                        ["backstepped" => NULL,
+                                         "fahrt_id"    => $config_current_fahrt_id,
+                                         "studityp" => $config_studitypen_o["TUTTI"]]]);
+$mitfahrer['hoers'] = $admin_db->count("bachelor", ["AND"=>
+                                        ["backstepped" => NULL,
+                                         "fahrt_id"    => $config_current_fahrt_id],
+                                         "LIKE"=>["studityp" => $config_studitypen_o["HOERS"]]]);
 
 $text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
         <ul class='list-nodeco'>
@@ -40,16 +48,16 @@ $text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
             <ul>
                 <li>Erste Nacht: ".$mitfahrer['erste']."</li>
                 <li>Letzte Nacht: ".$mitfahrer['zweit']."</li>
-                <li>Vegetarier: ".$mitfahrer['veget']."</li>
+                <li>Nicht-Allesesser: ".$mitfahrer['veget']."</li>
                 <li>Zurückgetreten: ".$mitfahrer['backs']."</li>
                 <li>Personen am Treffpunkt: ".$mitfahrer['treff']."</li>
             </ul>
             <li>Verteilung</li>
             <ul>
-                <li>Erstis:</li>
-                <li>Hörstis:</li>
-                <li>Tutti: </li>
-                <li>= Ratio (E vs T+H): </li>
+                <li>Erstis: ".$mitfahrer['ersti']."</li>
+                <li>Hörstis: ".$mitfahrer['hoers']."</li>
+                <li>Tutti:  ".$mitfahrer['tutti']."</li>
+                <li>= Anteil Erstis: ".round(($mitfahrer['ersti']/($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti']))*100,2)."%</li>
             </ul>
         </ul></div>";
 

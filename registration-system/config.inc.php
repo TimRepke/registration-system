@@ -21,14 +21,15 @@ $config_db = array(
     "type" => "mysql"
 );
 
-$config_studitypen = array(
-    "Ersti",       // 0
+$config_studitypen_o = array(
+    "ERSTI" => "Ersti",       // 0
     //"Wechsli",     // 1 - woanders/was anderes studiert, jetzt hier
     //"MasterErsti", // 2
-    "Hoersti",      // 3 - länger an der HU
-    "Tutor"       // 4 - Tutor
+    "HOERS" => "Hoersti",      // 3 - länger an der HU
+    "TUTTI" => "Tutor"       // 4 - Tutor
     //"Fachi"        // 5 - FS Ini
 );
+$config_studitypen = array_values($config_studitypen_o);
 
 $config_essen = array(
     "Alles",
