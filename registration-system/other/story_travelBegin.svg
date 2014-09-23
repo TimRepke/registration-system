@@ -170,13 +170,13 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284272"
-     inkscape:cx="1212.6058"
-     inkscape:cy="309.11855"
+     inkscape:zoom="0.7071068"
+     inkscape:cx="330.28398"
+     inkscape:cy="217.53363"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1916"
+     inkscape:window-width="956"
      inkscape:window-height="1041"
      inkscape:window-x="0"
      inkscape:window-y="18"
@@ -3466,7 +3466,7 @@
          transform="translate(-1.71875,0.625)" />
     </g>
     <g
-       id="g4241"
+       id="g5009"
        inkscape:export-filename="/home/it/Other/regsys/registration-system/view/graphics/story/ticket.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
@@ -3555,14 +3555,14 @@
       <path
          inkscape:connector-curvature="0"
          id="path4238"
-         d="m 1305.2813,270.375 -27.25,-1 -2,28.5 30.25,0.75 z"
-         style="fill:#ffffff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+         d="m 1309.8338,260.43972 -36.7881,-1.35003 -2.7,38.47557 40.8381,1.01251 z"
+         style="fill:#ffffff;stroke:#000000;stroke-width:0.98526406;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
       <path
          sodipodi:nodetypes="czzzczcc"
          inkscape:connector-curvature="0"
          id="path4240"
-         d="m 1283.5815,284.14149 c -0.7999,1.02201 1.398,1.28528 3.1105,3.64365 1.7125,2.35839 1.9357,4.35076 2.7356,4.35076 0.7998,0 1.3553,-4.32396 3.2365,-7.92773 1.8812,-3.60376 2.5875,-4.52812 6.0578,-7.75127 -2.6142,1.04088 -4.0079,2.03217 -5.6792,3.80599 -1.6714,1.77382 -3.0722,4.73836 -3.8685,6.97673 -1.7932,-2.62786 -3.993,-4.25344 -5.5927,-3.09813 z"
-         style="fill:#5aa02c;stroke:#000000;stroke-width:0.69999999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+         d="m 1276.2829,278.85717 c -1.5119,1.93169 2.6423,2.4293 5.8791,6.88681 3.2367,4.45756 3.6586,8.2233 5.1705,8.2233 1.5116,0 2.5617,-8.17265 6.1173,-14.98407 3.5556,-6.81141 4.8906,-8.55853 11.4497,-14.65055 -4.9411,1.96735 -7.5752,3.84097 -10.7342,7.19364 -3.159,3.35267 -5.8067,8.9559 -7.3117,13.18661 -3.3893,-4.96688 -7.5472,-8.03936 -10.5707,-5.85574 z"
+         style="fill:#5aa02c;stroke:#000000;stroke-width:1.02102041;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     </g>
   </g>
 </svg>

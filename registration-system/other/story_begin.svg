@@ -15,12 +15,51 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="drawing.svg"
+   sodipodi:docname="story_begin.svg"
    inkscape:export-filename="/home/it/Other/regsys/registration-system/other/drawing.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
      id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mend"
+       style="overflow:visible;">
+      <path
+         id="path5946"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.4) rotate(180) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutL"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="TriangleOutL"
+       style="overflow:visible">
+      <path
+         id="path6079"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.8)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path5940"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
     <linearGradient
        id="linearGradient6412">
       <stop
@@ -94,9 +133,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="821.62934"
-     inkscape:cy="164.7943"
+     inkscape:zoom="1"
+     inkscape:cx="975.15365"
+     inkscape:cy="292.47734"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -122,7 +161,7 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:snap-global="false">
+     inkscape:snap-global="true">
     <inkscape:grid
        type="xygrid"
        id="grid3892"
@@ -994,7 +1033,7 @@
     <g
        id="g6878"
        transform="translate(1070.5596,-12.727922)"
-       inkscape:export-filename="/home/it/Other/regsys/registration-system/other/klingel.png"
+       inkscape:export-filename="/home/it/Other/regsys/registration-system/view/graphics/story/bell.png"
        inkscape:export-xdpi="90.077118"
        inkscape:export-ydpi="90.077118">
       <rect
@@ -1085,5 +1124,24 @@
        id="path6906"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="csscsscsccsscsscsscsscsc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:none;marker-mid:none"
+       d="m 1256.2813,421.625 c 0,0 -27.7875,-1.72241 -61,-26.5 -31.5,-23.5 -43,-58 -44,-97 -1,-39 8.5,-99.5 11.5,-122"
+       id="path5423"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cssc"
+       inkscape:export-filename="/home/it/Other/regsys/registration-system/view/graphics/story/bell.png"
+       inkscape:export-xdpi="90.077118"
+       inkscape:export-ydpi="90.077118" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 1154.3133,189.00628 10.1868,-13.50628 6.1249,15.875"
+       id="path7665"
+       inkscape:connector-curvature="0"
+       transform="translate(-1.71875,0.625)"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/it/Other/regsys/registration-system/view/graphics/story/bell.png"
+       inkscape:export-xdpi="90.077118"
+       inkscape:export-ydpi="90.077118" />
   </g>
 </svg>

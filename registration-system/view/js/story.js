@@ -201,7 +201,9 @@ Story.prototype.initSummary = function()
 			var rowTitle = rows[rowName];
 			this.summaryTable.append('<tr><td>' + rowTitle + '</td><td id="story_summary_' + rowName + '"></td></tr>');
 		}
-		this.summaryTable.append('<tr><td colspan="2">&nbsp;</td></tr>');
+		this.summaryTable.append('<tr><td>Anmeldung verstecken</td><td><input id="story_summary_public" type="checkbox" name="public" value="public"/></td></tr>');
+		this.summaryTable.append('<tr><td colspan="2">Anmerkung</td></tr>');
+		this.summaryTable.append('<tr><td colspan="2"><textarea id="story_summary_comment" name="comment" style="width: 450px; height: 120px;"></textarea></td></tr>');
 		this.summaryTable.append('<tr><td colspan="2">Daten Ok? Dann <button onclick="storySubmit()">anmelden</button>.</td></tr>');
 	}
 
@@ -342,7 +344,7 @@ Story.prototype.addTicketTitle = function(ticket, title)
 }
 Story.prototype.addTicketButton = function(ticket, funcstring)
 {
-	var newButton = $('<div style="position: absolute; left: 249px; top: 125px; width: 27px; height: 27px; cursor: pointer;" onclick="' + funcstring + '">&nbsp;</div>');
+	var newButton = $('<div style="position: absolute; left: 245px; top: 115px; width: 36px; height: 37px; cursor: pointer;" onclick="' + funcstring + '">&nbsp;</div>');
 	ticket.append(newButton);
 	return newButton;
 }
@@ -588,7 +590,7 @@ Story.prototype.initBasicData = function()
 	this.toolTippedStoryWarning(this.bd_bell, 135, 310, 'mehl', "Bitte eine g&uuml;ltige eMail Addresse eingeben");
 
 	// == notice ==
-	this.bd_bell.append($('<div style="position:absolute;top:380px;left:120px">Bitte klingeln, wenn fertig.</div>'))
+	this.bd_bell.append($('<div style="position:absolute;top:378px;left:168px">Bitte klingeln, wenn fertig.</div>'))
 
 	this.bd_btn_continue = $('<div style="width:60px;height:67px;position:absolute;top:48px;left:48px;cursor:pointer;" onclick="story.next();" />');
 	this.bd_bell.append(this.bd_btn_continue);
@@ -707,7 +709,7 @@ function storySubmit()
 
 	function formAppendText(name, value)
 	{
-		form.append('<input name="' + name + '" value="' + value.replace(/[\r\n]/g, " ").replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"/>');
+		form.append('<input name="' + name + '" value="' + value.replace(/[\r\n]/g, "<br/>").replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"/>');
 	}
 
 	formAppendText('forname', story.form_variables.forname);
@@ -721,9 +723,9 @@ function storySubmit()
 	formAppendText('antyp', Story.travelMapPhp[Story.travelMap[story.form_variables.travelStartType]]);
 	formAppendText('abday', story.form_variables.travelEndDate);
 	formAppendText('abtyp', Story.travelMapPhp[Story.travelMap[story.form_variables.travelEndType]]);
-	formAppendText('comment', 'This form was created with VisualPotato3D'); // ?
-	// formAppendText('public', ''); // ?
-	// form.append('<input type="submit" name="submit" />');
+	formAppendText('comment', $('#story_summary_comment').val());
+	if ($('#story_summary_public').is(':checked'))
+		formAppendText('public', 'public');
 	formAppendText('storySubmit', 'storySubmit');
 
 	form.submit();
