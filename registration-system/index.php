@@ -382,7 +382,7 @@ function index_show_fahrtHeader($fahrt){
 
     echo '<div class="fahrt"><a href="index.php?fid='.$fahrt['fahrt_id'].'">'.$fahrt['titel'].'</a>';
     echo 'Ziel: <i>'.$fahrt['ziel'].'</i><br />';
-    echo 'Datum: <i>'.comm_format_date($fahrt['von'])." - ".comm_format_date($fahrt['bis']).'</i><br />';
+    echo 'Datum: <i>'.comm_from_mysqlDate($fahrt['von'])." - ".comm_from_mysqlDate($fahrt['bis']).'</i><br />';
     echo "Ansprechpartner: <i>".$fahrt['leiter']." (".comm_convert_mail($fahrt['kontakt']).")</i>";
     echo '<p>'.$fahrt['beschreibung'].'</p>
     </div>';
@@ -421,9 +421,9 @@ echo '<h2>Angemeldet</h2>';
             echo '<tr>
                 <!--td>'.$d["studityp"].'</td-->
                 <td>'.$d["pseudo"].'</td>
-                <td>'.comm_format_date($d["anday"]).'</td>
+                <td>'.comm_from_mysqlDate($d["anday"]).'</td>
                 <td>'.index_show_signupTable_destroyTypes($d["antyp"]).'</td>
-                <td>'.comm_format_date($d["abday"]).'</td>
+                <td>'.comm_from_mysqlDate($d["abday"]).'</td>
                 <td>'.index_show_signupTable_destroyTypes($d["abtyp"]).'</td>
                 <td>'.$d["comment"].'</td>
             </tr>';

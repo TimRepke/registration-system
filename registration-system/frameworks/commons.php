@@ -21,7 +21,7 @@ function comm_verbose($level, $text){
     }
 }
 
-function comm_format_date($date){
+function comm_from_mysqlDate($date){
     return date('d.m.Y', strtotime($date));
 }
 

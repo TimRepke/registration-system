@@ -84,13 +84,3 @@ function comm_admin_verbose($level, $text){
             echo $text.'<br />';
     }
 }
-
-function comm_verbose($level, $text){
-    global $config_verbose_level;
-    if($config_verbose_level >= $level) {
-        if(is_array($text)){
-            echo "<pre>"; print_r($text); echo "</pre>";
-        } else
-            echo $text.'<br />';
-    }
-}

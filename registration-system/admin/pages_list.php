@@ -6,6 +6,7 @@
  * Time: 7:09 PM
  */
 
+
 global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax;
 
 if(isset($_REQUEST['ajax'])){
@@ -84,8 +85,8 @@ $columnFunctions = array(
     "Name" => function($person) { return "<a href='mailto:".$person["mehl"]."?subject=FS-Fahrt'>".$person["forname"]." ".$person["sirname"]." (".$person["pseudo"].")</a>"; },
     "Anreisetyp" => function($person) { return $person["antyp"]; },
     "Abreisetyp" => function($person) { return $person["abtyp"]; },
-    "Anreisetag" => function($person) { return  date("d.m.Y", $person["anday"]); },
-    "Abreisetag" => function($person) { return date("d.m.Y", $person["abday"]); },
+    "Anreisetag" => function($person) { return  comm_from_mysqlDate( $person["anday"]); },
+    "Abreisetag" => function($person) { return comm_from_mysqlDate( $person["abday"]); },
     "Kommentar" => function($person) { return $person["comment"]; },
     "StudiTyp" => function($person) { return $person["studityp"]; },
     "PaidReBack" => function($person) { return ($person["paid"] ? $person["paid"] : "0") .",". ($person["repaid"] ? $person["repaid"] : "0") .",". ($person["backstepped"] ? $person["backstepped"] : "0"); }

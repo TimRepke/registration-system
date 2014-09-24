@@ -10,6 +10,7 @@ error_reporting(E_ALL || E_STRICT);
 session_start();
 
 require_once("commons_admin.php");
+require_once("../frameworks/commons.php");
 require_once("pages.php");
 require_once("../config.inc.php");
 require_once("../frameworks/medoo.php");
