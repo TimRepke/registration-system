@@ -7,14 +7,22 @@
  */
 
 global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_reisearten_0, $config_studitypen_o, $config_admin_verbose_level, $config_verbose_level, $config_essen;
-//$config_admin_verbose_level = 4;
-//$config_verbose_level = 4;
+$config_admin_verbose_level = 0;
+$config_verbose_level = 0;
 $text .= "<h1>Informationen</h1>";
 
 if(isset($_POST['note-content'])){
     comm_admin_verbose(2,"received submit");
-    $cont = $_REQUEST['note-content'];
-    $admin_db->update("fahrten",array("beschreibung"=>$cont),array("fahrt_id"=>$config_current_fahrt_id));
+    $admin_db->update("fahrten",["beschreibung" => $_REQUEST['note-content'],
+                                 "titel"        => $_REQUEST['titel'],
+                                 "von"          => $_REQUEST['von'],
+                                 "bis"          => $_REQUEST['bis'],
+                                 "ziel"         => $_REQUEST['ziel'],
+                                 "map_pin"      => $_REQUEST['us2-lat']." ".$_REQUEST['us2-lon'],
+                                 "leiter"       => $_REQUEST['leiter'],
+                                 "kontakt"      => $_REQUEST['kontakt'],
+                                 "regopen"      => $_REQUEST['regopen'] == "penis" ? 1 : 0],
+                        array("fahrt_id"=>$config_current_fahrt_id));
 }
 
 $data = $admin_db->get("fahrten", ["beschreibung", "titel", "von", "bis", "ziel", "map_pin", "leiter", "kontakt", "regopen"], array("fahrt_id"=>$config_current_fahrt_id));
@@ -46,7 +54,16 @@ section{
     width: inherit;
 }
 .formlist li{
-    margin: 15px 5px;
+    margin: 8px 10px;
+    clear: both;
+    height: 30px;
+}
+.formlist input{
+    float: right;
+    width: 300px;
+}
+.formlist label{
+    float:left;
 }
 </style> ";
 
@@ -62,26 +79,26 @@ $text .= '
                 <li><label>Ziel</label>
                     <input type="text" name="ziel" id="ziel" value="'.$data["ziel"].'" /></li>
                 <li><label>Von</label>
-                    <input type="text" name="von" id="von" value="'.$data["von"].'" />
-                <label>Bis</label>
+                    <input type="text" name="von" id="von" value="'.$data["von"].'" /></li>
+                <li><label>Bis</label>
                     <input type="text" name="bis" id="bis" value="'.$data["bis"].'" /></li>
-                <li><label>Registrierung offen</label>
-                    <input type="checkbox" name="titel" id="titel" value="'.$data["regopen"].'" /></li>
+                <li><label>Anm. offen</label>
+                    <input type="checkbox" name="regopen" id="regopen" value="penis" '.(($data["regopen"]==1) ? "checked" : "").' /></li>
                 <li><label>Leiter</label>
                     <input type="text" name="leiter" id="leiter" value="'.$data["leiter"].'" /></li>
-                <li><label>E-Mail-Adresse</label>
+                <li><label>E-Mail</label>
                     <input type="text" name="kontakt" id="kontakt" value="'.$data["kontakt"].'" /></li>
             </ul>
         </div>
         <div style="float:left">
             <label>Map Pin</label>
                 Location: <input type="text" id="us2-address" style="width: 200px"/>
-                <div id="us2" style="width: 500px; height: 400px;"></div>
-                <input type="hidden" id="us2-lat" value="'.explode(" ",$data["map_pin"])[0].'" />
-                <input type="hidden" id="us2-lon" value="'.explode(" ",$data["map_pin"])[1].'" />
+                <div id="us2" style="width: 500px; height: 315px;"></div>
+                <input type="hidden" id="us2-lat" name="us2-lat" value="'.explode(" ",$data["map_pin"])[0].'" />
+                <input type="hidden" id="us2-lon" name="us2-lon" value="'.explode(" ",$data["map_pin"])[1].'" />
                 <script>
                     $(\'#us2\').locationpicker({
-                        /*location: {latitude: 52.52, longitude: 13.38},*/
+                        location: {latitude: '.explode(" ",$data["map_pin"])[0].', longitude: '.explode(" ",$data["map_pin"])[1].'},
                         radius:0,
                         inputBinding: {
                             latitudeInput: $(\'#us2-lat\'),
