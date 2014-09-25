@@ -31,15 +31,16 @@ $config_studitypen_o = array(
 );
 $config_studitypen = array_values($config_studitypen_o);
 
-$config_essen = array(
-    "Alles",
-    "Vegetarisch",
-    "Vegan"
+$config_essen_o = array(
+    "ALLES" => "Alles",
+    "VEGE" => "Vegetarisch",
+    "VEGA" => "Vegan"
     //,"Frutarisch",
     //"Grießbrei",
     //"Carnivore",
     //"Extrawurst"
 );
+$config_essen = array_values($config_essen_o);
 
 $config_reisearten_o = array(
     "BUSBAHN"=>"gemeinsam mit Bus/Bahn",

@@ -134,6 +134,8 @@ Story.prototype.next = function(bGoBack)
 		break;
 	case 5:
 		this.initSummary();
+		this.storycanvas.stop(true, true).animate({height:bGoBack?'500px':'680px'}, 1000);
+		this.storybox.stop(true, true).animate({height:bGoBack?'500px':'680px'}, 1000);
 		this.summary.animate({left:bGoBack?'-900px':'0px'}, 1000);
 		this.travelEnd.animate({left:bGoBack?'0px':'900px'}, 1000);
 		break;
@@ -201,7 +203,10 @@ Story.prototype.initSummary = function()
 			var rowTitle = rows[rowName];
 			this.summaryTable.append('<tr><td>' + rowTitle + '</td><td id="story_summary_' + rowName + '"></td></tr>');
 		}
+		this.summaryTable.append('<tr><td>Du bist</td><td><select id="story_summary_studityp" name="studityp"><option>Ersti</option><option>Hoersti</option><option>Tutor</option></select></td></tr>');
 		this.summaryTable.append('<tr><td>Anmeldung verstecken</td><td><input id="story_summary_public" type="checkbox" name="public" value="public"/></td></tr>');
+		this.summaryTable.append('<tr><td>Captcha eingeben</td><td><input id="story_summary_captcha" type="text" name="captcha"/></td></tr>');
+		this.summaryTable.append('<tr><td align="center" colspan="2"><img src="view/captcha.php" alt=""/></td></tr>');
 		this.summaryTable.append('<tr><td colspan="2">Anmerkung</td></tr>');
 		this.summaryTable.append('<tr><td colspan="2"><textarea id="story_summary_comment" name="comment" style="width: 450px; height: 120px;"></textarea></td></tr>');
 		this.summaryTable.append('<tr><td colspan="2">Daten Ok? Dann <button onclick="storySubmit()">anmelden</button>.</td></tr>');
@@ -412,8 +417,8 @@ Story.prototype.initTravelEnd = function()
 	}
 
 	// warnings created at the end -> on top
-	this.travelEndTypeWarning = this.toolTippedStoryWarning(this.travelEndTicket, 32, 95, null, "Auf der linken Seite den<br/>Anreise Typ anklicken");
-	this.travelEndDateWarning = this.toolTippedStoryWarning(this.travelEndTicket, 32, 70, null, "Anreise Datum wählen");
+	this.travelEndTypeWarning = this.toolTippedStoryWarning(this.travelEndTicket, 32, 95, null, "Auf der linken Seite den<br/>Abreise Typ anklicken");
+	this.travelEndDateWarning = this.toolTippedStoryWarning(this.travelEndTicket, 32, 70, null, "Abreise Datum wählen");
 }
 Story.prototype.initEat = function()
 {
@@ -672,34 +677,38 @@ Story.prototype.toolTippedStoryWarning = function(page, x, y, field, toolTipText
 
 	return warning;
 }
-$(function()
+Story.prototype.test = function()
 {
-	Story.eatMap = {
-	cow:
-		"Alles",
-	cheese:
-		"Vegetarisch",
-	wheat:
-		"Vegan"
-	};
-	Story.ageMap = {
-	eighteenplus:
-		"Nein",
-	below:
-		"Ja"
-	};
-	Story.travelMapPhp = config_get_travel_types();
-	Story.travelMap = {
-	car:
-		"AUTO",
-	oeffi:
-		"BUSBAHN",
-	bike:
-		"RAD",
-	camel:
-		"INDIVIDUELL"
-	};
-});
+	function cI(objPhp, obj, error, label)
+	{
+		var i = 0;
+		objPhpLoop:
+		for (var n in objPhp)
+		{
+			++i;
+			for (var j in obj)
+			{
+				if (obj[j] == n)
+					continue objPhpLoop;
+			}
+			error.push(n + " is missing in " + label);
+		}
+		for (var n in obj)
+			--i;
+		if (i != 0)
+			error.push(label + " item count differs by " + i);
+	}
+
+	var error = [];
+	
+	cI(Story.eatMapPhp, Story.eatMap, error, "eatMap");
+	cI(Story.travelMapPhp, Story.travelMap, error, "travelMap");
+
+	if (error.length > 0)
+	{
+		alert("Der Story Modus ist nicht aktuell.\r\nBitte ohne Story-Modus fortsetzen.\r\nDazu 'Seite funktioniert nicht' anklicken.\r\n\r\n"+error.join("\r\n"));
+	}
+}
 function storySubmit()
 {
 	var formWrapper = $('<div style="display:none"/>');
@@ -716,9 +725,9 @@ function storySubmit()
 	formAppendText('sirname', story.form_variables.name);
 	formAppendText('pseudo', story.form_variables.anzeig);
 	formAppendText('mehl', story.form_variables.mehl);
-	formAppendText('studityp', 'Ersti'); // ?
-	formAppendText('virgin', Story.ageMap[story.form_variables.age] || '');
-	formAppendText('essen', Story.eatMap[story.form_variables.eat] || '');
+	formAppendText('studityp', $('#story_summary_studityp').val());
+	formAppendText('virgin', Story.ageMap[story.form_variables.age]);
+	formAppendText('essen', Story.eatMapPhp[Story.eatMap[story.form_variables.eat]]);
 	formAppendText('anday', story.form_variables.travelStartDate);
 	formAppendText('antyp', Story.travelMapPhp[Story.travelMap[story.form_variables.travelStartType]]);
 	formAppendText('abday', story.form_variables.travelEndDate);
@@ -726,6 +735,7 @@ function storySubmit()
 	formAppendText('comment', $('#story_summary_comment').val());
 	if ($('#story_summary_public').is(':checked'))
 		formAppendText('public', 'public');
+	formAppendText('captcha', $('#story_summary_captcha').val());
 	formAppendText('storySubmit', 'storySubmit');
 
 	form.submit();
@@ -737,7 +747,35 @@ $(function()
 	var storybox = $('#storybox');
 	if (storybox)
 	{
+		Story.eatMapPhp = config_get_food_types();
+		Story.eatMap = {
+		cow:
+			"ALLES",
+		cheese:
+			"VEGE",
+		wheat:
+			"VEGA"
+		};
+		Story.ageMap = {
+		eighteenplus:
+			"Nein",
+		below:
+			"Ja"
+		};
+		Story.travelMapPhp = config_get_travel_types();
+		Story.travelMap = {
+		car:
+			"AUTO",
+		oeffi:
+			"BUSBAHN",
+		bike:
+			"RAD",
+		camel:
+			"INDIVIDUELL"
+		};
+		
 		story = new Story($('#storyhead'), $('#storycanvas'), storybox);
+		story.test();
 		story.begin();
 	}
 });
