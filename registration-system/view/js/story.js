@@ -219,7 +219,7 @@ Story.prototype.initSummary = function()
 	$('#story_summary_mehl').text(this.form_variables.mehl);
 	$('#story_summary_andaytyp').text(this.form_variables.travelStartDate + ", " + Story.travelMapPhp[Story.travelMap[this.form_variables.travelStartType]]);
 	$('#story_summary_abdaytyp').text(this.form_variables.travelEndDate + ", " + Story.travelMapPhp[Story.travelMap[this.form_variables.travelEndType]]);
-	$('#story_summary_eat').text(Story.eatMap[this.form_variables.eat]);
+	$('#story_summary_eat').text(Story.eatMapPhp[Story.eatMap[this.form_variables.eat]]);
 	$('#story_summary_age').text(Story.ageMap[this.form_variables.age]);
 }
 Story.prototype.initTravelStart = function()
