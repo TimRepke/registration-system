@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL || E_STRICT);
+error_reporting(E_ALL | E_STRICT);
 
 require 'config.inc.php';
 require 'frameworks/medoo.php';
