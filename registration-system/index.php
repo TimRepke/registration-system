@@ -48,7 +48,10 @@ function index_show_content(){
             comm_verbose(1,"Formular bekommen");
             $data = index_check_form();
             if(!is_null($data))
+            {
                 index_form_to_db($data);
+                echo 'Anmeldung erfolgreich.';
+			}
         } /*elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen, Anmeldung noch offen?
             index_show_formular($fid, $_REQUEST['bid']);
         } */ else {                       // leeres Formular anzeigen
@@ -362,7 +365,8 @@ function index_show_formular_helper_input($name, $id, $value, $subtext){
 function index_show_alleFahrten(){
     global $index_db;
     comm_verbose(2,"Liste aller Fahrten (Jahr, Ziel, Zeitraum, Anz. Mitfahrer)");
-    $foos = $index_db->select("fahrten",array('fahrt_id','titel','ziel','von','bis','beschreibung','leiter','kontakt'));
+    echo '<h2>Anmeldung zur Fachschaftsfahrt</h2>';
+    $foos = $index_db->select("fahrten",array('fahrt_id','titel','ziel','von','bis','beschreibung','leiter','kontakt'), "ORDER BY fahrt_id DESC");
     foreach($foos as $foo){
         index_show_fahrtHeader($foo);
     }
