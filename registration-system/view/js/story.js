@@ -134,6 +134,8 @@ Story.prototype.next = function(bGoBack)
 		break;
 	case 5:
 		this.initSummary();
+		this.storycanvas.stop(true, true).animate({height:bGoBack?'500px':'680px'}, 1000);
+		this.storybox.stop(true, true).animate({height:bGoBack?'500px':'680px'}, 1000);
 		this.summary.animate({left:bGoBack?'-900px':'0px'}, 1000);
 		this.travelEnd.animate({left:bGoBack?'0px':'900px'}, 1000);
 		break;
@@ -201,7 +203,10 @@ Story.prototype.initSummary = function()
 			var rowTitle = rows[rowName];
 			this.summaryTable.append('<tr><td>' + rowTitle + '</td><td id="story_summary_' + rowName + '"></td></tr>');
 		}
+		this.summaryTable.append('<tr><td>Du bist</td><td><select id="story_summary_studityp" name="studityp"><option>Ersti</option><option>Hoersti</option><option>Tutor</option></select></td></tr>');
 		this.summaryTable.append('<tr><td>Anmeldung verstecken</td><td><input id="story_summary_public" type="checkbox" name="public" value="public"/></td></tr>');
+		this.summaryTable.append('<tr><td>Captcha eingeben</td><td><input id="story_summary_captcha" type="text" name="captcha"/></td></tr>');
+		this.summaryTable.append('<tr><td align="center" colspan="2"><img src="view/captcha.php" alt=""/></td></tr>');
 		this.summaryTable.append('<tr><td colspan="2">Anmerkung</td></tr>');
 		this.summaryTable.append('<tr><td colspan="2"><textarea id="story_summary_comment" name="comment" style="width: 450px; height: 120px;"></textarea></td></tr>');
 		this.summaryTable.append('<tr><td colspan="2">Daten Ok? Dann <button onclick="storySubmit()">anmelden</button>.</td></tr>');
@@ -716,7 +721,7 @@ function storySubmit()
 	formAppendText('sirname', story.form_variables.name);
 	formAppendText('pseudo', story.form_variables.anzeig);
 	formAppendText('mehl', story.form_variables.mehl);
-	formAppendText('studityp', 'Ersti'); // ?
+	formAppendText('studityp', $('#story_summary_studityp').val());
 	formAppendText('virgin', Story.ageMap[story.form_variables.age] || '');
 	formAppendText('essen', Story.eatMap[story.form_variables.eat] || '');
 	formAppendText('anday', story.form_variables.travelStartDate);
@@ -726,6 +731,7 @@ function storySubmit()
 	formAppendText('comment', $('#story_summary_comment').val());
 	if ($('#story_summary_public').is(':checked'))
 		formAppendText('public', 'public');
+	formAppendText('captcha', $('#story_summary_captcha').val());
 	formAppendText('storySubmit', 'storySubmit');
 
 	form.submit();
