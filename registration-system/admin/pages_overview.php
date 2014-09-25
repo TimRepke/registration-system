@@ -6,7 +6,7 @@
  * Time: 8:04 PM
  */
 
-global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_reisearten_0, $config_studitypen_o, $config_admin_verbose_level, $config_verbose_level, $config_essen;
+global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_reisearten_o, $config_studitypen_o, $config_admin_verbose_level, $config_verbose_level, $config_essen;
 //$config_admin_verbose_level = 4;
 //$config_verbose_level = 4;
 $text .= "<h1>Übersichtsseite</h1>";
