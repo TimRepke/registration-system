@@ -1,6 +1,6 @@
 <?php
 session_start();
-error_reporting(E_ALL | E_STRICT);
+// error_reporting(E_ALL | E_STRICT);
 
 require 'config.inc.php';
 require 'frameworks/medoo.php';
@@ -272,6 +272,21 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
         </div>';
 	if ($withStoryMode)
 	{
+		function putTypesInObject($obj)
+		{
+			$text = '';
+			$first = true;
+			foreach($obj as $key => $value)
+			{
+				if ($first)
+					$first = false;
+				else
+					$text .= ', ';
+				$text .= '"'.$key.'":"'.$value.'"';
+			}
+			return $text;
+		}
+		
 		echo '</noscript>';
 		echo '<h2>Anmeldeformular</h2>';
 		echo<<<END
@@ -291,22 +306,34 @@ END;
 		echo<<<END
  ];
 				}
+				function comm_get_food_types()
+				{
+					return [ 
+END;
+					$dates = comm_get_possible_dates($index_db, $fid);
+					foreach($dates as &$date)
+						$date = '"'.$date.'"';
+					echo implode(', ', $dates);
+		echo<<<END
+ ];
+				}
 				function config_get_travel_types()
 				{
-					return { 
+					return 
 END;
-					$first = true;
 					global $config_reisearten_o;
-					foreach($config_reisearten_o as $key => $value)
-					{
-						if ($first)
-							$first = false;
-						else
-							echo ', ';
-						echo '"'.$key.'":"'.$value.'"';
-					}
+					echo putTypesInObject($config_reisearten_o);
 		echo<<<END
- };
+;
+				}
+				function config_get_food_types()
+				{
+					return 
+END;
+					global $config_essen_o;
+					echo putTypesInObject($config_essen_o);
+		echo<<<END
+;
 				}
 			</script>
 		</div>
