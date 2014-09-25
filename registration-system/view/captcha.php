@@ -25,7 +25,7 @@ function captchaForCode($code)
 	imagefill($img, 0, 0, $bgcol);
 	for($x = 0; $x < $code_len; $x++){
 			$col = imagecolorallocate($img, rand(80, 255), rand(80, 255), rand(80, 255));
-			imagettftext($img, 40, 0, 20 + (45 * $x), 64, $col, "km.ttf", substr($code, $x, 1));
+			imagettftext($img, 40, 0, 20 + (45 * $x), 64, $col, __DIR__."/km.ttf", substr($code, $x, 1));
 	}
 
 	header('Content-Type: image/png');
