@@ -31,12 +31,12 @@ function checkIfLogin()
 
 function isValidUser($user, $password)
 {
-    global $config_admins;
+    $config_admins = readUserFile();
     foreach($config_admins as $cfg_user => $cfg_password)
     {
         if ($cfg_user != $user)
             continue;
-
+        $cfg_password = $cfg_password["pw"];
         if ($cfg_password[0] == '{')
         {
             if (strpos($cfg_password, "{SHA254}") >= 0)
@@ -55,6 +55,28 @@ function isValidUser($user, $password)
         }
     }
     return false;
+}
+
+function readUserFile(){
+    global $config_userfile;
+    $ret = [];
+
+    $handle = fopen($config_userfile, "r");
+    if ($handle) {
+        while (($line = fgets($handle)) !== false) {
+            $tmp = explode(" ", $line);
+            if(count($tmp)>=3){
+                $ret[$tmp[1]] = ["pw" => $tmp[2], "sa" => $tmp[0]];
+            }
+        }
+    } else { }
+    fclose($handle);
+    return $ret;
+}
+
+function isSuperAdmin(){
+    $config_admins = readUserFile();
+    return isset($_SESSION['loggedIn']) && isset($config_admins[$_SESSION['loggedIn']]) && $config_admins[$_SESSION['loggedIn']]['sa'] === "S";
 }
 
 function isLoggedIn()
