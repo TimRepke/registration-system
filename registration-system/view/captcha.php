@@ -1,4 +1,17 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['captcha']) || isset($_GET['renew']))
+{
+	/* $captchaCount;
+	if (!isset($_SESSION['captcha_count']))
+		$captchaCount = $_SESSION['captcha_count'] = 0;
+	else
+		$captchaCount = $_SESSION['captcha_count'] += 1; */
+
+	$_SESSION['captcha'] = generateRandomString();
+}
+$code = $_SESSION['captcha'];
 
 function captchaForCode($code)
 {
@@ -22,7 +35,7 @@ function captchaForCode($code)
 	imagepng($img);
 	imagedestroy($img);
 }
-function generateRandomString($length = 6) {
+function generateRandomString($length = 4) {
 	$characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // abcdefghijklmnopqrstuvwxyz
 	$randomString = '';
 	for ($i = 0; $i < $length; $i++) {
@@ -31,6 +44,6 @@ function generateRandomString($length = 6) {
 	return $randomString;
 }
 
-captchaForCode(generateRandomString());
+captchaForCode($code);
 
 ?>

@@ -1,4 +1,5 @@
 <?php
+session_start();
 error_reporting(E_ALL | E_STRICT);
 
 require 'config.inc.php';
@@ -124,6 +125,7 @@ function index_check_form(){
     index_check_field('public', "public", $data, $errors, 'Trollololol');
     index_check_field('virgin', array("Ja","Nein"), $data, $errors, 'Bitte Altersbereich wählen!');
     index_check_field('comment', "comment", $data, $errors, 'Trollololol');
+    index_check_field('captcha', null, $data, $errors, 'Captcha falsch eingegeben.');
 
     if($data['anday'] == $data['abday'])
         array_push($errors, "Anreisetag = Abreisetag -> Bitte prüfen!");
@@ -170,7 +172,17 @@ function index_check_field($index, $check, &$datarr, &$errarr, $errmess){
     $pushdat = "";
     comm_verbose(3,"checking ".$index);
 
-    if($check == "public"){
+    if($index == "captcha"){
+		if(isset($_SESSION['captcha']) && $_REQUEST[$index] == $_SESSION['captcha'])
+		{
+			unset($_SESSION['captcha']);
+		}
+		else
+		{
+			array_push($errarr, $errmess);
+			$datarr[$index] = "";
+		}
+	} elseif($check == "public"){
         if(isset($_REQUEST[$index])) $datarr[$index] = 0;
         else  $datarr[$index] = 1;
     } elseif(!isset($_REQUEST[$index])){
@@ -248,7 +260,10 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
     echo'
         <label>Anmerkung</label>
         <textarea id="comment" name ="comment" rows="3" cols="50">'.$bachelor["comment"].'</textarea>
-        <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">Anmeldung verstecken</span>
+        <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">Anmeldung verstecken</span><br/>
+        Captcha eingeben:<br/>
+        <img src="view/captcha.php" /><br/>
+        <input name="captcha" type="text" /><br/>
         <button type="submit" name="submit" id="submit" value="submit">Anmelden!</button>
         <div class="spacer"></div>
         </form>
