@@ -70,8 +70,18 @@ $config_superadmins = array(
 );
 */
 $config_userfile = __DIR__."/passwd/users.txt"; // relative to configfile
+$config_current_fahrt_file = __DIR__."/config_current_fahrt_id";
 
 $config_mailtag = "[FS-Fahrt] - ";
 $config_baseurl = "http://fsfahrt.repke.eu/anmeldung/registration-system/";
 
-$config_current_fahrt_id = 2;
+$config_current_fahrt_id = getCFID();
+
+function getCFID(){
+    global $config_current_fahrt_file;
+    if(file_exists( $config_current_fahrt_file ))
+        $tmp = file_get_contents($config_current_fahrt_file);
+    if(is_numeric($tmp))
+        return $tmp;
+    return 1;
+}
