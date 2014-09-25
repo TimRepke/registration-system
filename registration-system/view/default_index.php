@@ -27,7 +27,7 @@
 
 
 </div>
-<div id="footerbox">&copy; 2014 Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin.</div>
+<div id="footerbox">&copy;<?php echo date("Y"); ?> Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin.</div>
 <img src="view/graphics/studityp_5.gif" style="position: fixed;bottom: 5px;left:0px" />
 
 </div>

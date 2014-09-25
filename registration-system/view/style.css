@@ -41,6 +41,7 @@ div#headerbox {
 }
 
 div#menubox {
+  padding-top:5px;
   border-bottom: 1px solid black;
   -webkit-box-shadow: inset 0px 6px 6px 0px rgba(150, 150, 150, 0.75);
 	-moz-box-shadow:    inset 0px 6px 6px 0px rgba(150, 150, 150, 0.75);

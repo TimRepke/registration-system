@@ -1,5 +1,6 @@
 <?php
-error_reporting(E_ALL || E_STRICT);
+session_start();
+error_reporting(E_ALL | E_STRICT);
 
 require 'config.inc.php';
 require 'frameworks/medoo.php';
@@ -48,7 +49,10 @@ function index_show_content(){
             comm_verbose(1,"Formular bekommen");
             $data = index_check_form();
             if(!is_null($data))
+            {
                 index_form_to_db($data);
+                echo 'Anmeldung erfolgreich.';
+			}
         } /*elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen, Anmeldung noch offen?
             index_show_formular($fid, $_REQUEST['bid']);
         } */ else {                       // leeres Formular anzeigen
@@ -121,6 +125,7 @@ function index_check_form(){
     index_check_field('public', "public", $data, $errors, 'Trollololol');
     index_check_field('virgin', array("Ja","Nein"), $data, $errors, 'Bitte Altersbereich wählen!');
     index_check_field('comment', "comment", $data, $errors, 'Trollololol');
+    index_check_field('captcha', null, $data, $errors, 'Captcha falsch eingegeben.');
 
     if($data['anday'] == $data['abday'])
         array_push($errors, "Anreisetag = Abreisetag -> Bitte prüfen!");
@@ -167,7 +172,15 @@ function index_check_field($index, $check, &$datarr, &$errarr, $errmess){
     $pushdat = "";
     comm_verbose(3,"checking ".$index);
 
-    if($check == "public"){
+    if($index == "captcha"){
+		if(isset($_SESSION['captcha']) && isset($_REQUEST[$index]) && strtolower($_REQUEST[$index]) == strtolower($_SESSION['captcha']))
+			unset($_SESSION['captcha']);
+		else
+		{
+			array_push($errarr, $errmess);
+			$datarr[$index] = "";
+		}
+	} elseif($check == "public"){
         if(isset($_REQUEST[$index])) $datarr[$index] = 0;
         else  $datarr[$index] = 1;
     } elseif(!isset($_REQUEST[$index])){
@@ -245,7 +258,10 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
     echo'
         <label>Anmerkung</label>
         <textarea id="comment" name ="comment" rows="3" cols="50">'.$bachelor["comment"].'</textarea>
-        <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">Anmeldung verstecken</span>
+        <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">Anmeldung verstecken</span><br/>
+        Captcha eingeben:<br/>
+        <img src="view/captcha.php" /><br/>
+        <input name="captcha" type="text" /><br/>
         <button type="submit" name="submit" id="submit" value="submit">Anmelden!</button>
         <div class="spacer"></div>
         </form>
@@ -362,7 +378,8 @@ function index_show_formular_helper_input($name, $id, $value, $subtext){
 function index_show_alleFahrten(){
     global $index_db;
     comm_verbose(2,"Liste aller Fahrten (Jahr, Ziel, Zeitraum, Anz. Mitfahrer)");
-    $foos = $index_db->select("fahrten",array('fahrt_id','titel','ziel','von','bis','beschreibung','leiter','kontakt'), ["ORDER"=>"fahrt_id DESC"]);
+    echo '<h2>Anmeldung zur Fachschaftsfahrt</h2>';
+    $foos = $index_db->select("fahrten",array('fahrt_id','titel','ziel','von','bis','beschreibung','leiter','kontakt'), "ORDER BY fahrt_id DESC");
     foreach($foos as $foo){
         index_show_fahrtHeader($foo);
     }
