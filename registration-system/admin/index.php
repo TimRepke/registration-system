@@ -5,7 +5,7 @@
  * Date: 8/8/14
  * Time: 4:19 PM
  */
-error_reporting(E_ALL || E_STRICT);
+error_reporting(E_ALL | E_STRICT);
 
 session_start();
 
@@ -33,6 +33,7 @@ if (isLoggedIn())
         "Notizen" => "notes",
         "Listenexport" => "export",
         "Infos" => "infos",
+        "SA*"    => "admin",
         "Deadlink" => "dead"
     );
 
@@ -64,6 +65,10 @@ if (isLoggedIn())
             page_export(); break;
         case "infos":
             page_infos(); break;
+        case "admin":
+            if(isSuperAdmin()) page_sa();
+            else page_404($page);
+            break;
         default:
             page_404($page);
     }
