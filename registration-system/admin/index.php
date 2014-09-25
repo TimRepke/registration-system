@@ -33,8 +33,7 @@ if (isLoggedIn())
         "Notizen" => "notes",
         "Listenexport" => "export",
         "Infos" => "infos",
-        "SA*"    => "admin",
-        "Deadlink" => "dead"
+        "SA*"    => "admin"
     );
 
     $admin_db = new medoo(array(
