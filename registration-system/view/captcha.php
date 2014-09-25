@@ -36,7 +36,7 @@ function captchaForCode($code)
 	imagedestroy($img);
 }
 function generateRandomString($length = 4) {
-	$characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // abcdefghijklmnopqrstuvwxyz
+	$characters = '123456789ABCDEFHJKLMNOPQRSTUVWXYZ'; // abcdefghijklmnopqrstuvwxyz
 	$randomString = '';
 	for ($i = 0; $i < $length; $i++) {
 		$randomString .= $characters[rand(0, strlen($characters) - 1)];
