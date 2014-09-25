@@ -56,18 +56,20 @@ $config_reisearten_destroyed = array(
     "mit Schlauchboot"
 );
 
-$config_superadmins = array(
-    // username => password
-    "tim_sa"    => '{SHA-256}8013a101f26fd8dcc8c40d0eb1dcb513$c3a97d44e67564ed79a60fa0de6ea4193bb18932a8d08b5e8d664bd14b32a4f5', // broetchen
-    "manu_sa"   => '{SHA-256}12c9b021c42741545f9f01e2afd67aa2$7112be28c0c11f987de4401798a2ba041e518bb3f22bcb8cf4f3bf3f590b65b9' // mepmepmep
-);
 
+/* // deprecated:
 $config_admins = array(
     // username => password
-    "george" => "peter",
     "tim"    => '{SHA-256}8013a101f26fd8dcc8c40d0eb1dcb513$c3a97d44e67564ed79a60fa0de6ea4193bb18932a8d08b5e8d664bd14b32a4f5', // broetchen
     "manu"   => '{SHA-256}12c9b021c42741545f9f01e2afd67aa2$7112be28c0c11f987de4401798a2ba041e518bb3f22bcb8cf4f3bf3f590b65b9' // mepmepmep
+    ,"nosa"  => "{SHA-256}10be99b14c2627e8691134db9bacf456$0a7ce2973159cb2f3c971a62944fb865e5110780503513da6f6f1e16326f18a1" // murmeltier
 );
+
+$config_superadmins = array(
+    "tim", "manu"
+);
+*/
+$config_userfile = __DIR__."/passwd/users.txt"; // relative to configfile
 
 $config_mailtag = "[FS-Fahrt] - ";
 $config_baseurl = "http://fsfahrt.repke.eu/anmeldung/registration-system/";

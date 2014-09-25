@@ -43,6 +43,9 @@ function page_export(){
 function page_infos(){
     require_page("pages_infos.php");
 }
+function page_sa(){
+    require_once("pages_sa.php");
+}
 
 function require_page($page){
     if(!@file_exists($page) ) {
