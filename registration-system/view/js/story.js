@@ -677,35 +677,38 @@ Story.prototype.toolTippedStoryWarning = function(page, x, y, field, toolTipText
 
 	return warning;
 }
-$(function()
+Story.prototype.test = function()
 {
-	Story.eatMapPhp = config_get_food_types();
-	Story.eatMap = {
-	cow:
-		"ALLES",
-	cheese:
-		"VEGE",
-	wheat:
-		"VEGA"
-	};
-	Story.ageMap = {
-	eighteenplus:
-		"Nein",
-	below:
-		"Ja"
-	};
-	Story.travelMapPhp = config_get_travel_types();
-	Story.travelMap = {
-	car:
-		"AUTO",
-	oeffi:
-		"BUSBAHN",
-	bike:
-		"RAD",
-	camel:
-		"INDIVIDUELL"
-	};
-});
+	function cI(objPhp, obj, error, label)
+	{
+		var i = 0;
+		objPhpLoop:
+		for (var n in objPhp)
+		{
+			++i;
+			for (var j in obj)
+			{
+				if (obj[j] == n)
+					continue objPhpLoop;
+			}
+			error.push(n + " is missing in " + label);
+		}
+		for (var n in obj)
+			--i;
+		if (i != 0)
+			error.push(label + " item count differs by " + i);
+	}
+
+	var error = [];
+	
+	cI(Story.eatMapPhp, Story.eatMap, error, "eatMap");
+	cI(Story.travelMapPhp, Story.travelMap, error, "travelMap");
+
+	if (error.length > 0)
+	{
+		alert("Der Story Modus ist nicht aktuell.\r\nBitte ohne Story-Modus fortsetzen.\r\nDazu 'Seite funktioniert nicht' anklicken.\r\n\r\n"+error.join("\r\n"));
+	}
+}
 function storySubmit()
 {
 	var formWrapper = $('<div style="display:none"/>');
@@ -744,7 +747,35 @@ $(function()
 	var storybox = $('#storybox');
 	if (storybox)
 	{
+		Story.eatMapPhp = config_get_food_types();
+		Story.eatMap = {
+		cow:
+			"ALLES",
+		cheese:
+			"VEGE",
+		wheat:
+			"VEGA"
+		};
+		Story.ageMap = {
+		eighteenplus:
+			"Nein",
+		below:
+			"Ja"
+		};
+		Story.travelMapPhp = config_get_travel_types();
+		Story.travelMap = {
+		car:
+			"AUTO",
+		oeffi:
+			"BUSBAHN",
+		bike:
+			"RAD",
+		camel:
+			"INDIVIDUELL"
+		};
+		
 		story = new Story($('#storyhead'), $('#storycanvas'), storybox);
+		story.test();
 		story.begin();
 	}
 });
