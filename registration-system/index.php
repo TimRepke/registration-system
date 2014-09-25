@@ -274,7 +274,7 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
 	{
 		function putTypesInObject($obj)
 		{
-			$text = '';
+			$text = '{ ';
 			$first = true;
 			foreach($obj as $key => $value)
 			{
@@ -284,6 +284,7 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
 					$text .= ', ';
 				$text .= '"'.$key.'":"'.$value.'"';
 			}
+			$text .= ' }';
 			return $text;
 		}
 		
