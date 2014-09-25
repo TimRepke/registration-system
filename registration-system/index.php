@@ -173,10 +173,8 @@ function index_check_field($index, $check, &$datarr, &$errarr, $errmess){
     comm_verbose(3,"checking ".$index);
 
     if($index == "captcha"){
-		if(isset($_SESSION['captcha']) && isset($_REQUEST[$index]) && $_REQUEST[$index] == $_SESSION['captcha'])
-		{
+		if(isset($_SESSION['captcha']) && isset($_REQUEST[$index]) && strtolower($_REQUEST[$index]) == strtolower($_SESSION['captcha']))
 			unset($_SESSION['captcha']);
-		}
 		else
 		{
 			array_push($errarr, $errmess);
