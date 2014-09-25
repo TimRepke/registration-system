@@ -156,7 +156,7 @@ Story.prototype.next = function(bGoBack)
 }
 Story.prototype.initBeginButton = function()
 {
-	this.storyhead.append('<div style="cursor:pointer; text-decoration: underline" onclick="story.next()">Anmeldung starten (Story mode)</a>');
+	this.storyhead.append('<div style="text-align: center; cursor:pointer; text-decoration: underline" onclick="story.next()">Anmeldung starten (Story mode)</a>');
 }
 Story.prototype.initTravelStartAnimation = function()
 {
