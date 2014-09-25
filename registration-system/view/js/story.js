@@ -417,8 +417,8 @@ Story.prototype.initTravelEnd = function()
 	}
 
 	// warnings created at the end -> on top
-	this.travelEndTypeWarning = this.toolTippedStoryWarning(this.travelEndTicket, 32, 95, null, "Auf der linken Seite den<br/>Anreise Typ anklicken");
-	this.travelEndDateWarning = this.toolTippedStoryWarning(this.travelEndTicket, 32, 70, null, "Anreise Datum wählen");
+	this.travelEndTypeWarning = this.toolTippedStoryWarning(this.travelEndTicket, 32, 95, null, "Auf der linken Seite den<br/>Abreise Typ anklicken");
+	this.travelEndDateWarning = this.toolTippedStoryWarning(this.travelEndTicket, 32, 70, null, "Abreise Datum wählen");
 }
 Story.prototype.initEat = function()
 {
@@ -679,13 +679,14 @@ Story.prototype.toolTippedStoryWarning = function(page, x, y, field, toolTipText
 }
 $(function()
 {
+	Story.eatMapPhp = config_get_food_types();
 	Story.eatMap = {
 	cow:
-		"Alles",
+		"ALLES",
 	cheese:
-		"Vegetarisch",
+		"VEGE",
 	wheat:
-		"Vegan"
+		"VEGA"
 	};
 	Story.ageMap = {
 	eighteenplus:
@@ -722,8 +723,8 @@ function storySubmit()
 	formAppendText('pseudo', story.form_variables.anzeig);
 	formAppendText('mehl', story.form_variables.mehl);
 	formAppendText('studityp', $('#story_summary_studityp').val());
-	formAppendText('virgin', Story.ageMap[story.form_variables.age] || '');
-	formAppendText('essen', Story.eatMap[story.form_variables.eat] || '');
+	formAppendText('virgin', Story.ageMap[story.form_variables.age]);
+	formAppendText('essen', Story.eatMapPhp[Story.eatMap[story.form_variables.eat]]);
 	formAppendText('anday', story.form_variables.travelStartDate);
 	formAppendText('antyp', Story.travelMapPhp[Story.travelMap[story.form_variables.travelStartType]]);
 	formAppendText('abday', story.form_variables.travelEndDate);
