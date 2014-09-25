@@ -45,13 +45,16 @@ function index_show_content(){
 
         // --- Formular
         // storySubmit wg JQuery .submit() auf forms geht sonst nicht
-        if(isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit'])){ // Formular auswerten
+        if(isset($_REQUEST['success'])) {
+            echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung war erfolgreich.</div>';
+		} elseif(isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit'])){ // Formular auswerten
             comm_verbose(1,"Formular bekommen");
             $data = index_check_form();
             if(!is_null($data))
             {
                 index_form_to_db($data);
-                echo 'Anmeldung erfolgreich.';
+                header("Location: ?fid=".$fid."&success");
+                die();
 			}
         } /*elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen, Anmeldung noch offen?
             index_show_formular($fid, $_REQUEST['bid']);
@@ -259,9 +262,10 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
         <label>Anmerkung</label>
         <textarea id="comment" name ="comment" rows="3" cols="50">'.$bachelor["comment"].'</textarea>
         <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">Anmeldung verstecken</span><br/>
-        Captcha eingeben:<br/>
+        <div style="clear:both"></div>';
+    index_show_formular_helper_input("Captcha eingeben","captcha","","");
+    echo '
         <img src="view/captcha.php" /><br/>
-        <input name="captcha" type="text" /><br/>
         <button type="submit" name="submit" id="submit" value="submit">Anmelden!</button>
         <div class="spacer"></div>
         </form>
