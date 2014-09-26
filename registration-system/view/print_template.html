@@ -49,11 +49,35 @@
 
             table {
                 border-collapse: collapse;
+                border-spacing: 0;
             }
 
             .dattable table, .dattable th, .dattable td {
                 border: 1px solid black;
                 vertical-align: top;
+            }
+
+            .graycell{
+                background-color: transparent;
+                overflow: hidden;
+                z-index: 1;
+                border-right: 0;
+                border-bottom: 0;
+            }
+            .graycell:before{
+                content: "";
+                padding: 0;
+                height: 1px;
+                line-height: 1px;
+                width: 1px;
+                margin: -4px -994px -996px -6px;
+                display: block;
+                border: 0;
+                z-index: -1;
+                position:relative;
+                top: -500px;
+                border-top: 999px solid #d3d3d3;
+                border-left: 999px solid #d3d3d3;;
             }
 
         }
