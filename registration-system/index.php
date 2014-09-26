@@ -109,13 +109,11 @@ function index_form_to_db($data){
     if (!$res || $res[0]['regopen'] != "1")
 		return false;
 
-	$index_db->exec("LOCK TABLES fahrten WRITE"); // count should not be calculated in two scripts at once
+	$index_db->exec("LOCK TABLES fahrten, bachelor WRITE"); // count should not be calculated in two scripts at once
 
 	$cnt = $index_db->count("bachelor", ["AND" => ["backstepped" => NULL, "fahrt_id" => $config_current_fahrt_id]]);
 
 	$insertOk = $cnt < $res[0]['max_bachelor'];
-
-	die("OK");
 
 	if ($cnt+1 >= $res[0]['max_bachelor']) // registration is full already or after the following insert
 		$index_db->update("fahrten", ["regopen" => 0], ["fahrt_id" => $config_current_fahrt_id]);
