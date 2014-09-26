@@ -65,7 +65,11 @@ function index_show_content(){
         } /*elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen, Anmeldung noch offen?
             index_show_formular($fid, $_REQUEST['bid']);
         } */ else {                       // leeres Formular anzeigen
-			if ($index_db->has('fahrten', ['AND' => ['fahrt_id'=>$fid, 'regopen'=>1]]))
+            $cnt = $index_db->count("bachelor", ["AND"=>
+                ["backstepped" => NULL,
+                    "fahrt_id"    => $fid]]);
+            $max = $index_db->get("fahrten", "max_bachelor", ["fahrt_id" => $fid]);
+			if ($index_db->has('fahrten', ['AND' => ['fahrt_id'=>$fid, 'regopen'=>1]]) && $cnt < $max)
 				index_show_formular($fid);
 			else
 			{
@@ -95,7 +99,7 @@ function show_content(){
  * @param $data
  */
 function index_form_to_db($data){
-    global $index_db, $config_baseurl, $lang_regmail, $config_current_fahrt_id;
+    global $index_db, $config_baseurl, $lang_regmail;
 
 	// === prepare data to insert ===
     $data['version'] = 1;
@@ -105,13 +109,13 @@ function index_form_to_db($data){
     $data['abday'] = date('Y-m-d', DateTime::createFromFormat('d.m.Y',$data['abday'])->getTimestamp());
 
 	// === check regstration full ===
-    $res = $index_db->get("fahrten", ["regopen", "max_bachelor"], ["fahrt_id" => $config_current_fahrt_id]);
+    $res = $index_db->get("fahrten", ["regopen", "max_bachelor"], ["fahrt_id" => $data['fahrt_id']]);
     if (!$res || $res['regopen'] != "1")
 		return false;
 
 	$index_db->exec("LOCK TABLES fahrten, bachelor WRITE"); // count should not be calculated in two scripts at once
 
-	$cnt = $index_db->count("bachelor", ["AND" => ["backstepped" => NULL, "fahrt_id" => $config_current_fahrt_id]]);
+	$cnt = $index_db->count("bachelor", ["AND" => ["backstepped" => NULL, "fahrt_id" => $data['fahrt_id']]]);
 
 	$insertOk = $cnt < $res['max_bachelor'];
 
@@ -125,7 +129,7 @@ function index_form_to_db($data){
 		return false; // full
 
 	// === notify success ===
-    $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$config_current_fahrt_id));
+    $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$data['fahrt_id']));
     $mail = comm_get_lang("lang_regmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['bachelor_id'],
                                                  "{{organisator}}" => $from['leiter']));
     comm_send_mail($index_db, $data['mehl'], $mail, $from['kontakt']);
