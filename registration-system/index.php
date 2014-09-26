@@ -47,13 +47,18 @@ function index_show_content(){
         // storySubmit wg JQuery .submit() auf forms geht sonst nicht
         if(isset($_REQUEST['success'])) {
             echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung war erfolgreich.</div>';
+        } elseif(isset($_REQUEST['full'])) {
+			echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldegrenze wurde leider erreicht.</div>';
+			echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Bitte ein Auge offen halten, falls Plätze frei werden.</div>';
 		} elseif(isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit'])){ // Formular auswerten
             comm_verbose(1,"Formular bekommen");
             $data = index_check_form();
             if(!is_null($data))
             {
-                index_form_to_db($data);
-                header("Location: ?fid=".$fid."&success");
+                if (index_form_to_db($data))
+					header("Location: ?fid=".$fid."&success");
+				else
+					header("Location: ?fid=".$fid."&full");
                 die();
 			}
         } /*elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen, Anmeldung noch offen?
