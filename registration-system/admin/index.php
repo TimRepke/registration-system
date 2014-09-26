@@ -19,6 +19,8 @@ $template = file_get_contents("../view/admin_template.html");
 $title = "FSFahrt - Admin Panel";
 $navigation = "";
 $headers = "";
+$header  = "";
+$footer  = "";
 $text = "";
 $ajax = "";
 
@@ -84,6 +86,8 @@ else{
     $rep = ["{headers}" => $headers,
             "{text}"    => $text,
             "{navigation}" => $navigation,
-            "{title}"   => $title];
+            "{title}"   => $title,
+            "{header}"  => $header,
+            "{footer}"  => $footer];
     echo str_replace(array_keys($rep), array_values($rep), $template);
 }

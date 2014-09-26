@@ -6,7 +6,7 @@
  * Time: 10:05 PM
  */
 
-global $config_studitypen, $config_reisearten, $config_essen, $admin_db, $config_current_fahrt_id, $config_admin_verbose_level, $config_verbose_level, $text, $headers, $ajax;
+global $config_studitypen, $config_reisearten, $config_essen, $admin_db, $config_current_fahrt_id, $config_admin_verbose_level, $config_verbose_level, $text, $headers, $ajax, $header, $footer;
 
 $text .= '
 <ul>
@@ -35,11 +35,10 @@ if(isset($_REQUEST['ex'])){
 }
 
 function genRefRa(){
-    global $text;
+    global $text, $header, $footer;
     printTable(["col 1", "vol2"], [["a","b"],["c","d"]]);
-    $text .= "
-        <div class='footer'>TESTFOOT</div>
-        <div class='header'>TESTHEAD</div>";
+    $header = "Testhead";
+    $footer = "Testfoot";
 }
 
 function genTreff(){
