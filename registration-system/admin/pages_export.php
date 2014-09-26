@@ -37,7 +37,7 @@ if(isset($_REQUEST['ex'])){
 function genRefRa(){
     global $header, $footer, $admin_db, $config_current_fahrt_id;
 
-    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id]);
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id, "ORDER" => "forname ASC"]);
     $tabdata = [];
     foreach($people as $p){
         array_push($tabdata, [$p['forname']." ".$p['sirname'],"",""]);
@@ -67,13 +67,46 @@ ausgelegten Geld für die Fachschaftsfahrt auf das Konto des/der Finanzverantwor
 }
 
 function genTreff(){
+    global $header, $footer, $admin_db, $config_current_fahrt_id;
 
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id, "ORDER" => "forname ASC"]);
+    $ttabdata = [];
+    foreach($people as $p){
+        array_push($ttabdata, $p['forname']." ".$p['sirname']);
+    }
+    // leerfelder (just in case)
+    for($run = 0; $run < 8; $run++){
+        array_push($ttabdata, "&nbsp;");
+    }
+
+    $tabdata = [];
+    // transpose long list to have multiple columns
+    for($run = 0; $run < count($ttabdata); $run++){
+        $c1 = (isset($ttabdata[$run]) ? $ttabdata[$run] : "&nbsp;");
+        $run++;
+        $c2 = (isset($ttabdata[$run]) ? $ttabdata[$run] : "&nbsp;");
+        $run++;
+        $c3 = (isset($ttabdata[$run]) ? $ttabdata[$run] : "&nbsp;");
+        array_push($tabdata, [$c1, "&nbsp;", "", $c2, "&nbsp;", "", $c3, "&nbsp;"]);
+    }
+
+    $tabconf = ["colwidth" => ["20%", "10pt", "1px; margin:0; padding:0; font-size:1pt", "20%", "10pt", "1px; margin:0; padding:0; font-size:1pt", "20%", "10pt"],
+        "cellheight" => "25pt"];
+
+    printTable(["Name", "X", "", "Name", "X", "", "Name", "X"], $tabdata, $tabconf);
+
+    $data = getFahrtInfo();
+
+    $header = "
+<h1>Anwesenheitsliste Treffpunkt</h1>
+Liste aller Teilnehmer, die angegeben haben, gemeinsam mit Bus/Bahn anzureisen";
+    $footer = "Anwesenheitsliste - ".$data['titel'];
 }
 
 function genKonto(){
     global $header, $footer, $admin_db, $config_current_fahrt_id;
 
-    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id]);
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id, "ORDER" => "forname ASC"]);
     $tabdata = [];
     foreach($people as $p){
         array_push($tabdata, [$p['forname']." ".$p['sirname'],"&nbsp;","&nbsp;","&nbsp;","&nbsp;"]);
@@ -99,7 +132,33 @@ Diese Liste verbleibt bei dem/der Fahrtverantwortlichen <u>".$data['leiter']."</
 }
 
 function genUnter(){
+    global $header, $footer, $admin_db, $config_current_fahrt_id;
 
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id, "ORDER" => "forname ASC"]);
+    $tabdata = [];
+    foreach($people as $p){
+        array_push($tabdata, [$p['forname']." ".$p['sirname'],"&nbsp;","&nbsp;"]);
+    }
+    // leerfelder (just in case)
+    for($run = 0; $run < 8; $run++){
+        array_push($tabdata, ["&nbsp;","&nbsp;","&nbsp;"]);
+    }
+
+    $tabconf = ["colwidth" => ["20%", "25%", "55%"],
+        "cellheight" => "25pt"];
+
+    printTable(["Name", "Unterschrift", "&nbsp;"], $tabdata, $tabconf);
+
+    $data = getFahrtInfo();
+
+    $header = "
+<h1>TeilnehmerInnenliste</h1>
+<h2>Fachschaftsfahrt</h2>
+Fachschaft: <u>Informatik</u><br />
+Datum der Fahrt: <u>".comm_from_mysqlDate($data['von'])." - ".comm_from_mysqlDate($data['bis'])."</u><br />
+Verantwortlicher: <u>".$data['leiter']."</u><br />
+Liste aller Teilnehmer der Fachschaftsfahrt in der Einrichtung <u>".$data['ziel']."</u>";
+    $footer = "TeilnehmerInnenliste - ".$data['titel'];
 }
 
 function printTable($headers, $data, $tabconf = []){
@@ -109,8 +168,11 @@ function printTable($headers, $data, $tabconf = []){
     <table class='dattable'>
         <thead>
             <tr>";
-                foreach($headers as $h)
-                    $text.="<th>".$h."</th>";
+                $cell = 0;
+                foreach($headers as $h){
+                    $text.="<th".cellStyle($tabconf, $cell).">".$h."</th>";
+                    $cell++;
+                }
     $text.="
             </tr>
         </thead>
