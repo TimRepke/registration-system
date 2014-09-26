@@ -71,7 +71,31 @@ function genTreff(){
 }
 
 function genKonto(){
+    global $header, $footer, $admin_db, $config_current_fahrt_id;
 
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id]);
+    $tabdata = [];
+    foreach($people as $p){
+        array_push($tabdata, [$p['forname']." ".$p['sirname'],"&nbsp;","&nbsp;","&nbsp;","&nbsp;"]);
+    }
+    // leerfelder (just in case)
+    for($run = 0; $run < 8; $run++){
+        array_push($tabdata, ["&nbsp;","&nbsp;","&nbsp;","&nbsp;","&nbsp;"]);
+    }
+
+    $tabconf = ["colwidth" => ["25%", "30%", "25%", "15%", "5%"],
+        "cellheight" => "35pt",
+        "class" => [3=>"graycell", 4=>"graycell"]];
+
+    printTable(["Name", "Kontonummer/IBAN", "Bankleitzahl/BIC", "Betrag*", "Erl*"], $tabdata, $tabconf);
+
+    $data = getFahrtInfo();
+
+    $header = "
+<h1>Kontodaten für Rücküberweisung</h1>
+Diese Liste verbleibt bei dem/der Fahrtverantwortlichen <u>".$data['leiter']."</u> und wird benötigt um die Förderung und den Differenzbetrag nach der Fahrt zurück zu überweisen.<br />
+<b>Graue/mit Sternchen gekennzeichnete Fehler freilassen</b> (Trolle bekommen kein Geld!!)";
+    $footer = "Kontodaten (Rücküberweisung) - ".$data['titel'];
 }
 
 function genUnter(){
@@ -90,7 +114,7 @@ function printTable($headers, $data, $tabconf = []){
     $text.="
             </tr>
         </thead>
-        <tbody>";for($i=0; $i<10; $i++){ // FIXME entfernen! nur zu Testzwecken...
+        <tbody>";
             foreach($data as $dr){
                 $text .= "<tr>";
                     $cell = 0;
@@ -99,7 +123,7 @@ function printTable($headers, $data, $tabconf = []){
                         $cell++;
                     }
                 $text .= "</tr>";
-            }}
+            }
     $text .="
         </tbody>
     </table>";
@@ -107,13 +131,16 @@ function printTable($headers, $data, $tabconf = []){
 
 function cellStyle($tabconf, $cell){
     $ret = "";
-    if(isset($tabconf['cellheight']) || isset($tabconf['colwidth'])){
+    if(isset($tabconf['cellheight']) || isset($tabconf['colwidth']) || isset($tabconf['class'])){
         $ret .= " style='";
         if(isset($tabconf['cellheight']))
             $ret .= "height:".$tabconf['cellheight'].";";
         if(isset($tabconf['colwidth']) && isset($tabconf['colwidth'][$cell]))
             $ret .= "width:".$tabconf['colwidth'][$cell].";";
         $ret .= "'";
+
+        if(isset($tabconf['class']) && isset($tabconf['class'][$cell]))
+            $ret .= " class='".$tabconf['class'][$cell]."'";
     }
     return $ret;
 }
