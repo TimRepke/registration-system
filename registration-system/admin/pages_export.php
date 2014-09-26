@@ -35,10 +35,35 @@ if(isset($_REQUEST['ex'])){
 }
 
 function genRefRa(){
-    global $text, $header, $footer;
-    printTable(["col 1", "vol2"], [["a","b"],["c","d"]]);
-    $header = "Testhead";
-    $footer = "Testfoot";
+    global $header, $footer, $admin_db, $config_current_fahrt_id;
+
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id]);
+    $tabdata = [];
+    foreach($people as $p){
+        array_push($tabdata, [$p['forname']." ".$p['sirname'],"",""]);
+    }
+    // leerfelder (just in case)
+    for($run = 0; $run < 8; $run++){
+        array_push($tabdata, ["&nbsp;","&nbsp;","&nbsp;"]);
+    }
+
+    $tabconf = ["colwidth" => ["20%", "55%", "25%"],
+                "cellheight" => "35pt"];
+
+    printTable(["Name", "Anschrift", "Unterschrift"], $tabdata, $tabconf);
+
+    $data = getFahrtInfo();
+
+    $header = "
+<h1>TeilnehmerInnenliste und Einverständniserklärung</h1>
+<h2>Fachschaftsfahrt</h2>
+Fachschaft: <u>Informatik</u><br />
+Ziel: <u>".$data['ziel']."</u><br />
+Datum der Fahrt: <u>".comm_from_mysqlDate($data['von'])." - ".comm_from_mysqlDate($data['bis'])."</u><br />
+Hiermit erklären wir uns mit unserer Unterschrift damit einverstanden, dass das von uns
+ausgelegten Geld für die Fachschaftsfahrt auf das Konto des/der Finanzverantwortlichen/r,
+<u>".$data['leiter']."</u>, überwiesen wird.";
+    $footer = "Einverstädniserklärung - ".$data['titel'];
 }
 
 function genTreff(){
@@ -53,11 +78,11 @@ function genUnter(){
 
 }
 
-function printTable($headers, $data){
+function printTable($headers, $data, $tabconf = []){
     global $text;
 
     $text.="
-    <table>
+    <table class='dattable'>
         <thead>
             <tr>";
                 foreach($headers as $h)
@@ -65,14 +90,35 @@ function printTable($headers, $data){
     $text.="
             </tr>
         </thead>
-        <tbody>";for($i=0; $i<300; $i++){
+        <tbody>";for($i=0; $i<10; $i++){ // FIXME entfernen! nur zu Testzwecken...
             foreach($data as $dr){
                 $text .= "<tr>";
-                    foreach($dr as $dc)
-                        $text .= "<td>".$dc."</td>";
+                    $cell = 0;
+                    foreach($dr as $dc){
+                        $text .= "<td".cellStyle($tabconf,$cell).">".$dc."</td>";
+                        $cell++;
+                    }
                 $text .= "</tr>";
             }}
     $text .="
         </tbody>
     </table>";
+}
+
+function cellStyle($tabconf, $cell){
+    $ret = "";
+    if(isset($tabconf['cellheight']) || isset($tabconf['colwidth'])){
+        $ret .= " style='";
+        if(isset($tabconf['cellheight']))
+            $ret .= "height:".$tabconf['cellheight'].";";
+        if(isset($tabconf['colwidth']) && isset($tabconf['colwidth'][$cell]))
+            $ret .= "width:".$tabconf['colwidth'][$cell].";";
+        $ret .= "'";
+    }
+    return $ret;
+}
+
+function getFahrtInfo(){
+    global $config_current_fahrt_id, $admin_db;
+    return $admin_db->get("fahrten", ["beschreibung", "titel", "von", "bis", "ziel", "map_pin", "leiter", "kontakt", "regopen", "max_bachelor"], array("fahrt_id"=>$config_current_fahrt_id));
 }
