@@ -243,7 +243,11 @@ Story.prototype.initTravelStart = function()
 		$(this).stop(true, true).effect("highlight");
 	});
 
-	this.travelStartDate = this.addComboBox(this.travelStartTicket, "Datum", "anday", [""].concat(comm_get_possible_dates()), 115, 70); // @TODO: get date options from php
+	var possible_dates = comm_get_possible_dates();
+	possible_dates.pop(); // remove last
+	possible_dates.unshift(""); // push_front(...)
+
+	this.travelStartDate = this.addComboBox(this.travelStartTicket, "Datum", "anday", possible_dates, 115, 70); // @TODO: get date options from php
 	this.travelStartTicket.append('<div style="position: absolute; left: 65px; top: 95px">Typ</div>');
 	this.travelStartTicket.append('<div style="position: absolute; left: 115px; top: 95px" id="travelStartType">------</div>');
 	this.travelStartDate.change(function()
@@ -373,7 +377,11 @@ Story.prototype.initTravelEnd = function()
 		$(this).stop(true, true).effect("highlight");
 	});
 
-	this.travelEndDate = this.addComboBox(this.travelEndTicket, "Datum", "abday", [""].concat(comm_get_possible_dates()), 115, 70); // @TODO: get date options from php
+	var possible_dates = comm_get_possible_dates();
+	possible_dates.shift(); // remove first
+	possible_dates.unshift(""); // push_front(...)
+
+	this.travelEndDate = this.addComboBox(this.travelEndTicket, "Datum", "abday", possible_dates, 115, 70); // @TODO: get date options from php
 	this.travelEndTicket.append('<div style="position: absolute; left: 65px; top: 95px">Typ</div>');
 	this.travelEndTicket.append('<div style="position: absolute; left: 115px; top: 95px" id="travelEndType">------</div>');
 	this.travelEndDate.change(function()
