@@ -53,6 +53,7 @@ if(file_exists($config_userfile))
     $usas = file_get_contents($config_userfile);
 $text .= '<h2>Nutzer bearbeiten</h2>
 ACHTUNG: Tippfehler können Systemfunktionalität beeinträchtigen! <i>Format: {N|S}⎵USERNAME⎵PASSWORD⎵RANDOMSTUFF</i><br />
+Captain Obvious: "Nutzername darf kein Leerzeichen enthalten!"<br />
 <a href="../passwd/index.html">Passwort-gen tool</a> (an Organisator weiterleiten, der schickt dann Passwort hash zurück)<br />
 <form method="POST">
     <textarea rows="8" cols="130" name="users" id="users">'.$usas.'</textarea><br />

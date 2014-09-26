@@ -1,30 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html moznomarginboxes mozdisallowselectionprint>
 <head>
     <title>{title}</title>
     {headers}
     <style type="text/css">
         @media print {
+            html, body{
+                margin: 0;
+                padding: 0;
+                border: 0;
+            }
             div.footer {
                 position: fixed;
                 bottom: 0;
+                display: block;
+                margin-top: 1em;
             }
 
             div.header {
                 position: fixed;
                 top: 0;
+                display: block;
+                margin-bottom: 2em;
+            }
+
+            th.header{
+                width: 100%;
+                border-bottom: 1px dashed black;
             }
 
             thead{
                 display: table-header-group;
             }
 
+            #footer {
+                display: block;
+                position: fixed;
+                bottom: 0;
+                border-top: 1px dashed #000000;
+            }
 
         }
+
+        /* not supported in FF yet :( */
+        /*
+        @page :first, :left, :right{
+            margin: 0;
+            padding: 0;
+        }
+        */
 
     </style>
 </head>
 <body>
-{text}
+
+<!-- Jaaaa... Tabellenfoo! Aber anders geht es einfach nicht! -->
+<table width="100%">
+    <thead>
+        <tr>
+            <th class="header">{header}</th>
+        </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <td width="100%">
+            <table width="100%">
+                <tr>
+                    <td><br>&nbsp;</td>
+                </tr>
+            </table>
+    </tfoot>
+    <tbody>
+    <tr>
+        <td width="100%">
+
+            {text}
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<table id="footer" width="100%">
+    <tr>
+        <td width="100%">
+            {footer}
+        </td>
+    </tr>
+</table>
 </body>
 </html>
