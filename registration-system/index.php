@@ -48,7 +48,8 @@ function index_show_content(){
         if(isset($_REQUEST['success'])) {
             echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung war erfolgreich.</div>';
         } elseif(isset($_REQUEST['full'])) {
-			echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldegrenze wurde leider erreicht.</div>';
+			echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Anmeldung leider fehlgeschlagen.</div>';
+			echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Die Anmeldegrenze wurde leider erreicht.</div>';
 			echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Bitte ein Auge offen halten, falls Plätze frei werden.</div>';
 		} elseif(isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit'])){ // Formular auswerten
             comm_verbose(1,"Formular bekommen");
