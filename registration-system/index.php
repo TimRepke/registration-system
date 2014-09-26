@@ -64,7 +64,14 @@ function index_show_content(){
         } /*elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen, Anmeldung noch offen?
             index_show_formular($fid, $_REQUEST['bid']);
         } */ else {                       // leeres Formular anzeigen
-            index_show_formular($fid);
+			if ($index_db->has('fahrten', ['AND' => ['fahrt_id'=>$fid, 'regopen'=>1]]))
+				index_show_formular($fid);
+			else
+			{
+				echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung wurde geschlossen.</div>';
+				echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Falls die Fahrt noch bevor steht:</div>';
+				echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Ein Auge offen halten, falls Plätze frei werden.</div>';
+			}	
         }
 
         // --- Liste der Anmeldungen
