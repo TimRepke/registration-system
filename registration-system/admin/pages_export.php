@@ -37,7 +37,7 @@ if(isset($_REQUEST['ex'])){
 function genRefRa(){
     global $header, $footer, $admin_db, $config_current_fahrt_id;
 
-    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id, "ORDER" => "forname ASC"]);
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["AND" => ["fahrt_id"=>$config_current_fahrt_id, "backstepped" => NULL], "ORDER" => "forname ASC"]);
     $tabdata = [];
     foreach($people as $p){
         array_push($tabdata, [$p['forname']." ".$p['sirname'],"",""]);
@@ -67,9 +67,9 @@ ausgelegten Geld für die Fachschaftsfahrt auf das Konto des/der Finanzverantwor
 }
 
 function genTreff(){
-    global $header, $footer, $admin_db, $config_current_fahrt_id;
+    global $header, $footer, $admin_db, $config_current_fahrt_id, $config_reisearten_o;
 
-    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id, "ORDER" => "forname ASC"]);
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["AND" => ["fahrt_id"=>$config_current_fahrt_id, "backstepped" => NULL, "antyp" => $config_reisearten_o['BUSBAHN']], "ORDER" => "forname ASC"]);
     $ttabdata = [];
     foreach($people as $p){
         array_push($ttabdata, $p['forname']." ".$p['sirname']);
@@ -106,7 +106,7 @@ Liste aller Teilnehmer, die angegeben haben, gemeinsam mit Bus/Bahn anzureisen";
 function genKonto(){
     global $header, $footer, $admin_db, $config_current_fahrt_id;
 
-    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id, "ORDER" => "forname ASC"]);
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["AND" => ["fahrt_id"=>$config_current_fahrt_id, "backstepped" => NULL], "ORDER" => "forname ASC"]);
     $tabdata = [];
     foreach($people as $p){
         array_push($tabdata, [$p['forname']." ".$p['sirname'],"&nbsp;","&nbsp;","&nbsp;","&nbsp;"]);
@@ -134,7 +134,7 @@ Diese Liste verbleibt bei dem/der Fahrtverantwortlichen <u>".$data['leiter']."</
 function genUnter(){
     global $header, $footer, $admin_db, $config_current_fahrt_id;
 
-    $people = $admin_db->select('bachelor',["forname", "sirname"], ["fahrt_id"=>$config_current_fahrt_id, "ORDER" => "forname ASC"]);
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["AND" => ["fahrt_id"=>$config_current_fahrt_id, "backstepped" => NULL], "ORDER" => "forname ASC"]);
     $tabdata = [];
     foreach($people as $p){
         array_push($tabdata, [$p['forname']." ".$p['sirname'],"&nbsp;","&nbsp;"]);
