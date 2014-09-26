@@ -83,16 +83,40 @@ function show_content(){
  */
 function index_form_to_db($data){
     global $index_db, $config_baseurl, $lang_regmail, $config_current_fahrt_id;
+
+	// === prepare data to insert ===
     $data['version'] = 1;
     $data['bachelor_id'] = comm_generate_key($index_db, "bachelor", "bachelor_id", array('fahrt_id'=>$data['fahrt_id']));
     $data['anm_time'] = time();
     $data['anday'] = date('Y-m-d', DateTime::createFromFormat('d.m.Y',$data['anday'])->getTimestamp());
     $data['abday'] = date('Y-m-d', DateTime::createFromFormat('d.m.Y',$data['abday'])->getTimestamp());
-    $index_db->insert("bachelor", $data);
+
+	// === check regstration full ===
+    $res = $index_db->select("fahrten", ["regopen", "max_bachelor"], ["fahrt_id" => $config_current_fahrt_id]);
+    if (!$regopen)
+		return false;
+
+	$index_db->exec("LOCK TABLES fahrten WRITE"); // count should not be calculated in two scripts at once
+	$cnt = $index_db->count("bachelor", ["AND"=> ["backstepped" => NULL, "fahrt_id" => $config_current_fahrt_id]]);
+
+	$insertOk = $cnt < $res['max_bachelor'];
+
+	if ($cnt+1 >= $res['max_bachelor']) // registration is full already or after the following insert
+		$index_db->update("fahrten", ["regopen" => 0], ["fahrt_id" => $config_current_fahrt_id]);
+
+	if ($insertOk)
+		$index_db->insert("bachelor", $data);
+    $index_db->exec("UNLOCK TABLES"); // insert is done now, count may be recalculated in other threads
+	if (!$insertOk)
+		return false; // full
+
+	// === notify success ===
     $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$config_current_fahrt_id));
     $mail = comm_get_lang("lang_regmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['bachelor_id'],
                                                  "{{organisator}}" => $from['leiter']));
     comm_send_mail($index_db, $data['mehl'], $mail, $from['kontakt']);
+    
+    return true;
 }
 
 /**
