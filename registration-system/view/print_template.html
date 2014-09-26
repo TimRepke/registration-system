@@ -4,34 +4,34 @@
     <title>{title}</title>
     {headers}
     <style type="text/css">
-        @media print {
-            html, body{
-                margin: 0;
-                padding: 0;
-                border: 0;
-            }
-            div.footer {
-                position: fixed;
-                bottom: 0;
-                display: block;
-                margin-top: 1em;
-            }
+        html, body{
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-family:Verdana,Helvetica,sans-serif;
+            font-size:12pt;
+        }
 
-            div.header {
-                position: fixed;
-                top: 0;
-                display: block;
-                margin-bottom: 2em;
+        @media print, screen {
+            h1{
+                font-size: 14pt;
+            }
+            h2{
+                font-size: 13pt;
             }
 
             th.header{
                 width: 100%;
                 border-bottom: 1px dashed black;
+                text-decoration: none;
+                font-weight: normal;
+                text-align: left;
             }
 
             thead{
                 display: table-header-group;
             }
+
 
             #footer {
                 display: block;
@@ -39,16 +39,28 @@
                 bottom: 0;
                 border-top: 1px dashed #000000;
             }
+            #footer:after {
+                counter-increment: page;
+                content: "Seite" counter(page);
+                right: 0;
+                top: 0pt;
+                position: absolute;
+            }
+
+            table {
+                border-collapse: collapse;
+            }
+
+            .dattable table, .dattable th, .dattable td {
+                border: 1px solid black;
+                vertical-align: top;
+            }
 
         }
 
-        /* not supported in FF yet :( */
-        /*
-        @page :first, :left, :right{
-            margin: 0;
-            padding: 0;
+        @page {
+            margin: 3em;
         }
-        */
 
     </style>
 </head>
@@ -72,7 +84,7 @@
     </tfoot>
     <tbody>
     <tr>
-        <td width="100%">
+        <td width="100%" style="padding-top: 10pt">
 
             {text}
         </td>
