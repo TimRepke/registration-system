@@ -16,6 +16,7 @@ require_once("../config.inc.php");
 require_once("../frameworks/medoo.php");
 
 $template = file_get_contents("../view/admin_template.html");
+$title = "FSFahrt - Admin Panel";
 $navigation = "";
 $headers = "";
 $text = "";
@@ -79,5 +80,10 @@ else
 
 if(isset($_REQUEST['ajax']))
     echo $ajax;
-else
-    echo str_replace("{headers}", $headers, str_replace("{text}", $text, str_replace("{navigation}", $navigation, $template)));
+else{
+    $rep = ["{headers}" => $headers,
+            "{text}"    => $text,
+            "{navigation}" => $navigation,
+            "{title}"   => $title];
+    echo str_replace(array_keys($rep), array_values($rep), $template);
+}
