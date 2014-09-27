@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Sep 27, 2014 at 06:29 PM
+-- Generation Time: Sep 27, 2014 at 06:35 PM
 -- Server version: 5.5.38-0ubuntu0.14.04.1
 -- PHP Version: 5.5.14
 
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `fahrten` (
 
 INSERT INTO `fahrten` (`fahrt_id`, `titel`, `ziel`, `von`, `bis`, `regopen`, `beschreibung`, `leiter`, `kontakt`, `map_pin`, `max_bachelor`) VALUES
 (1, 'Fachschaftsfahrt Winter 2012', 'KiEZ Inselparadies am Schwielowsee bei Werder', '2012-10-26', '2012-10-28', 0, 'Alle Informationen zur Fahrt im <a rel="nofollow" target="_blank" href="http://wiki.fachschaft.informatik.hu-berlin.de/wiki/Fachschaftsfahrt_Winter_2012">Wiki</a>', 'Tim Repke', 'nein@nein.de', ' ', 2),
-(2, 'Fachschaftsfahrt Winter 2013', 'KiEZ Frauensee bei Gräbendorf', '2013-10-25', '2013-10-27', 1, '<pre>Erstsemester und Fachschaftsfahrt im Wintersemester 13/14\r\nAlle Informationen im <a rel="nofollow" target="_blank" href="http://wiki.fachschaft.informatik.hu-berlin.de/wiki/Fachschaftsfahrt_Winter_2013">Wiki</a>\r\n\r\nAdresse:\r\nKiEZ Frauensee\r\nWeg zum Frauensee 1\r\n15754 Heidesee\r\nWWW: <a rel="nofollow" target="_blank" href="http://www.frauensee.de/">http://www.frauensee.de</a></pre>', 'Tim Repke', 'nein@nein.de', '52.50514830899912 13.4540158525391', 19),
+(2, 'Fachschaftsfahrt Winter 2013', 'KiEZ Frauensee bei Gräbendorf', '2013-10-25', '2013-10-27', 1, 'Erstsemester und Fachschaftsfahrt im Wintersemester 13/14<br>Alle Informationen im <a rel="nofollow" target="_blank" href="http://wiki.fachschaft.informatik.hu-berlin.de/wiki/Fachschaftsfahrt_Winter_2013">Wiki</a>', 'Tim Repke', 'nein@nein.de', '52.50514830899912 13.4540158525391', 19),
 (5, 'Fachschaftsfahrt Winter 2014', ' Jugendherberge Münchehofe', '2014-10-24', '2014-10-26', 1, 'Dies ist die Anmeldung zur Erstsemester-/Fachschaftsfahrt im Wintersemester 2014/15. <br>Weitere Infos sind im <a rel="nofollow" target="_blank" href="http://wiki.fachschaft.informatik.hu-berlin.de/wiki/Fachschaftsfahrt_Winter_2014">Wiki</a>', 'Georg Gentzen', 'gentzeng@informatik.hu-berlin.de', '52.55853564453215 14.14091885241703', 60);
 
 -- --------------------------------------------------------
