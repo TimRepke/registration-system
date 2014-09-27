@@ -473,7 +473,7 @@ function index_show_fahrtHeader($fahrt){
     $cnt = $index_db->count("bachelor", ["AND"=>
                                             ["backstepped" => NULL,
                                              "fahrt_id"    => $fahrt['fahrt_id']]]);
-    echo '<div class="fahrt"><a href="index.php?fid='.$fahrt['fahrt_id'].'">'.$fahrt['titel'].'</a>';
+    echo '<div class="fahrt"><a  class="fahrthead" href="index.php?fid='.$fahrt['fahrt_id'].'">'.$fahrt['titel'].'</a>';
     echo 'Ziel: <i>'.$fahrt['ziel'].'</i><br />';
     echo 'Datum: <i>'.comm_from_mysqlDate($fahrt['von'])." - ".comm_from_mysqlDate($fahrt['bis']).'</i><br />';
     echo "Ansprechpartner: <i>".$fahrt['leiter']." (".comm_convert_mail($fahrt['kontakt']).")</i><br />";
