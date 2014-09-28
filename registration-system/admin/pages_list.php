@@ -55,6 +55,17 @@ div.btn{
     background-position: -23px -169px;
 }
 
+#editForm{
+    display: none;
+    position: fixed;
+    top:100px;
+    left: 200px;
+    width: 700px;
+    height: 800px;
+    overflow: auto;
+    border: 1px solid #000000;
+    background-color: #b0bed9;
+}
 </style>";
 
 $text .= "Meldeliste";
@@ -120,23 +131,64 @@ foreach($people as $person) {
 $text .=<<<END
         </tbody>
     </table>
+    <div id="editForm"></div>
     <script type='text/javascript'>
+
+        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+            "link-pre": function ( a ) {
+                return a.match(/<a [^>]+>([^<]+)<\/a>/)[1];
+            }/*,
+
+            "link-asc": function ( a, b ) {
+                return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+            },
+
+            "link-desc": function ( a, b ) {
+                return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+            }*/
+            ,
+            "prb-pre": function ( a ){
+                var tmp = a.split(",");
+                //alert();
+                return ((tmp[0]==0) ? '0' : '1') + ((tmp[1]==0) ? '0' : '1') + ((tmp[2]==0) ? '0' : '1');
+            }
+        } );
+
         $(document).ready(function(){
-            $('#mlist').dataTable({
-                "iDisplayLength": 20,
-                "columnDefs": [{
-                    "render": function ( data, type, row ) {
-                        var btns = "";
-                        var classes = ["paid", "repaid", "backstepped"];
-                        var txt = data.split(",");
-                        for(var i = 0; i < txt.length; i++){
-                            var tmp = (txt[i]==0) ? 0 : 1;
-                            btns += "<div onclick=\"btnclick(this, '"+classes[i]+"','"+row[0]+"',"+tmp+");\" class='btn btn-"+classes[i]+"-"+tmp+"'>&nbsp;</div>";
+            var ltab = $('#mlist').dataTable({
+                "iDisplayLength": 70,
+                "columnDefs": [
+                    { type: 'link', targets: 2 },
+                    { type: 'prb', targets: 9 }
+                ],
+                "aoColumnDefs": [
+                    {
+                        "aTargets": [ 9 ],
+                        "mDataProp": function ( data, type, row ) {
+                            if (type === 'set') {
+                                data[9] = row;
+
+                                var btns = "";
+                                var classes = ["paid", "repaid", "backstepped"];
+                                var txt = data[9].split(",");
+                                for(var i = 0; i < txt.length; i++){
+                                    var tmp = (txt[i]==0) ? 0 : 1;
+                                    btns += "<div onclick=\"btnclick(this, '"+classes[i]+"','"+row[0]+"',"+tmp+");\" class='btn btn-"+classes[i]+"-"+tmp+"'>&nbsp;</div>";
+                                }
+
+                                // Store the computed display for speed
+                                data.date_rendered = btns;
+                                return;
+                            }
+                            else if (type === 'display' || type === 'filter') {
+                                return data.date_rendered;
+                            }
+                            // 'sort' and 'type' both just use the raw data
+                            return data[9];
                         }
-                        return btns;
-                    },
-                    "targets": 9
-                }]
+                    }
+                ],
+                "order": [[ 2, "asc" ]]
             });
         });
 
