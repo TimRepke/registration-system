@@ -43,10 +43,15 @@ function comm_get_possible_dates($db, $fid){
 
 function comm_isopen_fid($db_handle, $fid){
     comm_verbose(3,"checking if fid ". $fid . " is open");
-    return $db_handle->has("fahrten", array(
-                                            "AND" => array(
-                                                "fahrt_id"=>$fid,
-                                                "regopen"=>1)));
+    $cnt = $db_handle->count("bachelor", ["AND"=>
+        ["backstepped" => NULL,
+            "fahrt_id"    => $fid]]);
+    $max = $db_handle->get("fahrten", "max_bachelor", ["fahrt_id" => $fid]);
+    $open = $db_handle->has('fahrten', ['AND' => ['fahrt_id'=>$fid, 'regopen'=>1]]);
+
+    comm_verbose(3,"cnt: ".$cnt.", max: ".$max.", open: ".($open ? "yes" : "no"));
+
+    return ( $open && $cnt < $max );
 }
 
 function comm_generate_key($db_handle, $table, $col, $conditions){

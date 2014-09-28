@@ -65,11 +65,7 @@ function index_show_content(){
         } /*elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen, Anmeldung noch offen?
             index_show_formular($fid, $_REQUEST['bid']);
         } */ else {                       // leeres Formular anzeigen
-            $cnt = $index_db->count("bachelor", ["AND"=>
-                ["backstepped" => NULL,
-                    "fahrt_id"    => $fid]]);
-            $max = $index_db->get("fahrten", "max_bachelor", ["fahrt_id" => $fid]);
-			if ($index_db->has('fahrten', ['AND' => ['fahrt_id'=>$fid, 'regopen'=>1]]) && $cnt < $max)
+			if (comm_isopen_fid($index_db, $fid))
 				index_show_formular($fid);
 			else
 			{
@@ -115,9 +111,7 @@ function index_form_to_db($data){
 
 	$index_db->exec("LOCK TABLES fahrten, bachelor WRITE"); // count should not be calculated in two scripts at once
 
-	$cnt = $index_db->count("bachelor", ["AND" => ["backstepped" => NULL, "fahrt_id" => $data['fahrt_id']]]);
-
-	$insertOk = $cnt < $res['max_bachelor'];
+	$insertOk = comm_isopen_fid($index_db, $data['fahrt_id']);
 
 	/*if ($cnt+1 >= $res['max_bachelor']) // registration is full already or after the following insert
 		$index_db->update("fahrten", ["regopen" => 0], ["fahrt_id" => $config_current_fahrt_id]); */
