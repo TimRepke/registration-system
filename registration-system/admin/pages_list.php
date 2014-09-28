@@ -60,8 +60,9 @@ if(isset($_REQUEST['ajax'])){
         $ajax .= admin_show_formular_helper_input("Anzeigename","pseudo",$bachelor["pseudo"],"");
         $ajax .= admin_show_formular_helper_input("E-Mail-Adresse","mehl",$bachelor["mehl"],"regelmäßig lesen!");
         $ajax .= admin_show_formular_helper_sel("Du bist","studityp",$config_studitypen, $bachelor["studityp"],"");
-        $ajax .= admin_show_formular_helper_sel("Alter 18+?","virgin",array("Nein", "Ja"), (($bachelor["virgin"]==1) ? "Nein" : "Ja"), "Bist du älter als 18 Jahre?");
+        $ajax .= admin_show_formular_helper_sel("Alter 18+?","virgin",array("Nein", "Ja"), (($bachelor["virgin"]==1) ? "Nein" : "Ja"), "älter als 18?");
         $ajax .= admin_show_formular_helper_sel("Essenswunsch","essen",$config_essen, $bachelor["essen"],"Info für den Koch.");
+        $ajax .= "<div style='clear: both;'></div>";
         $ajax .= admin_show_formular_helper_sel2("Anreise","anday", array_slice($possible_dates,0, -1), $bachelor["anday"]
             ,"antyp",$config_reisearten, $bachelor["antyp"],"");
         $ajax .= admin_show_formular_helper_sel2("Abreise","abday", array_slice($possible_dates,1), $bachelor["abday"]
@@ -125,12 +126,16 @@ div.btn{
     left: 200px;
     width: 700px;
     height: 700px;
-    overflow: auto;
     border: 1px solid #000000;
     background-color: beige;
     padding: 20px 10px 10px 10px;
 }
 
+#editForm>p{
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
 #editFormTopbar{
     background-color: #b0bed9;
     height: 20px;
@@ -138,7 +143,7 @@ div.btn{
     top: 0;
     left: 0;
     right: 0;
-    paddin: 0;
+    padding: 0;
 }
 #editFormTopbar p{
     position: absolute;
