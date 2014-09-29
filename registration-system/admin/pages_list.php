@@ -20,14 +20,19 @@ $ecols = [
     "abday"   => function($d){ return date('Y-m-d', DateTime::createFromFormat('d.m.Y',$d)->getTimestamp()); },
     "comment" => function($d){ return $d; },
     "studityp"=> function($d){ return $d; },
-    "virgin"  => function($d){ return (($d=="Nein") ? 1 : 0); }
+    "virgin"  => function($d){ return (($d=="Nein") ? 1 : 0); } // nein zu 18+ heißt ja zu virgin => 1
 ];
 
 if(isset($_REQUEST['change'])){
     $update = [];
-    foreach($ecols as $e){
-
+    foreach($ecols as $k=>$e){
+        $update[$k] = $e($_REQUEST[$k]);
     }
+    $admin_db->update("bachelor", $update, ["bachelor_id"=> $_REQUEST['change']]);
+}
+
+if(isset($_REQUEST['delete'])){
+    $admin_db->delete("bachelor", ["bachelor_id"=> $_REQUEST['delete']]);
 }
 
 if(isset($_REQUEST['ajax'])){
@@ -54,7 +59,7 @@ if(isset($_REQUEST['ajax'])){
         ];
 
 
-        $bachelor = $admin_db->get('bachelor', array_merge($ecols, array_keys($rcols)), array('bachelor_id'=>$bid));
+        $bachelor = $admin_db->get('bachelor', array_merge(array_keys($ecols), array_keys($rcols)), array('bachelor_id'=>$bid));
         $possible_dates = comm_get_possible_dates($admin_db, $bachelor['fahrt_id']);
 
         foreach($rcols as $k=>$r){
@@ -63,14 +68,15 @@ if(isset($_REQUEST['ajax'])){
 
         $ajax .= '<br />
         <div id="stylized" class="myform">
-        <form id="form" name="form" method="post" action="?list&change='.$bid.'">';
+        <form id="form" name="form" method="post" action="?page=list">';
+        $ajax .= '<input type="hidden" value="'.$bid.'" name="change" id="change" />';
 
         $ajax .= admin_show_formular_helper_input("Vorname", "forname", $bachelor["forname"], "");
         $ajax .= admin_show_formular_helper_input("Nachname","sirname",$bachelor["sirname"],"");
         $ajax .= admin_show_formular_helper_input("Anzeigename","pseudo",$bachelor["pseudo"],"");
         $ajax .= admin_show_formular_helper_input("E-Mail-Adresse","mehl",$bachelor["mehl"],"regelmäßig lesen!");
-        $ajax .= admin_show_formular_helper_sel("Du bist","studityp",$config_studitypen, $bachelor["studityp"],"");
-        $ajax .= admin_show_formular_helper_sel("Alter 18+?","virgin",array("Nein", "Ja"), (($bachelor["virgin"]==1) ? "Nein" : "Ja"), "älter als 18?");
+        $ajax .= admin_show_formular_helper_sel("Er/Sie/Es ist","studityp",$config_studitypen, $bachelor["studityp"],"");
+        $ajax .= admin_show_formular_helper_sel("Alter 18+?","virgin",array("Nein", "Ja"), (($bachelor["virgin"]==1) ? "Nein" : "Ja"), "Älter als 18?");
         $ajax .= admin_show_formular_helper_sel("Essenswunsch","essen",$config_essen, $bachelor["essen"],"Info für den Koch.");
         $ajax .= "<div style='clear: both;'></div>";
         $ajax .= admin_show_formular_helper_sel2("Anreise","anday", array_slice($possible_dates,0, -1), $bachelor["anday"]
@@ -82,13 +88,21 @@ if(isset($_REQUEST['ajax'])){
         <textarea id="comment" name="comment" rows="3" cols="40">'.$bachelor["comment"].'</textarea>
         <input type="checkbox" name="public" value="public" style="width:40px" '.(($bachelor['public']==1 ? " checked" : "")).'><span style="float:left">Anmeldung verstecken</span><br/>
         <div style="clear:both"></div>
-
+        Note: No check for validity of data here!
         <button type="submit" name="submit" id="submit" value="submit">Ändern!</button>
         <div class="spacer"></div>';
 
 
         $ajax .= '</form>
         </div>
+        ';
+
+        $ajax .= '<br /><hr /> <br/>
+            <form method="POST" >
+                Note: Keine Nachfrage, löscht direkt und unwiederruflich!!<br />
+                <input type="submit" name="submit_del" value="DELETE" />
+                <input type="hidden" name="delete" value="'.$bid.'" />
+            </form>
         ';
     }
 
@@ -135,16 +149,23 @@ div.btn{
     top:100px;
     left: 200px;
     width: 700px;
-    height: 700px;
+    height: 80%;
     border: 1px solid #000000;
     background-color: beige;
     padding: 20px 10px 10px 10px;
 }
 
 #editForm>p{
-    height: 100%;
-    width: 100%;
+    display: block;
+    position:absolute;
+    height:auto;
+    bottom:0;
+    top:0;
+    left:0;
+    right:0;
     overflow: auto;
+    padding: 10px;
+    margin: 20px 0 0 0;
 }
 #editFormTopbar{
     background-color: #b0bed9;
@@ -163,6 +184,8 @@ div.btn{
     margin: 0;
     right: 5px;
     cursor: none;
+    height: 20px;
+    display: block;
 }
 
 </style>";
@@ -309,23 +332,7 @@ $text .=<<<END
                 $(this).parent().parent().hide();
             });
 
-            $(".js-ajax-php-json").submit(function(){
-                var data = $(this).serialize();
-                $.ajax({
-                    type: "POST",
-                    dataType: "json",
-                    url: "response.php",
-                    data: data,
-                    success: function(data) {
-                        $(".the-return").html(
-                            "Favorite beverage: " + data["favorite_beverage"] + "<br />Favorite restaurant: " + data["favorite_restaurant"] + "<br />Gender: " + data["gender"] + "<br />JSON: " + data["json"]
-                        );
 
-                        // alert("Form submitted successfully.Returned json: " + data["json"]);
-                    }
-                });
-                return false;
-            });
         });
 
         function btnclick(that, type, hash, state){
