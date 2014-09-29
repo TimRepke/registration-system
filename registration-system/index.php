@@ -245,7 +245,12 @@ function index_check_field($index, $check, &$datarr, &$errarr, $errmess){
                 //$tmp = "";
             }
         }
-        $datarr[$index] = $tmp;
+        if($index == "virgin"){
+            if($_REQUEST[$index]=="Ja") $datarr[$index] = 0; // NOTE: for consistency: virgin = 0 means > 18
+            else  $datarr[$index] = 1;
+        } else {
+            $datarr[$index] = $tmp;
+        }
     }
 }
 
@@ -284,7 +289,7 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
     index_show_formular_helper_input("Anzeigename","pseudo",$bachelor["pseudo"],"");
     index_show_formular_helper_input("E-Mail-Adresse","mehl",$bachelor["mehl"],"regelmäßig lesen!");
     index_show_formular_helper_sel("Du bist","studityp",$config_studitypen, $bachelor["studityp"],"");
-    index_show_formular_helper_sel("Alter 18+?","virgin",array("", "Nein", "Ja"), $bachelor["virgin"], "Bist du älter als 18 Jahre?");
+    index_show_formular_helper_sel("Alter 18+?","virgin",array("", "Nein", "Ja"), ($bachelor["virgin"]==0) ? "Ja" : "Nein", "Bist du älter als 18 Jahre?");
     index_show_formular_helper_sel("Essenswunsch","essen",$config_essen, $bachelor["essen"],"Info für den Koch.");
     index_show_formular_helper_sel2("Anreise","anday", array_slice($possible_dates,0, -1), $bachelor["anday"]
                                              ,"antyp",$config_reisearten, $bachelor["antyp"],"");

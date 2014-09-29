@@ -9,6 +9,27 @@
 
 global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_studitypen, $config_essen, $config_reisearten;
 
+$ecols = [
+    "forname" => function($d){ return $d; },
+    "sirname" => function($d){ return $d; },
+    "mehl"    => function($d){ return $d; },
+    "pseudo"  => function($d){ return $d; },
+    "antyp"   => function($d){ return $d; },
+    "abtyp"   => function($d){ return $d; },
+    "anday"   => function($d){ return date('Y-m-d', DateTime::createFromFormat('d.m.Y',$d)->getTimestamp()); },
+    "abday"   => function($d){ return date('Y-m-d', DateTime::createFromFormat('d.m.Y',$d)->getTimestamp()); },
+    "comment" => function($d){ return $d; },
+    "studityp"=> function($d){ return $d; },
+    "virgin"  => function($d){ return (($d=="Nein") ? 1 : 0); }
+];
+
+if(isset($_REQUEST['change'])){
+    $update = [];
+    foreach($ecols as $e){
+
+    }
+}
+
 if(isset($_REQUEST['ajax'])){
 
     if(isset($_REQUEST['update']) && isset($_REQUEST['hash']) && isset($_REQUEST['nstate'])){
@@ -22,18 +43,7 @@ if(isset($_REQUEST['ajax'])){
     elseif(isset($_REQUEST['form'])){
         $bid = $_REQUEST['hash'];
 
-        $ecols = [
-            "forname",
-            "sirname",
-            "mehl",
-            "pseudo",
-            "antyp",
-            "abtyp",
-            "anday",
-            "abday",
-            "comment",
-            "studityp"
-        ];
+
         $rcols = [
             "bachelor_id" => ["Hash",   function( $b ){ return $b; }],
             "fahrt_id" => ["Fahrt",     function( $b ){ return "ID ".$b; }],
@@ -53,7 +63,7 @@ if(isset($_REQUEST['ajax'])){
 
         $ajax .= '<br />
         <div id="stylized" class="myform">
-        <form id="form" name="form" method="post" action="">';
+        <form id="form" name="form" method="post" action="?list&change='.$bid.'">';
 
         $ajax .= admin_show_formular_helper_input("Vorname", "forname", $bachelor["forname"], "");
         $ajax .= admin_show_formular_helper_input("Nachname","sirname",$bachelor["sirname"],"");
@@ -175,7 +185,8 @@ $columns = array(
     "studityp",
     "paid",
     "repaid",
-    "backstepped"
+    "backstepped",
+    "virgin"
 );
 
 $columnFunctions = array(
@@ -189,6 +200,7 @@ $columnFunctions = array(
     "Abreisetag" => function($person) { return comm_from_mysqlDate( $person["abday"]); },
     "Kommentar" => function($person) { return $person["comment"]; },
     "StudiTyp" => function($person) { return $person["studityp"]; },
+    "18+" => function($person) { return (($person["virgin"]==0) ? "Ja" : "Nein"); },
     "PaidReBack" => function($person) { return ($person["paid"] ? $person["paid"] : "0") .",". ($person["repaid"] ? $person["repaid"] : "0") .",". ($person["backstepped"] ? $person["backstepped"] : "0"); }
 );
 
@@ -252,18 +264,18 @@ $text .=<<<END
                 "columnDefs": [
                     { type: 'link', targets: 2 },
                     { type: 'link', targets: 0 },
-                    { type: 'prb', targets: 9 }
+                    { type: 'prb', targets: 10 }
                 ],
                 "aoColumnDefs": [
                     {
-                        "aTargets": [ 9 ],
+                        "aTargets": [ 10 ],
                         "mDataProp": function ( data, type, row ) {
                             if (type === 'set') {
-                                data[9] = row;
+                                data[10] = row;
 
                                 var btns = "";
                                 var classes = ["paid", "repaid", "backstepped"];
-                                var txt = data[9].split(",");
+                                var txt = data[10].split(",");
                                 for(var i = 0; i < txt.length; i++){
                                     var tmp = (txt[i]==0) ? 0 : 1;
                                     btns += "<div onclick=\"btnclick(this, '"+classes[i]+"','"+data[0].match(/<a [^>]+>([^<]+)<\/a>/)[1]+"',"+tmp+");\" class='btn btn-"+classes[i]+"-"+tmp+"'>&nbsp;</div>";
@@ -277,7 +289,7 @@ $text .=<<<END
                                 return data.date_rendered;
                             }
                             // 'sort' and 'type' both just use the raw data
-                            return data[9];
+                            return data[10];
                         }
                     }
                 ],
