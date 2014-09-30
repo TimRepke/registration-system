@@ -22,7 +22,7 @@ if(isset($_POST['note-content'])){
                                  "leiter"       => $_REQUEST['leiter'],
                                  "kontakt"      => $_REQUEST['kontakt'],
                                  "max_bachelor" => $_REQUEST['max_bachelor'],
-                                 "regopen"      => $_REQUEST['regopen'] == "penis" ? 1 : 0],
+                                 "regopen"      => isset($_REQUEST['regopen']) ? 1 : 0],
                         array("fahrt_id"=>$config_current_fahrt_id));
 }
 
