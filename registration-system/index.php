@@ -77,6 +77,8 @@ function index_show_content(){
 
         // --- Liste der Anmeldungen
         index_show_signupTable($fid);
+
+        index_show_fahrtHeader_js($fid);
     }
     // Zeige Übersicht aller Fahrten
     else {
@@ -462,6 +464,73 @@ function index_show_alleFahrten(){
  * @param $fahrt wenn array, dann Datenbankrow; wenn zahl, dann wird das selektiert
  */
 function index_show_fahrtHeader($fahrt){
+    global $index_db, $config_googleAPI;
+
+    if(!is_array($fahrt)){
+        // select fahrt by ID
+        $fahrt = $index_db->select('fahrten', array('fahrt_id','titel','ziel', 'von', 'bis', 'leiter', 'kontakt', 'beschreibung', 'max_bachelor', 'map_pin'), array('fahrt_id'=> $fahrt));
+        if(!$fahrt){ index_show_alleFahrten(); return;}
+        else  $fahrt = $fahrt[0];
+    }
+    $cnt = $index_db->count("bachelor", ["AND"=>
+        ["backstepped" => NULL,
+            "fahrt_id"    => $fahrt['fahrt_id']]]);
+
+    echo '<div class="fahrt">
+            <a  class="fahrthead" href="index.php?fid='.$fahrt['fahrt_id'].'">'.$fahrt['titel'].'</a>';
+        echo 'Ziel: <i>'.$fahrt['ziel'].'</i><br />';
+        echo 'Datum: <i>'.comm_from_mysqlDate($fahrt['von'])." - ".comm_from_mysqlDate($fahrt['bis']).'</i><br />';
+        echo "Ansprechpartner: <i>".$fahrt['leiter']." (".comm_convert_mail($fahrt['kontakt']).")</i><br />";
+        echo "Anmeldungen: <i>".$cnt."; maximal: ".$fahrt['max_bachelor']."</i>";
+        echo '<p>'.$fahrt['beschreibung'].'</p>
+            <div id="map-canvas"></div>
+    </div>';
+}
+function index_show_fahrtHeader_js($fahrt){
+    global $index_db;
+    $pin = $index_db->get("fahrten", "map_pin", ["fahrt_id" => $fahrt]);
+
+    echo '<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+        <script>
+
+            var ziel = new google.maps.LatLng('.str_replace(" ", ", ", $pin ).');
+            var marker;
+            var map;
+
+            function initialize() {
+                var mapOptions = {
+                    zoom: 8,
+                    center: ziel,
+                    panControl: false,
+                    zoomControl: false,
+                    scaleControl: true,
+                    mapTypeControl: false,
+                    streetViewControl: false,
+                    overviewMapControl: false
+                };
+
+                map = new google.maps.Map(document.getElementById(\'map-canvas\'), mapOptions);
+
+                marker = new google.maps.Marker({
+                    map:map,
+                    draggable:true,
+                    animation: google.maps.Animation.DROP,
+                    position: ziel
+                });
+
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+
+
+            google.maps.event.addDomListener(window, \'load\', initialize);
+
+        </script>';
+
+}
+/**
+ * @param $fahrt wenn array, dann Datenbankrow; wenn zahl, dann wird das selektiert
+ */
+function index_show_fahrtHeader_old($fahrt){
     global $index_db;
     if(!is_array($fahrt)){
         // select fahrt by ID
