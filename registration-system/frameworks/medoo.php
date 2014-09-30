@@ -122,6 +122,7 @@ class medoo
 			}
 		}
 		catch (PDOException $e) {
+            //trigger_error("MySQL Connection was not established!\n".$e->getMessage(), E_USER_ERROR);
 			throw new Exception($e->getMessage());
 		}
 	}
