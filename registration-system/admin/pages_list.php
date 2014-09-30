@@ -20,7 +20,9 @@ $ecols = [
     "abday"   => function($d){ return date('Y-m-d', DateTime::createFromFormat('d.m.Y',$d)->getTimestamp()); },
     "comment" => function($d){ return $d; },
     "studityp"=> function($d){ return $d; },
-    "virgin"  => function($d){ return (($d=="Nein") ? 1 : 0); } // nein zu 18+ heißt ja zu virgin => 1
+    "virgin"  => function($d){ return (($d=="Nein") ? 1 : 0); }, // nein zu 18+ heißt ja zu virgin => 1
+    "public"  => function($d){ return $d; },
+    "essen"   => function($d){ return $d; }
 ];
 
 if(isset($_REQUEST['change'])){
@@ -86,7 +88,7 @@ if(isset($_REQUEST['ajax'])){
         $ajax .= '
         <label>Anmerkung</label>
         <textarea id="comment" name="comment" rows="3" cols="40">'.$bachelor["comment"].'</textarea>
-        <input type="checkbox" name="public" value="public" style="width:40px" '.(($bachelor['public']==1 ? " checked" : "")).'><span style="float:left">Anmeldung verstecken</span><br/>
+        <input type="checkbox" name="public" value="public" style="width:40px" '.(($bachelor['public']==0 ? " checked" : "")).'><span style="float:left">Anmeldung verstecken</span><br/>
         <div style="clear:both"></div>
         Note: No check for validity of data here!
         <button type="submit" name="submit" id="submit" value="submit">Ändern!</button>
@@ -190,7 +192,7 @@ div.btn{
 
 </style>";
 
-$text .= "Meldeliste";
+$text .= "<h1>Meldeliste</h1>";
 
 $columns = array(
     "bachelor_id",
@@ -209,7 +211,8 @@ $columns = array(
     "paid",
     "repaid",
     "backstepped",
-    "virgin"
+    "virgin",
+    "essen"
 );
 
 $columnFunctions = array(
@@ -223,9 +226,18 @@ $columnFunctions = array(
     "Abreisetag" => function($person) { return comm_from_mysqlDate( $person["abday"]); },
     "Kommentar" => function($person) { return $person["comment"]; },
     "StudiTyp" => function($person) { return $person["studityp"]; },
+    "Essen" => function($person) { return $person["essen"]; },
     "18+" => function($person) { return (($person["virgin"]==0) ? "Ja" : "Nein"); },
     "PaidReBack" => function($person) { return ($person["paid"] ? $person["paid"] : "0") .",". ($person["repaid"] ? $person["repaid"] : "0") .",". ($person["backstepped"] ? $person["backstepped"] : "0"); }
 );
+
+$text .= "Toggle Column ";
+    $tcnt = 0;
+foreach($columnFunctions as $key => $value){
+    $text .= '<a class="toggle-vis" data-column="'.$tcnt.'">'.$key.'</a> - ';
+    $tcnt++;
+}
+$text .= "<br />";
 
 $text .=<<<END
     <table id="mlist">
@@ -252,6 +264,7 @@ foreach($people as $person) {
     $text .= "</tr>";
 }
 
+    $buttoncol = 11;
 $text .=<<<END
         </tbody>
     </table>
@@ -283,22 +296,21 @@ $text .=<<<END
 
         $(document).ready(function(){
             var ltab = $('#mlist').dataTable({
-                "iDisplayLength": 70,
                 "columnDefs": [
                     { type: 'link', targets: 2 },
                     { type: 'link', targets: 0 },
-                    { type: 'prb', targets: 10 }
+                    { type: 'prb', targets: $buttoncol }
                 ],
                 "aoColumnDefs": [
                     {
-                        "aTargets": [ 10 ],
+                        "aTargets": [ $buttoncol ],
                         "mDataProp": function ( data, type, row ) {
                             if (type === 'set') {
-                                data[10] = row;
+                                data[$buttoncol] = row;
 
                                 var btns = "";
                                 var classes = ["paid", "repaid", "backstepped"];
-                                var txt = data[10].split(",");
+                                var txt = data[$buttoncol].split(",");
                                 for(var i = 0; i < txt.length; i++){
                                     var tmp = (txt[i]==0) ? 0 : 1;
                                     btns += "<div onclick=\"btnclick(this, '"+classes[i]+"','"+data[0].match(/<a [^>]+>([^<]+)<\/a>/)[1]+"',"+tmp+");\" class='btn btn-"+classes[i]+"-"+tmp+"'>&nbsp;</div>";
@@ -312,13 +324,23 @@ $text .=<<<END
                                 return data.date_rendered;
                             }
                             // 'sort' and 'type' both just use the raw data
-                            return data[10];
+                            return data[$buttoncol];
                         }
                     }
                 ],
-                "order": [[ 2, "asc" ]]
+                "order": [[ 2, "asc" ]],
+                "paging": false
             });
 
+            $('a.toggle-vis').click( function (e) {
+                e.preventDefault();
+
+                // Get the column API object
+                var column = ltab.column( $(this).attr('data-column') );
+
+                // Toggle the visibility
+                column.visible( ! column.visible() );
+            } );
             $(".edit_bachelor").click( function(){
                 var bid = $(this).text();
                 $.get( "?page=list&ajax=ajax&form=form&hash="+bid, function( data ) {
