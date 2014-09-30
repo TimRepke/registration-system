@@ -194,7 +194,7 @@ Story.prototype.initSummary = function()
 			eat:
 				"Essenswahl",
 			age:
-				"Unter 18?"
+				"Über 18?"
 		};
 
 		for (var i = 0; i < rowOrder.length; ++i)
@@ -766,9 +766,9 @@ $(function()
 		};
 		Story.ageMap = {
 		eighteenplus:
-			"Nein",
+			"Ja",
 		below:
-			"Ja"
+			"Nein"
 		};
 		Story.travelMapPhp = config_get_travel_types();
 		Story.travelMap = {
