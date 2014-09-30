@@ -7,7 +7,7 @@
  */
 
 
-global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_studitypen, $config_essen, $config_reisearten;
+global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_studitypen, $config_essen, $config_reisearten, $config_essen_o, $config_reisearten_o;
 
 $ecols = [
     "forname" => function($d){ return $d; },
@@ -220,18 +220,18 @@ $columnFunctions = array(
     //,"FahrtID" => function($person) { return $person["fahrt_id"]; }
 ,"Anmeldung" => function($person) { return date("d.m.Y", $person['anm_time']); },
     "Name" => function($person) { return "<a href='mailto:".$person["mehl"]."?subject=FS-Fahrt'>".$person["forname"]." ".$person["sirname"]." (".$person["pseudo"].")</a>"; },
-    "Anreisetyp" => function($person) { return $person["antyp"]; },
-    "Abreisetyp" => function($person) { return $person["abtyp"]; },
+    "Anreisetyp" => function($person) { global $config_reisearten_o; return array_search($person["antyp"], $config_reisearten_o); },
+    "Abreisetyp" => function($person) { global $config_reisearten_o; return array_search($person["abtyp"], $config_reisearten_o); },
     "Anreisetag" => function($person) { return  comm_from_mysqlDate( $person["anday"]); },
     "Abreisetag" => function($person) { return comm_from_mysqlDate( $person["abday"]); },
     "Kommentar" => function($person) { return $person["comment"]; },
     "StudiTyp" => function($person) { return $person["studityp"]; },
-    "Essen" => function($person) { return $person["essen"]; },
+    "Essen" => function($person) { global $config_essen_o; return array_search($person["essen"], $config_essen_o); },
     "18+" => function($person) { return (($person["virgin"]==0) ? "Ja" : "Nein"); },
     "PaidReBack" => function($person) { return ($person["paid"] ? $person["paid"] : "0") .",". ($person["repaid"] ? $person["repaid"] : "0") .",". ($person["backstepped"] ? $person["backstepped"] : "0"); }
 );
 
-$text .= "Toggle Column ";
+$text .= "Toggle Column: ";
     $tcnt = 0;
 foreach($columnFunctions as $key => $value){
     $text .= '<a class="toggle-vis" data-column="'.$tcnt.'">'.$key.'</a> - ';
@@ -240,7 +240,7 @@ foreach($columnFunctions as $key => $value){
 $text .= "<br />";
 
 $text .=<<<END
-    <table id="mlist">
+    <table id="mlist" class="compact hover">
         <thead>
             <tr>
 END;
@@ -293,9 +293,9 @@ $text .=<<<END
                 return ((tmp[0]==0) ? '0' : '1') + ((tmp[1]==0) ? '0' : '1') + ((tmp[2]==0) ? '0' : '1');
             }
         } );
-
+        var ltab;
         $(document).ready(function(){
-            var ltab = $('#mlist').dataTable({
+             ltab = $('#mlist').DataTable({
                 "columnDefs": [
                     { type: 'link', targets: 2 },
                     { type: 'link', targets: 0 },
