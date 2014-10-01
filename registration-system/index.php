@@ -454,10 +454,13 @@ function index_show_alleFahrten(){
     global $index_db;
     comm_verbose(2,"Liste aller Fahrten (Jahr, Ziel, Zeitraum, Anz. Mitfahrer)");
     echo '<h2>Anmeldung zur Fachschaftsfahrt</h2>';
-    $foos = $index_db->select("fahrten",array('fahrt_id','titel','ziel','von','bis','beschreibung','leiter','kontakt'), "ORDER BY fahrt_id DESC");
+    $foos = $index_db->select("fahrten",array('fahrt_id','titel','ziel','von','bis','beschreibung','leiter','kontakt', 'max_bachelor'), "ORDER BY fahrt_id DESC");
+    $fids = [];
     foreach($foos as $foo){
         index_show_fahrtHeader($foo);
+        array_push($fids, $foo['fahrt_id']);
     }
+    index_show_fahrtHeader_js($fids);
 }
 
 /**
@@ -468,7 +471,7 @@ function index_show_fahrtHeader($fahrt){
 
     if(!is_array($fahrt)){
         // select fahrt by ID
-        $fahrt = $index_db->select('fahrten', array('fahrt_id','titel','ziel', 'von', 'bis', 'leiter', 'kontakt', 'beschreibung', 'max_bachelor', 'map_pin'), array('fahrt_id'=> $fahrt));
+        $fahrt = $index_db->select('fahrten', array('fahrt_id','titel','ziel', 'von', 'bis', 'leiter', 'kontakt', 'beschreibung', 'max_bachelor'), array('fahrt_id'=> $fahrt));
         if(!$fahrt){ index_show_alleFahrten(); return;}
         else  $fahrt = $fahrt[0];
     }
@@ -481,26 +484,35 @@ function index_show_fahrtHeader($fahrt){
         echo 'Ziel: <i>'.$fahrt['ziel'].'</i><br />';
         echo 'Datum: <i>'.comm_from_mysqlDate($fahrt['von'])." - ".comm_from_mysqlDate($fahrt['bis']).'</i><br />';
         echo "Ansprechpartner: <i>".$fahrt['leiter']." (".comm_convert_mail($fahrt['kontakt']).")</i><br />";
-        echo "Anmeldungen: <i>".$cnt."; maximal: ".$fahrt['max_bachelor']."</i>";
+        echo "Anmeldungen: <i>".$cnt." / ".$fahrt['max_bachelor']."</i>";
         echo '<p>'.$fahrt['beschreibung'].'</p>
-            <div id="map-canvas"></div>
+            <div class="map-canvas" id="map-canvas-'.$fahrt['fahrt_id'].'"></div>
     </div>';
 }
-function index_show_fahrtHeader_js($fahrt){
+function index_show_fahrtHeader_js($fahrten){
     global $index_db;
-    $pin = $index_db->get("fahrten", "map_pin", ["fahrt_id" => $fahrt]);
+
+    $pins = $index_db->select("fahrten", ["fahrt_id", "map_pin"], ["fahrt_id" => $fahrten]);
 
     echo '<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
-        <script>
+        <script>';
 
-            var ziel = new google.maps.LatLng('.str_replace(" ", ", ", $pin ).');
-            var marker;
-            var map;
-
+    foreach($pins as $p){
+        echo'
+            var ziel_'.$p['fahrt_id'].' = new google.maps.LatLng('.str_replace(" ", ", ", $p["map_pin"] ).');
+            var marker_'.$p['fahrt_id'].';
+            var map_'.$p['fahrt_id'].';
+            ';
+    }
+    echo'
             function initialize() {
-                var mapOptions = {
+            ';
+
+    foreach($pins as $p){
+        echo'
+                var mapOptions_'.$p['fahrt_id'].' = {
                     zoom: 8,
-                    center: ziel,
+                    center: ziel_'.$p['fahrt_id'].',
                     panControl: false,
                     zoomControl: false,
                     scaleControl: true,
@@ -509,16 +521,18 @@ function index_show_fahrtHeader_js($fahrt){
                     overviewMapControl: false
                 };
 
-                map = new google.maps.Map(document.getElementById(\'map-canvas\'), mapOptions);
+                map_'.$p['fahrt_id'].' = new google.maps.Map(document.getElementById(\'map-canvas-'.$p['fahrt_id'].'\'), mapOptions_'.$p['fahrt_id'].');
 
-                marker = new google.maps.Marker({
-                    map:map,
+                marker_'.$p['fahrt_id'].' = new google.maps.Marker({
+                    map:map_'.$p['fahrt_id'].',
                     draggable:true,
                     animation: google.maps.Animation.DROP,
-                    position: ziel
+                    position: ziel_'.$p['fahrt_id'].'
                 });
 
-                marker.setAnimation(google.maps.Animation.BOUNCE);
+                marker_'.$p['fahrt_id'].'.setAnimation(google.maps.Animation.BOUNCE);';
+    }
+    echo'
             }
 
 
