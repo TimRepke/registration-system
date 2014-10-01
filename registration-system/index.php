@@ -480,22 +480,47 @@ function index_show_fahrtHeader($fahrt){
             "fahrt_id"    => $fahrt['fahrt_id']]]);
 
     echo '<div class="fahrt">
+            <div class="fahrt-left">
             <a  class="fahrthead" href="index.php?fid='.$fahrt['fahrt_id'].'">'.$fahrt['titel'].'</a>';
         echo 'Ziel: <i>'.$fahrt['ziel'].'</i><br />';
         echo 'Datum: <i>'.comm_from_mysqlDate($fahrt['von'])." - ".comm_from_mysqlDate($fahrt['bis']).'</i><br />';
         echo "Ansprechpartner: <i>".$fahrt['leiter']." (".comm_convert_mail($fahrt['kontakt']).")</i><br />";
         echo "Anmeldungen: <i>".$cnt." / ".$fahrt['max_bachelor']."</i>";
-        echo '<p>'.$fahrt['beschreibung'].'</p>
+        echo '<p>'.$fahrt['beschreibung'].'</p></div>
             <div class="map-canvas" id="map-canvas-'.$fahrt['fahrt_id'].'"></div>
+            <div style="clear:both"></div>
     </div>';
+
+
 }
 function index_show_fahrtHeader_js($fahrten){
     global $index_db;
 
+    echo '
+        <script type="text/javascript">
+            //$(document).ready(function(){
+            window.onload = function() {
+                $("div.fahrt-left i").click(function(){
+                    });
+
+               $("div.fahrt-left i").hover(
+                    function(){
+                        $(this).html($(this).html().replace(/·/g, "&#128045;"));
+                        $(this).html($(this).html().replace("Ø", "&#128053;"));
+                    },
+                    function(){
+                        $(this).html($(this).html().replace(/🐭/g, "&middot;"));
+                        $(this).html($(this).html().replace("🐵", "&Oslash;"));
+                    }
+                );
+            };
+
+        </script>';
+
     $pins = $index_db->select("fahrten", ["fahrt_id", "map_pin"], ["fahrt_id" => $fahrten]);
 
     echo '<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
-        <script>';
+        <script type="text/javascript">';
 
     foreach($pins as $p){
         echo'
@@ -534,7 +559,6 @@ function index_show_fahrtHeader_js($fahrten){
     }
     echo'
             }
-
 
             google.maps.event.addDomListener(window, \'load\', initialize);
 
