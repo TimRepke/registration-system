@@ -49,7 +49,7 @@ function show_content(){
     );
 
     echo '
-    <div class="fahrt"><div class="fahrttitle">Anmeldedaten</div>
+    <div class="fahrt" style="background: #f9f9f9"><div class="fahrttitle">Anmeldedaten</div>
     <div class="fahrttable">';
 
     foreach($infolist as $key => $value)
