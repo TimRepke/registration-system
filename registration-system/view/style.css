@@ -276,7 +276,31 @@ p.edit_link {
 a.editenum { display: block; height: 20px; line-height: 20px; width: 20px; font-size: 0px; padding: 8px; background: url(edit.jpg) left center no-repeat; color: #FFF; }
 
 .fahrt{
-    padding: 30px;
+    margin: 30px;
+    /*border: 1px dotted black;*/
+    background-image: url("graphics/selection.gif");
+    padding: 1px;
+}
+.fahrt-left{
+    float: left;
+    width: 628px;
+    padding-left: 10px;
+    height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #f9f9f9;
+}
+.fahrt-left>p{
+    margin-left: 5px !important;
+    padding-left: 10px;
+    border-left: 1px solid lightgray;
+}
+.fahrt-right, .map-canvas {
+    height: 300px;
+    width: 300px;
+    margin: 0px;
+    padding: 0px;
+    float: left;
 }
 
 .fahrttable {
@@ -382,9 +406,3 @@ a.editenum { display: block; height: 20px; line-height: 20px; width: 20px; font-
     font-weight:bold;
 }
 
-.map-canvas {
-    height: 300px;
-    width: 300px;
-    margin: 0px;
-    padding: 0px
-}
