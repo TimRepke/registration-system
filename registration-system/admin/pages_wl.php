@@ -50,7 +50,7 @@ END;
     );
 
     $columnFunctions = array(
-        "Anmelde-ID" => function($person) { return $person["bachelor_id"]; }
+        "Anmelde-ID" => function($person) { return $person["waitlist_id"]; }
         //,"FahrtID" => function($person) { return $person["fahrt_id"]; }
         ,"Anmeldung" => function($person) { return date("d.m.Y", $person['anm_time']); },
         "Name" => function($person) { return "<a href='mailto:".$person["mehl"]."?subject=FS-Fahrt'>".$person["forname"]." ".$person["sirname"]." (".$person["pseudo"].")</a>"; },

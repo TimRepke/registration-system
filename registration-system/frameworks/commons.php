@@ -84,8 +84,7 @@ function comm_generate_key($db_handle, $check, $conditions){
     comm_verbose(3,"generated hex for test: ".$hex);
 
     foreach($check as $table => $col){
-        $conditions[$col] = $hex;
-        if($db_handle->has($table, array("AND"=>$conditions))) goto again;
+        if($db_handle->has($table, array("AND"=>[$col => $hex]))) goto again;
     }
 
     comm_verbose(2,"generated hex: ".$hex);
