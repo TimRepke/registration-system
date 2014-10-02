@@ -10,6 +10,12 @@ function page_stuff()
     require_page("pages_overview.php");
 }
 
+function page_front(){
+    global $text, $config_baseurl, $config_current_fahrt_id;
+    $text .= '<a href="'.$config_baseurl.'?fid='.$config_current_fahrt_id.'">'.$config_baseurl.'?fid='.$config_current_fahrt_id.'</a><br />';
+    $text .= '<iframe src="'.$config_baseurl.'?fid='.$config_current_fahrt_id.'" style="height:100%; width:100%;"></iframe>';
+}
+
 function page_list(){
     require_page("pages_list.php");
 }
@@ -45,6 +51,9 @@ function page_infos(){
 }
 function page_sa(){
     require_once("pages_sa.php");
+}
+function page_wl(){
+    require_once("pages_wl.php");
 }
 
 function require_page($page){

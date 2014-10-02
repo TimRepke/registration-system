@@ -31,8 +31,13 @@ function show_content(){
         die("Kein Hash angegeben!");
 
     $data = $status_db->get("bachelor", "*", array("bachelor_id"=>substr($_REQUEST['hash'],0,15)));
-    if(!$data)
-        die("Kein gültiger Hash gegeben!");
+    $wl = FALSE;
+    if(!$data){
+        $data = $status_db->get("waitlist", "*", array("waitlist_id"=>substr($_REQUEST['hash'],0,15)));
+        $wl = TRUE;
+        if(!data)
+            die("<h1>Kein gültiger Hash gegeben!</h1>");
+    }
 
     $infolist = Array(
     	'Anmelde ID' => $data['bachelor_id'],
@@ -49,7 +54,12 @@ function show_content(){
     );
 
     echo '
-    <div class="fahrt" style="background: #f9f9f9"><div class="fahrttitle">Anmeldedaten</div>
+    <div class="fahrt" style="background: #f9f9f9"><div class="fahrttitle">Anmeldedaten</div>';
+
+    if($wl)
+        echo '<div style="color: red; font-weight: bold; font-size: 14pt;">Achtung, dies ist nur ein Eintrag auf der Warteliste!<br /> Sofern keine weiteren Auskünfte folgen, kannst du leider NICHT mitfahren...</div>';
+
+    echo'
     <div class="fahrttable">';
 
     foreach($infolist as $key => $value)
