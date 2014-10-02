@@ -729,6 +729,8 @@ function storySubmit()
 		form.append('<input name="' + name + '" value="' + value.replace(/[\r\n]/g, "<br/>").replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"/>');
 	}
 
+    if(window.location.pathname.search("waitlist")>0)
+        formAppendText("waitlist", "waitlist");
 	formAppendText('forname', story.form_variables.forname);
 	formAppendText('sirname', story.form_variables.name);
 	formAppendText('pseudo', story.form_variables.anzeig);
