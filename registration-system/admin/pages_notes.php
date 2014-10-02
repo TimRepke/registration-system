@@ -32,6 +32,9 @@ body {
     padding-top: 40px !important;
     padding-left: 10px !important;
 }
+#admin-content{
+    height: 100% !important;
+}
 </style>";
 
 $text .= '

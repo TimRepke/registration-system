@@ -50,7 +50,7 @@ function index_show_content(){
         } elseif(isset($_REQUEST['full'])) {
 			echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Anmeldung leider fehlgeschlagen.</div>';
 			echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Die Anmeldegrenze wurde leider erreicht.</div>';
-			echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Bitte ein Auge offen halten, falls Plätze frei werden.</div>';
+			echo '<div style="text-align:center; font-size: 14pt; ">Es besteht die Möglichkeit sich auf der Warteliste einzutragen.<br /> Wenn du das möchtest, klicke hier: <a class="normallink" href="?fid='.$fid.'&waitlist">&#8694; Warteliste</a></div>';
 		} elseif(isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit'])){ // Formular auswerten
             comm_verbose(1,"Formular bekommen");
             $data = index_check_form();
@@ -65,13 +65,15 @@ function index_show_content(){
         } /*elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen, Anmeldung noch offen?
             index_show_formular($fid, $_REQUEST['bid']);
         } */ else {                       // leeres Formular anzeigen
-			if (comm_isopen_fid($index_db, $fid))
+            $openstatus = comm_isopen_fid_helper($index_db, $fid);
+			if ($openstatus == 0 || isset($_REQUEST['waitlist']))
 				index_show_formular($fid);
-			else
-			{
-				echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung wurde geschlossen.</div>';
-				echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Falls die Fahrt noch bevor steht:</div>';
-				echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Ein Auge offen halten, falls Plätze frei werden.</div>';
+			else {
+                echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung wurde geschlossen.</div>';
+                if( $openstatus != 2 ){
+                    echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Ein Auge offen halten, ob Plätze frei werden.</div>';
+                    echo '<div style="text-align:center; font-size: 14pt;">Es gibt aber auch eine Warteliste.<br /> Wenn du da rauf möchtest, klicke hier: <a class="normallink" href="?fid='.$fid.'&waitlist">&#8694; Warteliste</a></div>';
+                }
 			}	
         }
 
@@ -97,37 +99,54 @@ function show_content(){
  * @param $data
  */
 function index_form_to_db($data){
-    global $index_db, $config_baseurl, $lang_regmail;
+    global $index_db, $config_baseurl;
 
 	// === prepare data to insert ===
-    $data['version'] = 1;
-    $data['bachelor_id'] = comm_generate_key($index_db, "bachelor", "bachelor_id", array('fahrt_id'=>$data['fahrt_id']));
     $data['anm_time'] = time();
     $data['anday'] = date('Y-m-d', DateTime::createFromFormat('d.m.Y',$data['anday'])->getTimestamp());
     $data['abday'] = date('Y-m-d', DateTime::createFromFormat('d.m.Y',$data['abday'])->getTimestamp());
 
-	// === check regstration full ===
-    $res = $index_db->get("fahrten", ["regopen", "max_bachelor"], ["fahrt_id" => $data['fahrt_id']]);
-    if (!$res || $res['regopen'] != "1")
-		return false;
+    if(isset($_REQUEST['waitlist'])){
+        if(comm_isopen_fid_helper($index_db, $data['fahrt_id'])==1){
+            // === prepare data to insert ===
+            $data['waitlist_id'] = comm_generate_key($index_db, ["bachelor" => "bachelor_id", "waitlist" => "waitlist_id"], ['fahrt_id'=>$data['fahrt_id']]);
 
-	$index_db->exec("LOCK TABLES fahrten, bachelor WRITE"); // count should not be calculated in two scripts at once
+            // === insert data ===
+            $index_db->insert("waitlist", $data);
 
-	$insertOk = comm_isopen_fid($index_db, $data['fahrt_id']);
+            // === notify success ===
+            $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$data['fahrt_id']));
+            $mail = comm_get_lang("lang_waitmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['bachelor_id'],
+                                                          "{{organisator}}" => $from['leiter']));
+        }
+        else return false;
+    } else {
+        // === prepare data to insert ===
+        $data['version'] = 1;
+        $data['bachelor_id'] = comm_generate_key($index_db, ["bachelor", "bachelor_id"], ['fahrt_id'=>$data['fahrt_id']]);
+        // === check regstration full ===
+        $res = $index_db->get("fahrten", ["regopen", "max_bachelor"], ["fahrt_id" => $data['fahrt_id']]);
+        if (!$res || $res['regopen'] != "1")
+            return false;
 
-	/*if ($cnt+1 >= $res['max_bachelor']) // registration is full already or after the following insert
-		$index_db->update("fahrten", ["regopen" => 0], ["fahrt_id" => $config_current_fahrt_id]); */
+        $index_db->exec("LOCK TABLES fahrten, bachelor WRITE"); // count should not be calculated in two scripts at once
 
-	if ($insertOk)
-		$index_db->insert("bachelor", $data);
-    $index_db->exec("UNLOCK TABLES"); // insert is done now, count may be recalculated in other threads
-	if (!$insertOk)
-		return false; // full
+        $insertOk = comm_isopen_fid($index_db, $data['fahrt_id']);
 
-	// === notify success ===
-    $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$data['fahrt_id']));
-    $mail = comm_get_lang("lang_regmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['bachelor_id'],
-                                                 "{{organisator}}" => $from['leiter']));
+        /*if ($cnt+1 >= $res['max_bachelor']) // registration is full already or after the following insert
+            $index_db->update("fahrten", ["regopen" => 0], ["fahrt_id" => $config_current_fahrt_id]); */
+
+        if ($insertOk)
+            $index_db->insert("bachelor", $data);
+        $index_db->exec("UNLOCK TABLES"); // insert is done now, count may be recalculated in other threads
+        if (!$insertOk)
+            return false; // full
+
+        // === notify success ===
+        $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$data['fahrt_id']));
+        $mail = comm_get_lang("lang_regmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['bachelor_id'],
+                                                     "{{organisator}}" => $from['leiter']));
+    }
     comm_send_mail($index_db, $data['mehl'], $mail, $from['kontakt']);
     
     return true;
@@ -282,7 +301,7 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
     }
     $fidd = is_null($bid) ? $fid : $fid."&bid=".$bid;
     echo '<div id="stylized" class="myform">
-        <form id="form" name="form" method="post" action="index.php?fid='.$fidd.'">
+        <form id="form" name="form" method="post" action="index.php?fid='.$fidd.(isset($_REQUEST['waitlist']) ? '&waitlist' : '').'">
         <h1>Anmeldeformular</h1>
         <p>Bitte hier verbindlich anmelden.</p>';
 

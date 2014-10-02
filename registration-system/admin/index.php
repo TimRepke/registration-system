@@ -30,8 +30,10 @@ checkIfLogin();
 if (isLoggedIn())
 {
     $menu = array(
+        "Anmeldung" => "front",
         "Übersicht" => "stuff",
         "Meldeliste" => "list",
+        "Warteliste" => "wl",
         "Kosten" => "cost",
         "Rundmail" => "mail",
         "Notizen" => "notes",
@@ -53,11 +55,14 @@ if (isLoggedIn())
 
     switch($page)
     {
-        case "":
+        case "front":
+            page_front(); break;
         case "stuff":
             page_stuff(); break;
         case "list":
             page_list(); break;
+        case "wl":
+            page_wl(); break;
         case "cost":
             page_cost(); break;
         case "mail":

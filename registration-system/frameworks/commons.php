@@ -41,27 +41,53 @@ function comm_get_possible_dates($db, $fid){
 
 }
 
+/*
+ * returns TRUE iff registration is allowed
+ */
 function comm_isopen_fid($db_handle, $fid){
+    $ret = comm_isopen_fid_helper($db_handle, $fid);
+    return $ret == 0;
+}
+
+/*
+ * returns value depending on registration status
+ * 0 = registration open (slots available)
+ * 1 = all slots taken -> waitlist open
+ * 2 = registration closed!
+ */
+function comm_isopen_fid_helper($db_handle, $fid){
     comm_verbose(3,"checking if fid ". $fid . " is open");
+    $open = $db_handle->has('fahrten', ['AND' => ['fahrt_id'=>$fid, 'regopen'=>1]]);
+    if(!$open)
+        return 2;
+
     $cnt = $db_handle->count("bachelor", ["AND"=>
         ["backstepped" => NULL,
             "fahrt_id"    => $fid]]);
     $max = $db_handle->get("fahrten", "max_bachelor", ["fahrt_id" => $fid]);
-    $open = $db_handle->has('fahrten', ['AND' => ['fahrt_id'=>$fid, 'regopen'=>1]]);
+    $wl = $db_handle->count('waitlist', ['AND' =>
+        ["transferred" => NULL,
+         "fahrt_id"    => $fid]]);
 
     comm_verbose(3,"cnt: ".$cnt.", max: ".$max.", open: ".($open ? "yes" : "no"));
 
-    return ( $open && $cnt < $max );
+    if ( $cnt < $max && $wl == 0 )
+        return 0;
+
+    return 1;
 }
 
-function comm_generate_key($db_handle, $table, $col, $conditions){
+function comm_generate_key($db_handle, $check, $conditions){
     again:
     $bytes = openssl_random_pseudo_bytes(8);
     $hex   = bin2hex($bytes);
     comm_verbose(3,"generated hex for test: ".$hex);
-    $conditions[$col] = $hex;
 
-    if($db_handle->has($table, array("AND"=>$conditions))) goto again;
+    foreach($check as $table => $col){
+        $conditions[$col] = $hex;
+        if($db_handle->has($table, array("AND"=>$conditions))) goto again;
+    }
+
     comm_verbose(2,"generated hex: ".$hex);
     return $hex;
 }

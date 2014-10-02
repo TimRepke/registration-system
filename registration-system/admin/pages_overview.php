@@ -41,6 +41,11 @@ $mitfahrer['hoers'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id],
                                          "LIKE"=>["studityp" => $config_studitypen_o["HOERS"]]]);
+$warte['ntran'] = $admin_db->count("waitlist", ["AND"=>
+                                        ["transferred" => NULL,
+                                         "fahrt_id"    => $config_current_fahrt_id]]);
+$warte['gesam'] = $admin_db->count("waitlist", ["fahrt_id"    => $config_current_fahrt_id]);
+
 
 $text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
         <ul class='list-nodeco'>
@@ -51,6 +56,12 @@ $text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
                 <li>Nicht-Allesesser: ".$mitfahrer['veget']."</li>
                 <li>Zurückgetreten: ".$mitfahrer['backs']."</li>
                 <li>Personen am Treffpunkt: ".$mitfahrer['treff']."</li>
+            </ul>
+            <li>Warteliste:</li>
+            <ul>
+                <li>Noch wartend: ".$warte['ntran']."</li>
+                <li>Übertragen: ".($warte['gesam']-$warte['ntran'])."</li>
+                <li>Gesamt: ".$warte['gesam']."</li>
             </ul>
             <li>Verteilung</li>
             <ul>
