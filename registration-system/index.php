@@ -116,8 +116,9 @@ function index_form_to_db($data){
 
             // === notify success ===
             $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$data['fahrt_id']));
-            $mail = comm_get_lang("lang_waitmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['bachelor_id'],
+            $mail = comm_get_lang("lang_waitmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['waitlist_id'],
                                                           "{{organisator}}" => $from['leiter']));
+            comm_send_mail($index_db, $data['mehl'], $mail, $from['kontakt']);
         }
         else return false;
     } else {
@@ -146,8 +147,8 @@ function index_form_to_db($data){
         $from = $index_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$data['fahrt_id']));
         $mail = comm_get_lang("lang_regmail", array( "{{url}}"         => $config_baseurl."status.php?hash=".$data['bachelor_id'],
                                                      "{{organisator}}" => $from['leiter']));
+        comm_send_mail($index_db, $data['mehl'], $mail, $from['kontakt']);
     }
-    comm_send_mail($index_db, $data['mehl'], $mail, $from['kontakt']);
     
     return true;
 }
@@ -165,7 +166,7 @@ function index_check_form(){
 
     $fid  = $_REQUEST['fid'];
     $data['fahrt_id'] = $fid;
-    if(!comm_isopen_fid($index_db, $fid)){
+    if(comm_isopen_fid_helper($index_db, $fid)>1){
         $errors = array("Ungültige Fahrt!");
         goto index_check_form_skip;
     }
@@ -286,13 +287,16 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
     global $index_db, $config_studitypen, $config_essen, $config_reisearten, $invalidCharsRegEx;
 
 	$withStoryMode = !isset($_GET['noscript']) && !isset($_REQUEST['submit']) && !isset($_REQUEST['storySubmit']);
-	if ($withStoryMode)
+	if ($withStoryMode){
+        if(isset($_REQUEST['waitlist']))
+            echo '<h1 style="color: red; text-align: center;">Nur Warteliste!</h1>';
 		echo '<noscript>';
+    }
 
     $possible_dates = comm_get_possible_dates($index_db, $fid);
 
     if(is_null($bachelor))
-        $bachelor = array('forname' => "", 'sirname' => "", 'anday' => $possible_dates[0], 'abday' => $possible_dates[count($possible_dates)-1], 'antyp' => "", 'abtyp' => "", 'pseudo' => "", 'mehl' => "", 'essen' => "", 'public' => "", 'virgin' => "", 'studityp' => "", 'comment'=>"");
+        $bachelor = array('forname' => "", 'sirname' => "", 'anday' => $possible_dates[0], 'abday' => $possible_dates[count($possible_dates)-1], 'antyp' => "", 'abtyp' => "", 'pseudo' => "", 'mehl' => "", 'essen' => "", 'public' => "", 'studityp' => "", 'comment'=>"");
     if(!is_null($bid)){
         if($index_db->has('bachelor',array('bachelor_id' => $bid))){
             $bachelor = $index_db->select('bachelor', array('forname','sirname','anday','abday','antyp','abtyp','pseudo','mehl','essen','public','virgin','studityp','comment'), array('bachelor_id'=>$bid));
@@ -301,16 +305,25 @@ function index_show_formular($fid, $bid = NULL, $bachelor = NULL){
     }
     $fidd = is_null($bid) ? $fid : $fid."&bid=".$bid;
     echo '<div id="stylized" class="myform">
-        <form id="form" name="form" method="post" action="index.php?fid='.$fidd.(isset($_REQUEST['waitlist']) ? '&waitlist' : '').'">
-        <h1>Anmeldeformular</h1>
+        <form id="form" name="form" method="post" action="index.php?fid='.$fidd.(isset($_REQUEST['waitlist']) ? '&waitlist' : '').'">';
+    if(isset($_REQUEST['waitlist'])){
+        echo '<h1 style="color: red;">Warteliste</h1>
+        <p>Bitte in die Warteliste eintragen.</p>';
+    } else {
+        echo '<h1>Anmeldeformular</h1>
         <p>Bitte hier verbindlich anmelden.</p>';
+    }
+
+    $tmp_vir = "";
+    if(isset($bachelor['virgin']))
+        $tmp_vir = $bachelor['virgin']==0 ? "Ja" : "Nein";
 
     index_show_formular_helper_input("Vorname", "forname", $bachelor["forname"], "");
     index_show_formular_helper_input("Nachname","sirname",$bachelor["sirname"],"");
     index_show_formular_helper_input("Anzeigename","pseudo",$bachelor["pseudo"],"");
     index_show_formular_helper_input("E-Mail-Adresse","mehl",$bachelor["mehl"],"regelmäßig lesen!");
     index_show_formular_helper_sel("Du bist","studityp",$config_studitypen, $bachelor["studityp"],"");
-    index_show_formular_helper_sel("Alter 18+?","virgin",array("", "Nein", "Ja"), ($bachelor["virgin"]==0) ? "Ja" : "Nein", "Bist du älter als 18 Jahre?");
+    index_show_formular_helper_sel("Alter 18+?","virgin",array("", "Nein", "Ja"), $tmp_vir, "Bist du älter als 18 Jahre?");
     index_show_formular_helper_sel("Essenswunsch","essen",$config_essen, $bachelor["essen"],"Info für den Koch.");
     index_show_formular_helper_sel2("Anreise","anday", array_slice($possible_dates,0, -1), $bachelor["anday"]
                                              ,"antyp",$config_reisearten, $bachelor["antyp"],"");
