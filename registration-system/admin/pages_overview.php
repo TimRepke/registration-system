@@ -41,6 +41,10 @@ $mitfahrer['hoers'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id],
                                          "LIKE"=>["studityp" => $config_studitypen_o["HOERS"]]]);
+$mitfahrer['virgi'] = $admin_db->count("bachelor", ["AND"=>
+                                        ["backstepped" => NULL,
+                                         "fahrt_id"    => $config_current_fahrt_id,
+                                         "virgin"      => 1]]);
 $warte['ntran'] = $admin_db->count("waitlist", ["AND"=>
                                         ["transferred" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id]]);
@@ -65,6 +69,7 @@ $text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
             </ul>
             <li>Verteilung</li>
             <ul>
+                <li>Jungfrauen: ".$mitfahrer['virgi']."</li>
                 <li>Erstis: ".$mitfahrer['ersti']."</li>
                 <li>Hörstis: ".$mitfahrer['hoers']."</li>
                 <li>Tutti:  ".$mitfahrer['tutti']."</li>
