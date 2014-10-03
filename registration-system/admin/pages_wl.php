@@ -5,8 +5,11 @@
  * Date: 10/2/14
  * Time: 7:53 PM
  */
+error_reporting(E_ALL | E_STRICT);
+ini_set("display_errors",1);
+global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_studitypen, $config_essen, $config_reisearten, $config_essen_o, $config_reisearten_o, $config_baseurl;
 
-global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_studitypen, $config_essen, $config_reisearten, $config_essen_o, $config_reisearten_o;
+require_once("../frameworks/commons.php");
 
 // deletes the entry completely
 if(isset($_REQUEST['delete'])){
@@ -15,6 +18,55 @@ if(isset($_REQUEST['delete'])){
 
 // moves entry to final list
 if(isset($_REQUEST['move'])){
+    $transdata = $admin_db->get("waitlist", [
+        "fahrt_id",
+        "anm_time",
+        "forname",
+        "sirname",
+        "mehl",
+        "pseudo",
+        "antyp",
+        "abtyp",
+        "anday",
+        "abday",
+        "comment",
+        "studityp",
+        "virgin",
+        "essen"],
+        ["AND" => [
+            "waitlist_id" => $_REQUEST['move'],
+            "fahrt_id"    => $config_current_fahrt_id
+        ]]
+    );
+    $tinsert = $tupdate = NULL;
+    if($transdata){
+        $transdata['bachelor_id'] = $_REQUEST['move'];
+
+        $duplicate = FALSE;
+        if($admin_db->has("bachelor", ["AND" =>[
+                                         "bachelor_id" => $_REQUEST['move'],
+                                         "fahrt_id"    => $config_current_fahrt_id]]))
+            $duplicate = TRUE;
+        else{
+            $tinsert = $admin_db->insert("bachelor", $transdata);
+            $tupdate = $admin_db->update("waitlist", ["transferred" => time()], ["AND" => [
+                                                                                    "waitlist_id" => $_REQUEST['move'],
+                                                                                    "fahrt_id"    => $config_current_fahrt_id
+                                                                                ]]);
+        }
+    }
+
+    if(!$transdata || is_null($tinsert) || is_null($tupdate) || $duplicate)
+        $text .= '<div style="color:red;">Some error at transfer...</div>';
+    else{
+        $text .= '<div style="color:green;">Transfer seems successfull, sending automatic mail now to '.$transdata['mehl'].'</div>';
+
+        // === notify success ===
+        $from = $admin_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$transdata['fahrt_id']));
+        $mail = comm_get_lang("lang_waittoregmail", array( "{{url}}" => $config_baseurl."status.php?hash=".$_REQUEST['move'],
+                                                           "{{organisator}}" => $from['leiter']));
+        comm_send_mail($admin_db, $transdata['mehl'], $mail, $from['kontakt']);
+    }
 
 }
 
@@ -64,7 +116,7 @@ END;
         "18+" => function($person) { return (($person["virgin"]==0) ? "Ja" : "Nein"); },
         "Uebertragen" => function($person) {
                 if(!is_numeric($person["transferred"]))
-                    return "<a href='?page=wl&move=".$person["bachelor_id"]."'>&#8614; übertragen</a>";
+                    return "<a href='?page=wl&move=".$person["waitlist_id"]."'>&#8614; übertragen</a>";
                 else
                     return date("d.m.Y", $person['transferred']);
             }
@@ -97,7 +149,7 @@ END;
     foreach($people as $person) {
         $text .= "<tr>";
         foreach($columnFunctions as $key => $value){
-            $text .= "<td class='".$key.((!strpos($columnFunctions['Uebertragen']($person), "<")) ? '' : ' list-backstepped')."'>".$value($person)."</td>";
+            $text .= "<td class='".$key.((strpos($columnFunctions['Uebertragen']($person), "href")>0) ? '' : ' list-backstepped')."'>".$value($person)."</td>";
         }
         $text .= "</tr>";
     }
@@ -109,7 +161,11 @@ END;
     <script type='text/javascript'>
         jQuery.extend( jQuery.fn.dataTableExt.oSort, {
             "link-pre": function ( a ) {
-                return a.match(/<a [^>]+>([^<]+)<\/a>/)[1];
+                var tmp = a.match(/<a [^>]+>([^<]+)<\/a>/);
+                if(tmp)
+                    return a.match(/<a [^>]+>([^<]+)<\/a>/)[1];
+                else
+                    return a;
             }
         } );
         var ltab;
@@ -119,7 +175,7 @@ END;
                     { type: 'link', targets: 2 },
                     { type: 'link', targets: 11 }
                 ],
-                "order": [[ 11, "asc" ], [1,"asc" ]],
+                "order": [[ 11, "desc" ], [1,"asc" ]],
                 "paging": false
             });
 

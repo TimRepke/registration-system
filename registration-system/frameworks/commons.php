@@ -120,6 +120,6 @@ function comm_send_mail($db_handle, $addr, $cont, $from = NULL){
 }
 
 function comm_get_lang($lang, $replace){
-    global $$lang;
+    require_once(__DIR__."/../lang.php");
     return str_replace(array_keys($replace), array_values($replace), $$lang);
 }
