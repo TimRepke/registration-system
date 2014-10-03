@@ -46,4 +46,5 @@ Weitere Informationen werden wir an diese E-Mail-Adresse senden, also bitte rege
 Viele Grüße,
 {{organisator}}!
 ";
+
 ?>
