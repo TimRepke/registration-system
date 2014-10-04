@@ -10,25 +10,16 @@ mb_regex_encoding('UTF-8');
 ob_start('mb_output_handler');
 date_default_timezone_set("Europe/Berlin");
 
-$config_verbose_level = 0; // 0 = nothing, 1 = important, 2 = somewhat important, 3 = detailed verbose, 4 = with sql
-$config_admin_verbose_level = 0;
+// Adjust variables here ===============================================================================================
 
-// Adjust variables here ========================================================================================================
-$config_baseurl = "http://fsfahrt.repke.eu/anmeldung/registration-system/";
-$config_basepath = "/var/www/vhosts/fsfahrt.repke.eu/httpdocs/anmeldung/registration-system";
-
-$config_db = array(
-    "name" => "fsfahrt",
-    "user" => "fsfahrt",
-    "pass" => "9Lug*96q",
-    "host" => "localhost",
-    "type" => "mysql"
-);
+// actually adjust the stuff in there...
+require("config.local.php");
 
 
 
 
-// ========= DONT TOUCH ANYTHING DOWN HERE!!!
+// ========= DONT TOUCH ANYTHING DOWN HERE!!! ==========================================================================
+
 $config_studitypen_o = array(
     "ERSTI" => "Ersti",       // 0
     //"Wechsli",     // 1 - woanders/was anderes studiert, jetzt hier

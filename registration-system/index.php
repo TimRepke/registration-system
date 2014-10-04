@@ -182,10 +182,10 @@ function index_check_form(){
     index_check_field('abtyp', $config_reisearten, $data, $errors, 'Entwickler Bier geben und: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
     index_check_field('essen', $config_essen, $data, $errors, 'Hat das wirklich nicht gereicht??'); // ggf trollable machen mit /^[a-zA-Z]{2,50}$/
     index_check_field('studityp', $config_studitypen, $data, $errors, 'Neue Chance, diesmal FS-Ini wählen!');
-    index_check_field('public', "public", $data, $errors, 'Trollololol');
+    index_check_field('public', 'public', $data, $errors, 'Trollololol');
     index_check_field('virgin', array("Ja","Nein"), $data, $errors, 'Bitte Altersbereich wählen!');
-    index_check_field('comment', "comment", $data, $errors, 'Trollololol');
-    index_check_field('captcha', null, $data, $errors, 'Captcha falsch eingegeben.');
+    index_check_field('comment', 'comment', $data, $errors, 'Trollololol');
+    index_check_field('captcha', 'captcha', $data, $errors, 'Captcha falsch eingegeben.');
 
     if($data['anday'] == $data['abday'])
         array_push($errors, "Anreisetag = Abreisetag -> Bitte prüfen!");
@@ -232,47 +232,74 @@ function index_check_field($index, $check, &$datarr, &$errarr, $errmess){
     $pushdat = "";
     comm_verbose(3,"checking ".$index);
 
-    if($index == "captcha"){
-		if(isset($_SESSION['captcha']) && isset($_REQUEST[$index]) && strtolower($_REQUEST[$index]) == strtolower($_SESSION['captcha']))
-			unset($_SESSION['captcha']);
-		else
-		{
-			array_push($errarr, $errmess);
-			$datarr[$index] = "";
-		}
-	} elseif($check == "public"){
+    // check that first because if unchecked it doesnt exist
+    if($check == "public"){
         if(isset($_REQUEST[$index])) $datarr[$index] = 0;
         else  $datarr[$index] = 1;
-    } elseif(!isset($_REQUEST[$index])){
+    }
+
+    // if index is missing -> error!
+    elseif(!isset($_REQUEST[$index])){
         array_push($errarr, $errmess);
+
+        // set it in every case so corrections are possible
         $datarr[$index] = "";
-    } else {
+    }
+
+    // index is there -> check if value is allowed
+    else {
         $tmp = trim($_REQUEST[$index]);
+
+        // do specific check if a set of variables is allowed
         if(is_array($check)){
-            if(!in_array($tmp,$check)){
+            if(!in_array($tmp,$check))
                 array_push($errarr, $errmess);
-                //$tmp = "";
-            }
-        } else {
-            if($check == "mail"){
-                if (!filter_var($tmp, FILTER_VALIDATE_EMAIL)) {
-                    array_push($errarr, $errmess);
-                    //$tmp = "";
-                }
-            } elseif($check == "comment"){
-                // do nothing? maybe some graphical joke, is somebody tries to drop DB
-            } elseif(!(preg_match($check, $tmp)==1)){
+            else
+                $datarr[$index] = $tmp;
+        }
+
+        // check captcha
+        elseif($check == "captcha"){
+            if(isset($_SESSION['captcha']) && strtolower($tmp) == strtolower($_SESSION['captcha'])){
+                unset($_SESSION['captcha']);
+            } else{
                 array_push($errarr, $errmess);
-                //$tmp = "";
+                $datarr[$index] = "";
             }
         }
-        if($index == "virgin"){
-            if($_REQUEST[$index]=="Ja") $datarr[$index] = 0; // NOTE: for consistency: virgin = 0 means > 18
-            else  $datarr[$index] = 1;
-        } else {
+
+        // check mail address
+        elseif($check == "mail"){
+            if(!filter_var($tmp, FILTER_VALIDATE_EMAIL))
+                array_push($errarr, $errmess);
+
+            // set it in every case so corrections are possible
             $datarr[$index] = $tmp;
         }
+
+        // check comment field
+        elseif($check == "comment"){
+            $datarr[$index] = htmlspecialchars($tmp, ENT_QUOTES);
+        }
+
+        // check virgin field
+        elseif($index == "virgin"){
+            if($_REQUEST[$index]=="Ja") $datarr[$index] = 0; // NOTE: for consistency: virgin = 0 means > 18
+            else  $datarr[$index] = 1;
+        }
+
+        //everything else
+        else {
+            // check with regex
+            if(!(preg_match($check, $tmp)==1))
+                array_push($errarr, $errmess);
+
+            // set it in every case so corrections are possible
+            $datarr[$index] = $tmp;
+        }
+
     }
+
 }
 
 /**

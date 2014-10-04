@@ -35,7 +35,7 @@ function show_content(){
     if(!$data){
         $data = $status_db->get("waitlist", "*", array("waitlist_id"=>substr($_REQUEST['hash'],0,15)));
         $wl = TRUE;
-        if(!data)
+        if(!$data)
             die("<h1>Kein gültiger Hash gegeben!</h1>");
     }
 
