@@ -124,7 +124,7 @@ function index_form_to_db($data){
     } else {
         // === prepare data to insert ===
         $data['version'] = 1;
-        $data['bachelor_id'] = comm_generate_key($index_db, ["bachelor", "bachelor_id"], ['fahrt_id'=>$data['fahrt_id']]);
+        $data['bachelor_id'] = comm_generate_key($index_db, ["bachelor" => "bachelor_id"], ['fahrt_id'=>$data['fahrt_id']]);
         // === check regstration full ===
         $res = $index_db->get("fahrten", ["regopen", "max_bachelor"], ["fahrt_id" => $data['fahrt_id']]);
         if (!$res || $res['regopen'] != "1")
