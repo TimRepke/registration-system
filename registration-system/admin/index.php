@@ -5,7 +5,7 @@
  * Date: 8/8/14
  * Time: 4:19 PM
  */
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL);
 ini_set("display_errors",1);
 
 session_start();
@@ -15,6 +15,7 @@ require_once("../frameworks/commons.php");
 require_once("pages.php");
 require_once("../config.inc.php");
 require_once("../frameworks/medoo.php");
+require '../lang.php';
 
 $template = file_get_contents("../view/admin_template.html");
 $title = "FSFahrt - Admin Panel";

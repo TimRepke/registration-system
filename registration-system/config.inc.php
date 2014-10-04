@@ -13,6 +13,10 @@ date_default_timezone_set("Europe/Berlin");
 $config_verbose_level = 0; // 0 = nothing, 1 = important, 2 = somewhat important, 3 = detailed verbose, 4 = with sql
 $config_admin_verbose_level = 0;
 
+// Adjust variables here ========================================================================================================
+$config_baseurl = "http://fsfahrt.repke.eu/anmeldung/registration-system/";
+$config_basepath = "/var/www/vhosts/fsfahrt.repke.eu/httpdocs/anmeldung/registration-system";
+
 $config_db = array(
     "name" => "fsfahrt",
     "user" => "fsfahrt",
@@ -21,6 +25,10 @@ $config_db = array(
     "type" => "mysql"
 );
 
+
+
+
+// ========= DONT TOUCH ANYTHING DOWN HERE!!!
 $config_studitypen_o = array(
     "ERSTI" => "Ersti",       // 0
     //"Wechsli",     // 1 - woanders/was anderes studiert, jetzt hier
@@ -70,11 +78,10 @@ $config_superadmins = array(
     "tim", "manu"
 );
 */
-$config_userfile = __DIR__."/passwd/users.txt"; // relative to configfile
-$config_current_fahrt_file = __DIR__."/config_current_fahrt_id";
+$config_userfile = $config_basepath."/passwd/users.txt"; // relative to configfile
+$config_current_fahrt_file = $config_basepath."/config_current_fahrt_id";
 
 $config_mailtag = "[FS-Fahrt] - ";
-$config_baseurl = "http://fsfahrt.repke.eu/anmeldung/registration-system/";
 
 $config_current_fahrt_id = getCFID();
 

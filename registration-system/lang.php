@@ -6,7 +6,7 @@
  * Time: 5:02 PM
  */
 
-$lang_regmail = "
+static $lang_regmail = "
 Deine Anmeldung zur Fachschaftsfahrt\\\\
 Hallo!
 Vielen Dank für die Anmeldung bei der Fachschaftsfahrt. Den Status der Anmeldung kannst Du jederzeit auf folgender Seite überprüfen:
@@ -18,7 +18,7 @@ Viele Grüße,
 {{organisator}}!
 ";
 
-$lang_waitmail = "
+static $lang_waitmail = "
 Warteliste zur Fachschaftsfahrt\\\\
 Hallo!
 Vielen Dank für die Vormerkung für die Fachschaftsfahrt. Den Status der Meldung kannst Du jederzeit auf folgender Seite überprüfen:
@@ -32,7 +32,7 @@ Viele Grüße,
 {{organisator}}!
 ";
 
-$lang_waittoregmail = "
+static $lang_waittoregmail = "
 Deine Anmeldung zur Fachschaftsfahrt\\\\
 Hallo!
 
