@@ -116,10 +116,17 @@ function comm_send_mail($db_handle, $addr, $cont, $from = NULL){
         'Reply-To: ' . $from. "\r\n" .
         'X-Mailer: PHP/' . phpversion();
 
+    comm_verbose(3, "sending mail... from: ".$from."<br/>to:".$addr."<br />subject: ".$subj."<br/>content:".$mess);
+
     return mail($addr, $config_mailtag.$subj, $mess, $headers);
 }
 
 function comm_get_lang($lang, $replace){
-    require_once(__DIR__."/../lang.php");
+    global $config_basepath;
+    //require_once($config_basepath."/lang.php");
+    //echo $config_basepath."/lang.php";
+    global $$lang;
+
+    comm_verbose(3,"found lang variable: <br />".$$lang);
     return str_replace(array_keys($replace), array_values($replace), $$lang);
 }

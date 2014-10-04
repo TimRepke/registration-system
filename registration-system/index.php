@@ -17,7 +17,6 @@ $index_db = new medoo(array(
     'password'      => $config_db["pass"]
 ));
 
-
 require 'view/default_index.php';
 
 
