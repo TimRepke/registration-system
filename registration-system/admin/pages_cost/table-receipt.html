@@ -1,32 +1,62 @@
-<table class="cost-table" id="">
-    <thead>
-    <tr>
-        <th>Position</th>
-        <th>Menge</th>
-        <th>Anzahl</th>
-        <th>Satz</th>
-        <th>Summe</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td class="edita" id='cell1'>Übernachtung</td>
-        <td class="cost-table-numeric edita" id='cell2'>2</td>
-        <td class="cost-table-numeric edita" id='cell3'>69</td>
-        <td class="cost-table-numeric edita" id='cell4'>10,50 €</td>
-        <td class="cost-table-numeric edita" id='cell5'>1 449,00 €</td>
-    </tr>
-    </tbody>
-    <tfoot>
-    <tr>
-        <td class="cost-table-invisible"></td>
-        <td class="cost-table-invisible"></td>
-        <td class="cost-table-invisible"></td>
-        <td class="cost-table-invisible"></td>
-        <td>2 915,10 €</td>
-    </tr>
-    </tfoot>
-</table>
+<form editable-form name="tableform" onaftersave="saveTable()" oncancel="cancel()">
+    <table class="cost-table" id="">
+        <thead>
+        <tr>
+            <th>Position</th>
+            <th>Menge</th>
+            <th>Anzahl</th>
+            <th>Satz</th>
+            <th>Summe</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in table.entries | filter:filterRow">
+            <td>
+                <span editable-text="row.pos" e-form="tableform" e-ng-change="chang($index, 'pos', $data)">
+                    {{ row.pos || '&nbsp;' }}
+                </span>
+            </td>
+            <td class="cost-table-numeric" >
+                <span editable-text="row.cnt" e-form="tableform" e-style="width: 20pt" e-ng-change="chang($index, 'cnt', $data)">
+                    {{ row.cnt || 1 }}
+                </span>
+            </td>
+            <td class="cost-table-numeric" >
+                <span editable-text="row.mul" e-form="tableform" e-style="width: 20pt" e-ng-change="chang($index, 'mul', $data)">
+                    {{ row.mul || 1 }}
+                </span>
+            </td>
+            <td class="cost-table-numeric" >
+                <span editable-text="row.price" e-form="tableform" e-style="width: 30pt" e-ng-change="chang($index, 'price', $data)">
+                    {{ row.price || 0 | currency:"€ "}}
+                </span>
+            </td>
+            <td class="cost-table-numeric" >{{ table.rowSum(row) | currency:"€ "}}</td>
+            <td><button type="button" ng-show="tableform.$visible" ng-click="deleteRow($index)" class="button-delete">del</button></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td class="cost-table-invisible"></td>
+            <td class="cost-table-invisible"></td>
+            <td class="cost-table-invisible"></td>
+            <td class="cost-table-invisible"></td>
+            <td>{{table.sum() | currency:"€ "}}</td>
+            <td></td>
+        </tr>
+        </tfoot>
+    </table>
+    <!-- buttons -->
+    <div class="btn-edit">
+        <button type="button" class="button-edit" ng-show="!tableform.$visible" ng-click="tableform.$show()">edit</button>
+    </div>
+    <div class="btn-form" ng-show="tableform.$visible">
+        <button type="button" ng-disabled="tableform.$waiting" ng-click="addRow()" class="button-add">add row</button> |
+        <button type="submit" ng-disabled="tableform.$waiting" class="button-save">save</button> |
+        <button type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="button-cancel">cancel</button>
+    </div>
+</form>
 
 <div class="debug" style="margin-top: 30px;">
     {{ table.entries | json }}
