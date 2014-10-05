@@ -28,7 +28,7 @@
                 </span>
             </td>
             <td class="cost-table-numeric">{{table.rowSum(row) | currency:"€ "}}</td>
-            <td><button type="button" ng-show="tableform.$visible" ng-click="deleteRow($index)">X</button></td>
+            <td><button type="button" ng-show="tableform.$visible" ng-click="deleteRow($index)" class="button-delete">del</button></td>
         </tr>
         </tbody>
         <tfoot>
@@ -44,15 +44,15 @@
 
     <!-- buttons -->
     <div class="btn-edit">
-        <button type="button" class="editbutton" ng-show="!tableform.$visible" ng-click="tableform.$show()">edit</button>
+        <button type="button" class="button-edit" ng-show="!tableform.$visible" ng-click="tableform.$show()">edit</button>
     </div>
     <div class="btn-form" ng-show="tableform.$visible">
-        <button type="button" ng-disabled="tableform.$waiting" ng-click="addRow()" >add row</button> |
-        <button type="submit" ng-disabled="tableform.$waiting">save</button> |
-        <button type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" >cancel</button>
+        <button type="button" ng-disabled="tableform.$waiting" ng-click="addRow()" class="button-add">add row</button> |
+        <button type="submit" ng-disabled="tableform.$waiting" class="button-save">save</button> |
+        <button type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="button-cancel">cancel</button>
     </div>
 </form>
 
-<div id="debug" style="margin-top: 30px">
+<div class="debug" style="margin-top: 30px;">
     {{ table.entries | json }}
 </div>
