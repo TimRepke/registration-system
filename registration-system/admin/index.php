@@ -58,6 +58,7 @@ if (isLoggedIn())
     {
         case "front":
             page_front(); break;
+        case "":
         case "stuff":
             page_stuff(); break;
         case "list":
