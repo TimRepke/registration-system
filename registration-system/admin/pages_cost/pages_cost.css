@@ -1,0 +1,18 @@
+.pages-cost-edit{
+    border: 1px solid black;
+    background-color: lightcyan;
+    height: 100px;
+    width: 100px;
+}
+
+.editbutton:before{
+    content: "";
+    background: url('../../view/graphics/jqueryui.png') no-repeat -68px -116px;
+    width: 9px;
+    height: 9px;
+    float: left;
+    margin: 4pt 4pt 0 4pt;
+}
+.editbutton{
+
+}

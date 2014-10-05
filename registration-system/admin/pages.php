@@ -41,7 +41,7 @@ function page_mail(){
 }
 
 function page_cost(){
-    require_page("pages_cost.php.old");
+    require_page("pages_cost.php");
 }
 function page_export(){
     require_page("pages_export.php");

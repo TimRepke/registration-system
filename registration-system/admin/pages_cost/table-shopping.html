@@ -1,0 +1,26 @@
+<table class="cost-table">
+    <thead>
+    <tr>
+        <th>Position</th>
+        <th>Anzahl</th>
+        <th>Satz</th>
+        <th>Summe</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="row in table.entries">
+        <td>{{row.pos}}</td>
+        <td class="cost-table-numeric">{{row.cnt}}</td>
+        <td class="cost-table-numeric">{{row.price | currency:"€ "}}</td>
+        <td class="cost-table-numeric">{{table.rowSum(row) | currency:"€ "}}</td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td class="cost-table-invisible"></td>
+        <td class="cost-table-invisible"></td>
+        <td class="cost-table-invisible"></td>
+        <td>{{table.sum() | currency:"€ "}}</td>
+    </tr>
+    </tfoot>
+</table>
