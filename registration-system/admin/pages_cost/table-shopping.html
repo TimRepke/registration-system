@@ -1,26 +1,58 @@
-<table class="cost-table">
-    <thead>
-    <tr>
-        <th>Position</th>
-        <th>Anzahl</th>
-        <th>Satz</th>
-        <th>Summe</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr ng-repeat="row in table.entries">
-        <td>{{row.pos}}</td>
-        <td class="cost-table-numeric">{{row.cnt}}</td>
-        <td class="cost-table-numeric">{{row.price | currency:"€ "}}</td>
-        <td class="cost-table-numeric">{{table.rowSum(row) | currency:"€ "}}</td>
-    </tr>
-    </tbody>
-    <tfoot>
-    <tr>
-        <td class="cost-table-invisible"></td>
-        <td class="cost-table-invisible"></td>
-        <td class="cost-table-invisible"></td>
-        <td>{{table.sum() | currency:"€ "}}</td>
-    </tr>
-    </tfoot>
-</table>
+
+<form editable-form name="tableform" onaftersave="saveTable()" oncancel="cancel()">
+    <table class="cost-table">
+        <thead>
+        <tr>
+            <th>Position</th>
+            <th>Anzahl</th>
+            <th>Satz</th>
+            <th>Summe</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in table.entries | filter:filterRow">
+            <td>
+                <span editable-text="row.pos" e-form="tableform">
+                    {{ row.pos || '' }}
+                </span>
+            </td>
+            <td class="cost-table-numeric">
+                <span editable-text="row.cnt" e-form="tableform">
+                    {{ row.cnt || 1 }}
+                </span>
+            </td>
+            <td class="cost-table-numeric">
+                <span editable-text="row.price" e-form="tableform">
+                    {{row.price || 0 | currency:"€ "}}
+                </span>
+            </td>
+            <td class="cost-table-numeric">{{table.rowSum(row) | currency:"€ "}}</td>
+            <td><button type="button" ng-show="tableform.$visible" ng-click="deleteRow($index)">X</button></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td class="cost-table-invisible"></td>
+            <td class="cost-table-invisible"></td>
+            <td class="cost-table-invisible"></td>
+            <td>{{table.sum() | currency:"€ "}}</td>
+            <td></td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <!-- buttons -->
+    <div class="btn-edit">
+        <button type="button" class="editbutton" ng-show="!tableform.$visible" ng-click="tableform.$show()">edit</button>
+    </div>
+    <div class="btn-form" ng-show="tableform.$visible">
+        <button type="button" ng-disabled="tableform.$waiting" ng-click="addRow()" >add row</button> |
+        <button type="submit" ng-disabled="tableform.$waiting">save</button> |
+        <button type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" >cancel</button>
+    </div>
+</form>
+
+<div id="debug" style="margin-top: 30px">
+    {{ table.entries | json }}
+</div>

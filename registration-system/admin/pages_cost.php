@@ -20,6 +20,7 @@ else {
     $headers .= '
              <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
              <script type="text/javascript" src="../view/js/angular.min.js"></script>
+             <script type="text/javascript" src="../view/js/xeditable.js"></script>
              <script type="text/javascript" src="pages_cost/pages_cost.js"></script>
              <link   type="text/css" rel="stylesheet" href="pages_cost/pages_cost.css" />';
 

@@ -16,3 +16,7 @@
 .editbutton{
 
 }
+
+.cost-table td{
+    border: 0;
+}
