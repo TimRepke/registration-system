@@ -13,17 +13,17 @@
         <tbody>
         <tr ng-repeat="row in table.entries | filter:filterRow">
             <td>
-                <span editable-text="row.pos" e-form="tableform">
-                    {{ row.pos || '' }}
+                <span editable-text="row.pos" e-form="tableform" e-ng-change="chang($index, 'pos', $data)">
+                    {{ row.pos || '&nbsp;' }}
                 </span>
             </td>
             <td class="cost-table-numeric">
-                <span editable-text="row.cnt" e-form="tableform">
+                <span editable-text="row.cnt" e-form="tableform" e-style="width: 20pt" e-ng-change="chang($index, 'cnt', $data)">
                     {{ row.cnt || 1 }}
                 </span>
             </td>
             <td class="cost-table-numeric">
-                <span editable-text="row.price" e-form="tableform">
+                <span editable-text="row.price" e-form="tableform" e-style="width: 30pt" e-ng-change="chang($index, 'price', $data)">
                     {{row.price || 0 | currency:"€ "}}
                 </span>
             </td>

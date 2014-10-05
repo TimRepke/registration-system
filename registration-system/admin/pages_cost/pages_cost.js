@@ -77,7 +77,8 @@
         table.sum = function(){
             var ret = 0;
             for(var run = 0; run < table.entries.length; run++)
-                ret += table.rowSum(table.entries[run]);
+                if(!table.entries[run].isDeleted)
+                    ret += table.rowSum(table.entries[run]);
             return ret;
         };
 
@@ -91,6 +92,10 @@
         // mark row as deleted
         $scope.deleteRow = function(index) {
             table.entries[index].isDeleted = true;
+        };
+
+        $scope.chang = function(index, prop, dat){
+            table.entries[index][prop] = dat;
         };
 
         // add row
