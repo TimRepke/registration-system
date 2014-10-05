@@ -28,7 +28,10 @@ $ecols = [
 if(isset($_REQUEST['change'])){
     $update = [];
     foreach($ecols as $k=>$e){
-        $update[$k] = $e($_REQUEST[$k]);
+        if($k == "public")
+            $update[$k] = isset($_REQUEST[$k]) ? 0 : 1;
+        else
+            $update[$k] = $e($_REQUEST[$k]);
     }
     $admin_db->update("bachelor", $update, ["bachelor_id"=> $_REQUEST['change']]);
 }
