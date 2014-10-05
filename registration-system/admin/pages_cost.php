@@ -35,6 +35,8 @@ if(isset($_REQUEST['ajax'])){
             break;
 
         case "get-receipt-json":
+            header('Content-Type: application/json');
+            $ajax = $admin_db->get("cost", "tab3", ["fahrt_id" => $fid]);
             break;
 
         case "get-moneyio-json":
@@ -50,6 +52,7 @@ if(isset($_REQUEST['ajax'])){
             break;
 
         case "set-receipt-json":
+            $admin_db->update("cost",["tab3" => $data], ["fahrt_id" => $fid]);
             break;
 
         case "set-moneyio-json":
