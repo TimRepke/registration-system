@@ -12,6 +12,54 @@ global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reis
 // AJAX requests up here ============================================================
 if(isset($_REQUEST['ajax'])){
 
+    $data = "";
+    $fid  = $config_current_fahrt_id;
+    $task = $_REQUEST['ajax'];
+
+    if(isset($_REQUEST['json-data'])){
+        $data = $_REQUEST['json-data'];
+    } elseif( strpos($task, "set")!==false && strpos($task, "json")!==false ){
+        $data = file_get_contents("php://input");
+    }
+
+
+    switch($task){
+
+        // == GETTER ==
+        case "get-price-json":
+            break;
+
+        case "get-shopping-json":
+            header('Content-Type: application/json');
+            $ajax = $admin_db->get("cost", "tab2", ["fahrt_id" => $fid]);
+            break;
+
+        case "get-receipt-json":
+            break;
+
+        case "get-moneyio-json":
+            break;
+
+
+        // == SETTER ==
+        case "set-price-json":
+            break;
+
+        case "set-shopping-json":
+            $admin_db->update("cost",["tab2" => $data], ["fahrt_id" => $fid]);
+            break;
+
+        case "set-receipt-json":
+            break;
+
+        case "set-moneyio-json":
+            break;
+
+        // == DEFAULT ==
+        default:
+            break;
+    }
+
 }
 
 
@@ -21,8 +69,10 @@ else {
              <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
              <script type="text/javascript" src="../view/js/angular.min.js"></script>
              <script type="text/javascript" src="../view/js/xeditable.js"></script>
+             <script type="text/javascript" src="../view/js/toastr.min.js"></script>
              <script type="text/javascript" src="pages_cost/pages_cost.js"></script>
-             <link   type="text/css" rel="stylesheet" href="pages_cost/pages_cost.css" />';
+             <link   type="text/css" rel="stylesheet" href="pages_cost/pages_cost.css" />
+             <link   type="text/css" rel="stylesheet" href="../view/css/toastr.css" />';
 
 
     $text .= '
@@ -31,8 +81,8 @@ else {
 
             <div ng-controller="TablePriceController as table">
                 <h2>Kosten pro Person</h2>
-                <a href ng-click="table.toggleEditmode()" class="editbutton">edit</a>
                 <table-price></table-price>
+                <button type="button" ng-click="table.toggleEditmode()" class="button-edit">edit</button>
                 <table-price-edit></table-price-edit>
             </div>
 

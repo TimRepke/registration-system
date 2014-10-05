@@ -63,10 +63,15 @@
         };
     });
 
-    app.controller('TableShoppingController', function($scope, $filter, $q){
+    app.controller('TableShoppingController', ["$scope", "$filter", "$q", "$http", function($scope, $filter, $q, $http){
         var table = this;
 
-        table.entries = tmp_shop;
+        table.entries = [];
+
+        $http.get('?page=cost&ajax=get-shopping-json').success(function(data){
+            if(data !== "")
+                table.entries = data;
+        });
 
         // === basic table functions ===
 
@@ -140,29 +145,14 @@
                 }
             }
 
+            $http.post('?page=cost&ajax=set-shopping-json', table.entries).success(function(data, status, headers, config){
+                toastr.success('Saved to Database!')
+            });
             return $q.all(results);
         };
 
-    });
+    }]);
 
-
-    var tmp_shop = [
-        {
-            pos: "Mate",
-            cnt: 4,
-            price: 0.67
-        },
-        {
-            pos: "Limonade",
-            cnt: 5,
-            price: 1.30
-        },
-        {
-            pos: "Brause",
-            cnt: 10,
-            price: 0.12
-        }
-    ];
 })();
 
 

@@ -1,3 +1,7 @@
+.debug{
+    display: none;
+}
+
 .pages-cost-edit{
     border: 1px solid black;
     background-color: lightcyan;
@@ -5,18 +9,50 @@
     width: 100px;
 }
 
-.editbutton:before{
+.cost-table td{
+    border: 0;
+}
+
+/* === Buttons == */
+
+.button-edit:before{
     content: "";
     background: url('../../view/graphics/jqueryui.png') no-repeat -68px -116px;
     width: 9px;
     height: 9px;
     float: left;
-    margin: 4pt 4pt 0 4pt;
+    margin: 2pt 4pt 0 0;
 }
-.editbutton{
-
+.button-delete:before{
+     content: "";
+     background: url('../../view/graphics/jqueryui.png') no-repeat -180px -100px;
+     width: 9px;
+     height: 10px;
+     float: left;
+     margin: 1.5pt 4pt 0 0;
+ }
+.button-add:before{
+    content: "";
+    background: url('../../view/graphics/jqueryui.png') no-repeat -20px -133px;
+    width: 8px;
+    height: 8px;
+    float: left;
+    margin: 3pt 4pt 0 0;
 }
-
-.cost-table td{
-    border: 0;
+.button-cancel:before{
+    content: "";
+    background: url('../../view/graphics/jqueryui.png') no-repeat -85px -133px;
+    width: 7px;
+    height: 7px;
+    float: left;
+    margin: 3.5pt 4pt 0 0;
 }
+.button-save:before{
+    content: "";
+    background: url('../../view/graphics/jqueryui.png') no-repeat -197px -100px;
+    width: 7px;
+    height: 9px;
+    float: left;
+    margin: 2.5pt 4pt 0 0;
+}
+/* == / end buttons == */
