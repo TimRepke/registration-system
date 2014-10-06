@@ -167,13 +167,21 @@ END;
                 else
                     return a;
             }
+            ,
+            "dedate-pre": function(a){
+                var tmp = a.split(".");
+                console.log(tmp[2]+tmp[1]+tmp[0]);
+                if(tmp.length>2)
+                    return (tmp[2]+tmp[1]+tmp[0]);
+                return a;
+            }
         } );
         var ltab;
         $(document).ready(function(){
              ltab = $('#mlist').DataTable({
                 "columnDefs": [
-                    { type: 'link', targets: 2 },
-                    { type: 'link', targets: 11 }
+                    { type: 'dedate', targets: [1,5,6]},
+                    { type: 'link', targets: [2, 11] }
                 ],
                 "order": [[ 11, "desc" ], [1,"asc" ]],
                 "paging": false
