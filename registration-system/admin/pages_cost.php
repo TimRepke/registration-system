@@ -27,6 +27,8 @@ if(isset($_REQUEST['ajax'])){
 
         // == GETTER ==
         case "get-price-json":
+            header('Content-Type: application/json');
+            $ajax = $admin_db->get("cost", "tab1", ["fahrt_id" => $fid]);
             break;
 
         case "get-shopping-json":
@@ -40,11 +42,14 @@ if(isset($_REQUEST['ajax'])){
             break;
 
         case "get-moneyio-json":
+            header('Content-Type: application/json');
+            $ajax = $admin_db->get("cost", "moneyIO", ["fahrt_id" => $fid]);
             break;
 
 
         // == SETTER ==
         case "set-price-json":
+            $admin_db->update("cost",["tab1" => $data], ["fahrt_id" => $fid]);
             break;
 
         case "set-shopping-json":
@@ -56,6 +61,7 @@ if(isset($_REQUEST['ajax'])){
             break;
 
         case "set-moneyio-json":
+            $admin_db->update("cost",["moneyIO" => $data], ["fahrt_id" => $fid]);
             break;
 
         // == DEFAULT ==

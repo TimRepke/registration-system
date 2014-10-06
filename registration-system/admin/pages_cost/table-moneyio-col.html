@@ -1,0 +1,25 @@
+<table class="cost-table">
+    <thead>
+    <tr>
+        <th>Position{{io}}</th>
+        <th>Summe</th>
+        <th ng-show="tform.$visible"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="row in col | filter:filterRow">
+        <td>
+            <span editable-text="row.pos" e-form="tableform" e-ng-change="chang(row, 'pos', $data)">
+                {{row.pos || "&nbsp;" }}
+            </span>
+        </td>
+        <td class="cost-table-numeric">
+            <span editable-text="row.val" e-form="tableform"  e-style="width: 35pt" e-ng-change="chang(row, 'val', $data)">
+                {{row.val || 0 | currency:"€ "}}
+            </span>
+        </td>
+        <td ng-show="tform.$visible"><button type="button" ng-click="$parent.$parent.deleteRow(io,$index)" class="button-delete">del</button></td>
+    </tr>
+    </tbody>
+</table>
+<button type="button" ng-disabled="tform.$waiting"  ng-show="tform.$visible" ng-click="$parent.addRow(col)" class="button-add">add row</button>

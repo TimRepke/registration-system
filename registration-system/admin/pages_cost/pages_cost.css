@@ -1,5 +1,6 @@
 .debug{
-    display: none;
+    /*display: none;*/
+    border: 1px dotted mediumvioletred;
 }
 
 .pages-cost-edit{
@@ -11,6 +12,26 @@
 
 .cost-table td{
     border: 0;
+}
+
+.table-moneyio tr td{
+    vertical-align: top;
+    border: 0;
+}
+.table-moneyio-sum{
+    padding-right: 17px;
+    border-top: 1px dashed black !important;
+    border-bottom: 1px solid black !important;
+}
+
+.red-text{
+    color: red;
+}
+.green-text{
+    color: green;
+}
+.yellow-text{
+    color:#ffdd00;
 }
 
 /* === Buttons == */

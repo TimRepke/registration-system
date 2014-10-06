@@ -1,73 +1,33 @@
-<div style="float:left">
-    <table class="cost-table" id="">
-        <thead>
+<form editable-form name="tableform" onaftersave="saveTable()" oncancel="cancel()">
+    <table class="table-moneyio">
         <tr>
-            <th>Position</th>
-            <th>Summe</th>
+            <td>
+                <table-moneyio-col col="table.entries.in" io="in" tform="tableform"></table-moneyio-col>
+            </td>
+            <td>
+                <table-moneyio-col col="table.entries.out" io="out" tform="tableform"></table-moneyio-col>
+            </td>
+            <td></td>
         </tr>
-        </thead>
-        <tbody>
+
         <tr>
-            <td class="edita" id='cell1'>Frauensee</td>
-            <td class="cost-table-numeric edita" id='cell2'>2 815,10 €</td>
+            <td class="cost-table-numeric table-moneyio-sum">{{ table.colSum(table.entries.in) | currency:"€ " }}</td>
+            <td class="cost-table-numeric table-moneyio-sum">{{ table.colSum(table.entries.out) | currency:"€ " }}</td>
+            <td class="cost-table-numeric table-moneyio-sum" ng-class="{red:'red-text', yellow:'yellow-text', green: 'green-text'}[table.diffColor()]">{{ table.diff() | currency:"€ " }}</td>
         </tr>
-        <tr>
-            <td class="edita" id='cell3'>Einkauf</td>
-            <td class="cost-table-numeric edita" id='cell4'>590,13 €</td>
-        </tr>
-        <tr>
-            <td class="edita" id='cell5'>Busfahrt</td>
-            <td class="cost-table-numeric edita" id='cell6'>216,00 €</td>
-        </tr>
-        <tr>
-            <td class="edita" id='cell7'>Bäcker</td>
-            <td class="cost-table-numeric edita" id='cell8'>22,40 €</td>
-        </tr>
-        <tr>
-            <td class="edita" id='cell9'>Kaution</td>
-            <td class="cost-table-numeric edita" id='cell10'>100,00 €</td>
-        </tr>
-        </tbody>
     </table>
+
+    <!-- buttons -->
+    <div class="btn-edit">
+        <button type="button" class="button-edit" ng-show="!tableform.$visible" ng-click="tableform.$show()">edit</button>
+    </div>
+    <div class="btn-form" ng-show="tableform.$visible">
+        <button type="submit" ng-disabled="tableform.$waiting" class="button-save">save</button> |
+        <button type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="button-cancel">cancel</button>
+    </div>
+</form>
+
+
+<div class="debug" style="margin-top: 30px;">
+    {{ table.entries | json }}
 </div>
-<div style="float:left">
-    <table class="cost-table" id="">
-        <thead>
-        <tr>
-            <th>Position</th>
-            <th>Summe</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td class="edita" id='cell1'>Pfand1</td>
-            <td class="cost-table-numeric edita" id='cell2'>82,17 €</td>
-        </tr>
-        <tr>
-            <td class="edita" id='cell3'>Pfand2</td>
-            <td class="cost-table-numeric edita" id='cell4'>10,00 €</td>
-        </tr>
-        <tr>
-            <td class="edita" id='cell5'>Pfand3</td>
-            <td class="cost-table-numeric edita" id='cell6'>15,00 €</td>
-        </tr>
-        <tr>
-            <td class="edita" id='cell7'>Fachschaft (Reste)</td>
-            <td class="cost-table-numeric edita" id='cell8'>76,00 €</td>
-        </tr>
-        <tr>
-            <td class="edita" id='cell9'>Kollekte</td>
-            <td class="cost-table-numeric edita" id='cell10'>4 620,00 €</td>
-        </tr>
-        <tr>
-            <td class="edita" id='cell11'>Förderung</td>
-            <td class="cost-table-numeric edita" id='cell12'>2 200,00 €</td>
-        </tr>
-        <tr>
-            <td class="edita" id='cell13'>Kaution</td>
-            <td class="cost-table-numeric edita" id='cell14'>100,00 €</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-<div style="clear:both"></div>
