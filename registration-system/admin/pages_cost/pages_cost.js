@@ -6,6 +6,36 @@
 (function() {
     var app = angular.module('pages-cost', ['price','shopping','receipt','moneyio']);
 
+    app.filter('currency', ["$filter", function($filter) {
+        return function(input, curSymbol, decPlaces, thouSep, decSep) {
+            curSymbol = curSymbol || " €";
+            decPlaces = decPlaces || 2;
+            thouSep = thouSep || " ";
+            decSep = decSep || ".";
+
+            // Check for invalid inputs
+            var out = isNaN(input) || input === '' || input === null ? 0.0 : input;
+
+            //Deal with the minus (negative numbers)
+            var minus = input < 0;
+            out = Math.abs(out);
+            out = $filter('number')(out, decPlaces);
+
+            // Replace the thousand and decimal separators.
+            // This is a two step process to avoid overlaps between the two
+            if(thouSep != ",") out = out.replace(/\,/g, "T");
+            if(decSep != ".") out = out.replace(/\./g, "D");
+            out = out.replace(/T/g, thouSep);
+            out = out.replace(/D/g, decSep);
+
+            // Add the minus and the symbol
+            if(minus){
+                return "-"  + out + curSymbol;
+            }else{
+                return out + curSymbol;
+            }
+        }
+    }]);
 })();
 
 
@@ -272,7 +302,7 @@
  * moneyIO module
  */
 (function() {
-    var app = angular.module('moneyio', ['currfil']);
+    var app = angular.module('moneyio', [ ]);
 
     app.directive("tableMoneyio", function() {
         return {
@@ -281,7 +311,7 @@
         };
     });
 
-    app.directive("tableMoneyioCol", function() {
+    app.directive("tableMoneyioCol", ["currencyFilter", function(currency) {
 
         return {
             restrict: 'E',
@@ -301,10 +331,14 @@
                     row[cell] = val;
                 }
 
+                scope.curr = function(e){
+                    console.log(e);
+                    return currency(e);
+                }
             }
 
         };
-    });
+    }]);
 
     app.controller('TableMoneyioController', ["$scope", "$filter", "$q", "$http", "$rootScope", function($scope, $filter, $q, $http, $rootScope){
         var table = this;
@@ -415,16 +449,6 @@
         };
 
     }]);
-
-    angular.module('currfil', []).filter('filterDiff', function() {
-        return function(val) {
-            //console.log(val);
-            if(val.indexOf("(")>-1)
-                return "<span style='color:red'>"+val+"</span>";
-            else
-                return "<span style='color:limegreen'>"+val+"</span>";
-        };
-    });
 
 })();
 

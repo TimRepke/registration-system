@@ -11,9 +11,9 @@
         </tr>
 
         <tr>
-            <td class="cost-table-numeric table-moneyio-sum">{{ table.colSum(table.entries.in) | currency:"€ " }}</td>
-            <td class="cost-table-numeric table-moneyio-sum">{{ table.colSum(table.entries.out) | currency:"€ " }}</td>
-            <td class="cost-table-numeric table-moneyio-sum" ng-class="{red:'red-text', yellow:'yellow-text', green: 'green-text'}[table.diffColor()]">{{ table.diff() | currency:"€ " }}</td>
+            <td class="cost-table-numeric table-moneyio-sum">{{ table.colSum(table.entries.in) | currency }}</td>
+            <td class="cost-table-numeric table-moneyio-sum">{{ table.colSum(table.entries.out) | currency }}</td>
+            <td class="cost-table-numeric table-moneyio-sum" ng-class="{red:'red-text', yellow:'yellow-text', green: 'green-text'}[table.diffColor()]">{{ table.diff() | currency }}</td>
         </tr>
     </table>
 

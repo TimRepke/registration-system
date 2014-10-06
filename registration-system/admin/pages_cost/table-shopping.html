@@ -24,10 +24,10 @@
             </td>
             <td class="cost-table-numeric">
                 <span editable-text="row.price" e-form="tableform" e-style="width: 30pt" e-ng-change="chang($index, 'price', $data)">
-                    {{row.price || 0 | currency:"€ "}}
+                    {{row.price || 0 | currency}}
                 </span>
             </td>
-            <td class="cost-table-numeric">{{table.rowSum(row) | currency:"€ "}}</td>
+            <td class="cost-table-numeric">{{table.rowSum(row) | currency}}</td>
             <td><button type="button" ng-show="tableform.$visible" ng-click="deleteRow($index)" class="button-delete">del</button></td>
         </tr>
         </tbody>
@@ -36,7 +36,7 @@
             <td class="cost-table-invisible"></td>
             <td class="cost-table-invisible"></td>
             <td class="cost-table-invisible"></td>
-            <td>{{table.sum() | currency:"€ "}}</td>
+            <td>{{table.sum() | currency}}</td>
             <td></td>
         </tr>
         </tfoot>
