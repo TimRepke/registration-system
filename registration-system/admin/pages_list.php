@@ -326,8 +326,7 @@ $text .=<<<END
                         }
                     },
                     { type: 'dedate', targets: [1,5,6]},
-                    { type: 'link', targets: 2 },
-                    { type: 'link', targets: 0 },
+                    { type: 'link', targets: [0, 2] }
                     { type: 'prb', targets: $buttoncol }
                 ],
                 "order": [[ 2, "asc" ]],
