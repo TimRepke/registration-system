@@ -280,30 +280,25 @@ $text .=<<<END
         jQuery.extend( jQuery.fn.dataTableExt.oSort, {
             "link-pre": function ( a ) {
                 return a.match(/<a [^>]+>([^<]+)<\/a>/)[1];
-            }/*,
-
-            "link-asc": function ( a, b ) {
-                return ((a < b) ? -1 : ((a > b) ? 1 : 0));
-            },
-
-            "link-desc": function ( a, b ) {
-                return ((a < b) ? 1 : ((a > b) ? -1 : 0));
-            }*/
+            }
             ,
             "prb-pre": function ( a ){
                 var tmp = a.split(",");
                 //alert();
                 return ((tmp[0]==0) ? '0' : '1') + ((tmp[1]==0) ? '0' : '1') + ((tmp[2]==0) ? '0' : '1');
             }
+            ,
+            "dedate-pre": function(a){
+                var tmp = a.split(".");
+                console.log(tmp[2]+tmp[1]+tmp[0]);
+                if(tmp.length>2)
+                    return (tmp[2]+tmp[1]+tmp[0]);
+                return a;
+            }
         } );
         var ltab;
         $(document).ready(function(){
              ltab = $('#mlist').DataTable({
-                "columnDefs": [
-                    { type: 'link', targets: 2 },
-                    { type: 'link', targets: 0 },
-                    { type: 'prb', targets: $buttoncol }
-                ],
                 "aoColumnDefs": [
                     {
                         "aTargets": [ $buttoncol ],
@@ -329,7 +324,11 @@ $text .=<<<END
                             // 'sort' and 'type' both just use the raw data
                             return data[$buttoncol];
                         }
-                    }
+                    },
+                    { type: 'dedate', targets: [1,5,6]},
+                    { type: 'link', targets: 2 },
+                    { type: 'link', targets: 0 },
+                    { type: 'prb', targets: $buttoncol }
                 ],
                 "order": [[ 2, "asc" ]],
                 "paging": false
