@@ -6,8 +6,9 @@
 .pages-cost-edit{
     border: 1px solid black;
     background-color: lightcyan;
-    height: 100px;
-    width: 100px;
+    position: absolute;
+    top: 100px;
+    left: 100px;
 }
 
 .cost-table td{
