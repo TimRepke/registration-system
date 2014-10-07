@@ -7,7 +7,6 @@
  */
 
 global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_reisearten_o, $config_studitypen_o, $config_admin_verbose_level, $config_verbose_level, $config_essen;
-header("Cache-Control: no-cache, must-revalidate");
 
 // AJAX requests up here ============================================================
 if(isset($_REQUEST['ajax'])){
@@ -91,8 +90,6 @@ else {
             <div ng-controller="TablePriceController as table">
                 <h2>Kosten pro Person</h2>
                 <table-price></table-price>
-                <button type="button" ng-click="table.toggleEditmode()" class="button-edit">edit</button>
-                <table-price-edit></table-price-edit>
             </div>
 
             <div ng-controller="TableShoppingController as table">

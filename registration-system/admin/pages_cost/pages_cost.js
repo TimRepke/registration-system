@@ -36,9 +36,8 @@
             }
         }
     }]);
+
 })();
-
-
 
 
 /* ****************************************************************
@@ -61,18 +60,85 @@
         };
     });
 
-    app.controller('TablePriceController', function(){
+    app.controller('TablePriceController', ["$http", function($http){
         var table = this;
 
         table.editmode = false;
+        table.base = [];
+        table.edit = [];
+
+
+        $http.get('?page=cost&ajax=get-price-json').success(function(data){
+            if(data !== ""){
+                table.base = data;
+            }
+        });
+
 
         table.toggleEditmode = function(){
             table.editmode = table.editmode == false;
         }
 
-    });
+        table.editTable = function(){
+            table.edit = jQuery.extend(true, {}, table.base);
+            table.toggleEditmode();
+        }
+        table.saveTable = function(){
+            table.base = jQuery.extend(true, {}, table.edit);
+            $http.post('?page=cost&ajax=set-price-json', table.edit).success(function(data, status, headers, config){
+                toastr.success('Saved to Database!')
+            });
+            table.toggleEditmode();
+        }
+        table.cancelTable = function(){
+            table.edit = [];
+            table.toggleEditmode();
+        }
+    }]);
 
 
+    var tmp = {
+        "Fahrt": [
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false}
+        ],
+        "Fix": [
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false}
+        ],
+        "Bettwäsche": [
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false}
+        ],
+        "Übernachtung": [
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false}
+        ],
+        "Essen(wir)": [
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false}
+        ],
+        "Früh": [
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false}
+        ],
+        "Mittag": [
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false}
+        ],
+        "Abend": [
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false},
+            {"val": 0, "ind": true, "an": true, "ab": false}
+        ]
+    };
 })();
 
 
@@ -83,9 +149,11 @@
  */
 (function() {
     var app = angular.module('shopping', ["xeditable"]);
+
     app.run(function(editableOptions) {
         editableOptions.theme = 'bs3';
     });
+
     app.directive("tableShopping", function() {
         return {
             restrict: 'E',
@@ -97,10 +165,10 @@
         var table = this;
 
         table.entries = [];
-
         $http.get('?page=cost&ajax=get-shopping-json').success(function(data){
-            if(data !== "")
+            if(data !== ""){
                 table.entries = data;
+            }
         });
 
         // === basic table functions ===
@@ -182,6 +250,7 @@
         };
 
     }]);
+
 
 })();
 
@@ -452,3 +521,63 @@
 
 })();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================================================================
+Mülltonne
+ */
+
+/*
+var dataapp = angular.module("tabdata",[]);
+dataapp.factory("DataService", ["$http", "$rootScope", function($http, $rootScope){
+
+    var dataService = {
+        tableShoppingData: { entries: [] }
+    };
+
+    $http.get('?page=cost&ajax=get-shopping-json').success(function(data){
+        if(data !== ""){
+            dataService.tableShoppingData.entries = data;
+            $rootScope.$broadcast("valuesUpdated");
+        }
+    });
+
+    return dataService;
+
+}]);
+dataapp.controller('dataController', function($scope, dataService) {
+    $scope.shared = dataService;
+});*/
+
+/*
+inject data to shopping
+ var tmp =
+ [
+ {
+ "pos": "Limonade",
+ "cnt": "76",
+ "price": "1.43"
+ },
+ {
+ "pos": "Brause",
+ "cnt": "42",
+ "price": "0.83"
+ },
+ {
+ "pos": "Lutscher",
+ "cnt": "1",
+ "price": "0.5"
+ },
+ ];
+ */
