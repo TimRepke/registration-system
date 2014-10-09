@@ -75,7 +75,7 @@ dataapp.service('shoppingData', ["$http", "$rootScope", function ($http, $rootSc
         if(data !== ""){
             table.entries = data;
             console.log("got shopping table from DB");
-        } else{
+        } else {
             table.entries = defaultData.shopping;
             console.error("Shopping table not loaded from DB - took default!");
         }
@@ -86,8 +86,38 @@ dataapp.service('shoppingData', ["$http", "$rootScope", function ($http, $rootSc
     // === basic table functions ===
 
     table.rowSum = function(row){
-        console.log("this.shopping.rowSum");
         return row.cnt*row.price;
+    };
+
+    table.sum = function(){
+        var ret = 0;
+        for(var run = 0; run < table.entries.length; run++)
+            if(!table.entries[run].isDeleted)
+                ret += table.rowSum(table.entries[run]);
+        return ret;
+    };
+
+}]);
+
+dataapp.service('receiptData', ["$http", "$rootScope", function ($http, $rootScope) {
+    var table = this;
+    table.entries = [];
+
+    $http.get('?page=cost&ajax=get-receipt-json').success(function(data){
+        if(data !== ""){
+            table.entries = data;
+            console.log("got receipt table from DB");
+        } else {
+            table.entries = defaultData.receipt;
+            console.error("Receipt table not loaded from DB - took default!");
+        }
+        $rootScope.$broadcast('data::receiptUpdated', table.entries);
+    });
+
+    // === basic table functions ===
+
+    table.rowSum = function(row){
+        return row.cnt*row.mul*row.price;
     };
 
     table.sum = function(){
@@ -427,7 +457,6 @@ dataapp.service('shoppingData', ["$http", "$rootScope", function ($http, $rootSc
         $scope.$on('data::shoppingUpdated', function(event, newTab) {
             table.entries = newTab;
             console.log("data in shopping controller received");
-            console.log(newTab);
         });
 
         $scope.$watch('table.entries', function() {
@@ -521,33 +550,29 @@ dataapp.service('shoppingData', ["$http", "$rootScope", function ($http, $rootSc
         };
     });
 
-    app.controller('TableReceiptController', ["$scope", "$filter", "$q", "$http", function($scope, $filter, $q, $http){
+    app.controller('TableReceiptController', ["$scope", "$filter", "$q", "$http", "receiptData", function($scope, $filter, $q, $http, receiptData){
         var table = this;
 
-        table.entries = [];
 
-        $http.get('?page=cost&ajax=get-receipt-json').success(function(data){
-            if(data !== "")
-                table.entries = data;
-            else{
-                table.entries = defaultData.receipt;
-                console.error("Receipt table not loaded from DB - took default!");
+        // === Data Binding stuff ==
+
+        $scope.dataService = receiptData;
+
+        table.entries = $scope.dataService.entries;
+
+        $scope.$on('data::receiptUpdated', function(event, newTab) {
+            table.entries = newTab;
+            console.log("data in receipt controller received");
+        });
+
+        $scope.$watch('table.entries', function() {
+            if(table.entries && $scope.dataService.entries){
+                $scope.dataService.entries = table.entries;
             }
         });
 
-        // === basic table functions ===
 
-        table.rowSum = function(row){
-            return row.cnt*row.mul*row.price;
-        };
 
-        table.sum = function(){
-            var ret = 0;
-            for(var run = 0; run < table.entries.length; run++)
-                if(!table.entries[run].isDeleted)
-                    ret += table.rowSum(table.entries[run]);
-            return ret;
-        };
 
         // === edit table functions ===
 
