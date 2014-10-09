@@ -78,6 +78,8 @@ else {
              <script type="text/javascript" src="../view/js/angular.min.js"></script>
              <script type="text/javascript" src="../view/js/xeditable.js"></script>
              <script type="text/javascript" src="../view/js/toastr.min.js"></script>
+             <script type="text/javascript" src="../view/js/angular-strap.min.js"></script>
+             <script type="text/javascript" src="../view/js/angular-strap.tpl.js"></script>
              <script type="text/javascript" src="pages_cost/pages_cost.js"></script>
              <link   type="text/css" rel="stylesheet" href="pages_cost/pages_cost.css" />
              <link   type="text/css" rel="stylesheet" href="../view/css/toastr.css" />';
@@ -106,6 +108,16 @@ else {
                 <h2>Money In/Out</h2>
                 <table-moneyio></table-moneyio>
             </div>
+        </div>
+
+
+        <div class="cost-anmerkung">
+            Achtung:<br />
+             <ul>
+                <li>Zurückgezogene Registrierungen werden hier nicht beachtet! Wenn Bezahlung erhalten unbedingt seperat auf dem Notizzettel verwalten!</li>
+                <li></li>
+                <li></li>
+             </ul>
         </div>
     ';
 

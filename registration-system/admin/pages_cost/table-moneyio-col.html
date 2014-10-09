@@ -1,7 +1,7 @@
 <table class="cost-table">
     <thead>
     <tr>
-        <th>Position{{io}}</th>
+        <th>Position - {{io}}</th>
         <th>Summe</th>
         <th ng-show="tform.$visible"></th>
     </tr>
@@ -14,7 +14,7 @@
             </span>
         </td>
         <td class="cost-table-numeric">
-            <!--span editable-text="row.val" e-form="tableform"  e-style="width: 35pt" e-ng-change="chang(row, 'val', $data)"-->
+            <span editable-text="row.val" e-form="tableform"  e-style="width: 35pt" e-ng-change="chang(row, 'val', $data)">
                 {{row.val || 0  | currency}}
 
         </td>
