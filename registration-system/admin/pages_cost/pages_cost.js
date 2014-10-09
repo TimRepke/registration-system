@@ -2,6 +2,106 @@
  * Created by tim on 10/4/14.
  */
 
+
+var defaultData = [];
+defaultData.price   = {
+    ALL: { // Stuff all have to pay, no matter when the come or leave
+        B_FIX: "4",  // Fixkosten (z.B. Kurzreisezuschlag)
+        C_BW: "4.5", // Bettwäsche
+        E_ESS:"5",   // Verpflegung gekauft durch uns
+        REFRA: "42"  // Förderung durch RefRat
+    },
+    VAR: { // stuff that has to be paid depending on certain variables
+        "F_FR": [ // Frühstück
+            { "val": "", "ind": false, "an": false, "ab": false },
+            { "val": "3", "ind": true, "an": false, "ab": true },
+            { "val": "3", "ind": true, "an": true, "ab": true }
+        ],
+        "G_MI": [ // Mittag
+            { "val": "", "ind": false, "an": false, "ab": false },
+            { "val": "", "ind": false, "an": false, "ab": false },
+            { "val": "", "ind": false, "an": false, "ab": false }
+        ],
+        "H_AB": [ // Abendbrot
+            { "val": "4", "ind": true, "an": true, "ab": false },
+            { "val": "4.5", "ind": true, "an": true, "ab": false },
+            { "val": "", "ind": false, "an": false, "ab": false }
+        ],
+        "D_UE": [ // Übernachtung
+            { "val": "12.5", "ind": true, "an": true, "ab": false },
+            { "val": "12.5", "ind": true, "an": true, "ab": false },
+            { "val": "", "ind": false, "an": false, "ab": false }
+        ],
+        "A_FAHRT": [ // Fahrtkosten (z.B. Bus, Bahn)
+            { "val": "2.5", "ind": false, "an": true, "ab": false },
+            { "val": "", "ind": false, "an": false, "ab": false },
+            { "val": "2.5", "ind": false, "an": false, "ab": true }
+        ]
+    }
+};
+defaultData.shopping= [
+    { "pos": "Limonade", "cnt": "76", "price": "1.43" },
+    { "pos": "Brause", "cnt": "42", "price": "0.83" },
+    { "pos": "Lutscher", "cnt": "1", "price": "0.5" }
+];
+defaultData.receipt = [
+    { "pos": "Bettwäsche", "cnt": "1", "mul": "40", "price": "1.43" },
+    { "pos": "Grillnutzung", "cnt": "1", "mul": "40", "price": "0.3" },
+    { "pos": "Halbpension", "cnt": "2", "mul": "40", "price": "12.30" },
+    { "pos": "Klodeckel", "cnt": 1, "mul": 1, "price": "33" }
+];
+defaultData.moneyio = {
+    "in": [
+        { "pos": "Förderung", "val": "1200" },
+        { "pos": "Pfand", "val": "31" }
+    ], "out": [
+        { "pos": "Einkaufen", "val": "354" },
+        { "pos": "Busfahrt Hin", "val": "35" },
+        { "pos": "Busfahrt Rück", "val": "40" },
+        { "pos": "Kaution", "val": "100" }
+    ]
+};
+
+
+
+
+
+var dataapp = angular.module("dataapp", []);
+dataapp.service('shoppingData', ["$http", "$rootScope", function ($http, $rootScope) {
+    var table = this;
+    table.entries = [];
+
+    $http.get('?page=cost&ajax=get-shopping-json').success(function(data){
+        if(data !== ""){
+            table.entries = data;
+            console.log("got shopping table from DB");
+        } else{
+            table.entries = defaultData.shopping;
+            console.error("Shopping table not loaded from DB - took default!");
+        }
+
+        $rootScope.$broadcast('data::shoppingUpdated', table.entries);
+    });
+
+    // === basic table functions ===
+
+    table.rowSum = function(row){
+        console.log("this.shopping.rowSum");
+        return row.cnt*row.price;
+    };
+
+    table.sum = function(){
+        var ret = 0;
+        for(var run = 0; run < table.entries.length; run++)
+            if(!table.entries[run].isDeleted)
+                ret += table.rowSum(table.entries[run]);
+        return ret;
+    };
+
+}]);
+
+
+
 /* MAIN module */
 (function() {
     var app = angular.module('pages-cost', ['price','shopping','receipt','moneyio']);
@@ -44,7 +144,7 @@
  * pricetable module
  */
 (function() {
-    var app = angular.module('price', []);
+    var app = angular.module('price', ['mgcrea.ngStrap.tooltip']);
 
     app.directive("tablePrice", function() {
         return {
@@ -53,28 +153,46 @@
         };
     });
 
-    app.directive("tablePriceEdit", function() {
+    app.directive("tablePriceEdit",  function() {
+
         return {
             restrict: 'E',
-            templateUrl: "pages_cost/table-price-edit.html"
+            templateUrl: "pages_cost/table-price-edit.html",
+            link: function(scope, parent){
+                scope.tooltip = [];
+                scope.tooltip.ind = {
+                    "title": "Auch für individuell Reisende zu zahlen",
+                    "checked": false
+                };
+                scope.tooltip.an = {
+                    "title": "Auch zu zahlen, wenn Anreise an dem Tag",
+                    "checked": false
+                };
+                scope.tooltip.ab = {
+                    "title": "Auch zu zahlen, wenn Abreise an dem Tagn",
+                    "checked": false
+                };
+            }
         };
     });
 
-    app.controller('TablePriceController', ["$http", function($http){
+    app.controller('TablePriceController', ["$http", "$scope", function($http, $scope){
         var table = this;
 
         table.editmode = false;
         table.base = [];
         table.edit = [];
 
-
         $http.get('?page=cost&ajax=get-price-json').success(function(data){
             if(data !== ""){
-                table.base = data;
+               table.base = data;
+            } else {
+                table.base = defaultData.price;
+                console.error("Price table not loaded from DB - took default!");
             }
         });
 
-
+        // == table manipulation functions ==
         table.toggleEditmode = function(){
             table.editmode = table.editmode == false;
         }
@@ -94,51 +212,186 @@
             table.edit = [];
             table.toggleEditmode();
         }
+        table.editUpdateAll = function(val, pos){
+            console.log(val);
+            table.edit.ALL[pos] = val;
+        }
+
+        // == table data functions ==
+        table.bez = {
+            A_FAHRT: "Fahrt",
+            B_FIX: "Fix",
+            C_BW: "Bettwäsche",
+            D_UE: "Übernachtung",
+            E_ESS: "Essen (wir)",
+            F_FR: "Frühstück",
+            G_MI: "Mittag",
+            H_AB: "Abend"
+            ,
+            FAHRT: "Fahrtkosten",
+            ESSEN: "Verpflegung",
+            FIX: "Fixkosten",
+            WIR: "Zusatzverpflegung",
+            UE: "Übernachtung",
+            REFRA: "(Förderung)"
+        };
+
+        table.calc = {
+            FAHRT: {
+                "pos": table.bez.FAHRT,
+                "sum": function(){
+                    if(!table.base.VAR || !table.base.VAR.A_FAHRT)
+                        return 0;
+
+                    var tmp = 0;
+                    for(var len = table.base.VAR.A_FAHRT.length; len--;)
+                        tmp += (table.base.VAR.A_FAHRT[len].val * 1);
+                    return tmp;
+                },
+                "cnt": function(){
+                    if(!table.base.VAR || !table.base.VAR.A_FAHRT)
+                        return 0;
+
+                    var tmp = 0;
+                    for(var len = table.base.VAR.A_FAHRT.length; len--;)
+                        if(table.base.VAR.A_FAHRT[len].val > 0)
+                            tmp++;
+                    return tmp;
+                },
+                "val": function(){
+                    var tmp = table.calc.FAHRT.cnt();
+                    if(tmp > 0)
+                        return table.calc.FAHRT.sum() / tmp;
+                    return table.calc.FAHRT.sum();
+                }
+            },
+            ESSEN: {
+                "pos": table.bez.ESSEN,
+                "sum": function(){
+                    if(!table.base.VAR || !table.base.VAR.H_AB || !table.base.VAR.F_FR || !table.base.VAR.G_MI)
+                        return 0;
+
+                    var tmp = 0;
+                    for(var len = table.base.VAR.H_AB.length; len--;)
+                        tmp += (table.base.VAR.H_AB[len].val * 1);
+                    for(var len = table.base.VAR.F_FR.length; len--;)
+                        tmp += (table.base.VAR.F_FR[len].val * 1);
+                    for(var len = table.base.VAR.G_MI.length; len--;)
+                        tmp += (table.base.VAR.G_MI[len].val * 1);
+                    return tmp;
+                },
+                "cnt": function(){
+                    if(!table.base.VAR || !table.base.VAR.H_AB || !table.base.VAR.F_FR || !table.base.VAR.G_MI)
+                        return 0;
+
+                    var tmp = 0;
+                    for(var len = table.base.VAR.F_FR.length; len--;)
+                        if(table.base.VAR.F_FR[len].val > 0)
+                            tmp++;
+                    for(var len = table.base.VAR.G_MI.length; len--;)
+                        if(table.base.VAR.G_MI[len].val > 0)
+                            tmp++;
+                    for(var len = table.base.VAR.H_AB.length; len--;)
+                        if(table.base.VAR.H_AB[len].val > 0)
+                            tmp++;
+                    return tmp;
+                },
+                "val": function(){
+                    var tmp = table.calc.ESSEN.cnt();
+                    if(tmp > 0)
+                        return table.calc.ESSEN.sum() / tmp;
+                    return table.calc.ESSEN.sum();
+                }
+            },
+            FIX: {
+                "pos": table.bez.FIX,
+                "sum": function(){
+                    if(!table.base.ALL || !table.base.ALL.B_FIX || !table.base.ALL.C_BW)
+                        return 0;
+                    return (table.base.ALL.B_FIX * 1) + (table.base.ALL.C_BW * 1);
+                },
+                "cnt": function(){
+                    if(!table.base.ALL || !table.base.ALL.B_FIX || !table.base.ALL.C_BW)
+                        return 0;
+                    return (table.base.ALL.B_FIX > 0 ? 1 : 0) + (table.base.ALL.C_BW > 0 ? 1 : 0);
+                },
+                "val": function(){
+                    var tmp = table.calc.FIX.cnt();
+                    if(tmp > 0)
+                        return table.calc.FIX.sum() / tmp;
+                    return table.calc.FIX.sum();
+                }
+            },
+            UE: {
+                "pos": table.bez.UE,
+                "sum": function(){
+                    if(!table.base.VAR || !table.base.VAR.D_UE)
+                        return 0;
+
+                    var tmp = 0;
+                    for(var len = table.base.VAR.D_UE.length; len--;)
+                        tmp += (table.base.VAR.D_UE[len].val * 1);
+                    return tmp;
+                },
+                "cnt": function(){
+                    if(!table.base.VAR || !table.base.VAR.D_UE)
+                        return 0;
+
+                    var tmp = 0;
+                    for(var len = table.base.VAR.D_UE.length; len--;)
+                        if(table.base.VAR.D_UE[len].val > 0)
+                            tmp++;
+                    return tmp;
+                },
+                "val": function(){
+                    var tmp = table.calc.UE.cnt();
+                    if(tmp > 0)
+                        return table.calc.UE.sum() / tmp;
+                    return table.calc.UE.sum();
+                }
+            },
+            WIR: {
+                "pos": table.bez.WIR,
+                "sum": function(){
+                    if(!table.base.ALL || !table.base.ALL.E_ESS)
+                        return 0;
+                    return table.base.ALL.E_ESS * 1;
+                },
+                "cnt": function(){
+                    if(!table.base.ALL || !table.base.ALL.E_ESS)
+                        return 0;
+                    return table.base.ALL.E_ESS > 0 ? 1 : 0;
+                },
+                "val": function(){
+                    var tmp = table.calc.WIR.cnt();
+                    if(tmp>0)
+                        return table.calc.WIR.sum() / tmp;
+                    return table.calc.WIR.sum();
+                }
+            },
+            X_REFRA: {
+                "pos": table.bez.REFRA,
+                "sum": function(){
+                    if(!table.base.ALL || !table.base.ALL.REFRA)
+                        return 0;
+                    return table.base.ALL.REFRA;
+                },
+                "cnt": function(){
+                    return 1;
+                },
+                "val": function(){
+                    return table.calc.X_REFRA.sum();
+                }
+            }
+        };
+
+        table.sum = function(){
+            return table.calc.ESSEN.sum() + table.calc.WIR.sum() + table.calc.FAHRT.sum() + table.calc.FIX.sum() + table.calc.UE.sum();
+        }
+
+
     }]);
 
-
-    var tmp = {
-        "Fahrt": [
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false}
-        ],
-        "Fix": [
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false}
-        ],
-        "Bettwäsche": [
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false}
-        ],
-        "Übernachtung": [
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false}
-        ],
-        "Essen(wir)": [
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false}
-        ],
-        "Früh": [
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false}
-        ],
-        "Mittag": [
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false}
-        ],
-        "Abend": [
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false},
-            {"val": 0, "ind": true, "an": true, "ab": false}
-        ]
-    };
 })();
 
 
@@ -148,7 +401,7 @@
  * shoppingtable module
  */
 (function() {
-    var app = angular.module('shopping', ["xeditable"]);
+    var app = angular.module('shopping', ["xeditable", "dataapp"]);
 
     app.run(function(editableOptions) {
         editableOptions.theme = 'bs3';
@@ -161,29 +414,29 @@
         };
     });
 
-    app.controller('TableShoppingController', ["$scope", "$filter", "$q", "$http", function($scope, $filter, $q, $http){
+    app.controller('TableShoppingController', ["$scope", "$filter", "$q", "$http", "shoppingData", function($scope, $filter, $q, $http, shoppingData){
         var table = this;
 
-        table.entries = [];
-        $http.get('?page=cost&ajax=get-shopping-json').success(function(data){
-            if(data !== ""){
-                table.entries = data;
+
+        // === Data Binding stuff ==
+
+        $scope.dataService = shoppingData;
+
+        table.entries = $scope.dataService.entries;
+
+        $scope.$on('data::shoppingUpdated', function(event, newTab) {
+            table.entries = newTab;
+            console.log("data in shopping controller received");
+            console.log(newTab);
+        });
+
+        $scope.$watch('table.entries', function() {
+            if(table.entries && $scope.dataService.entries){
+                $scope.dataService.entries = table.entries;
             }
         });
 
-        // === basic table functions ===
 
-        table.rowSum = function(row){
-            return row.cnt*row.price;
-        };
-
-        table.sum = function(){
-            var ret = 0;
-            for(var run = 0; run < table.entries.length; run++)
-                if(!table.entries[run].isDeleted)
-                    ret += table.rowSum(table.entries[run]);
-            return ret;
-        };
 
         // === edit table functions ===
 
@@ -255,8 +508,6 @@
 })();
 
 
-
-
 /* ****************************************************************
  * receipttable module
  */
@@ -278,6 +529,10 @@
         $http.get('?page=cost&ajax=get-receipt-json').success(function(data){
             if(data !== "")
                 table.entries = data;
+            else{
+                table.entries = defaultData.receipt;
+                console.error("Receipt table not loaded from DB - took default!");
+            }
         });
 
         // === basic table functions ===
@@ -421,6 +676,10 @@
         $http.get('?page=cost&ajax=get-moneyio-json').success(function(data){
             if(data !== "")
                 table.entries = data;
+            else {
+                table.entries = defaultData.moneyio;
+                console.error("MoneyIO table not loaded from DB - took default!");
+            }
         });
 
         // === basic table functions ===
@@ -520,12 +779,6 @@
     }]);
 
 })();
-
-
-
-
-
-
 
 
 

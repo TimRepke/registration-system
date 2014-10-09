@@ -9,15 +9,23 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="(key,row) in table.edit">
-                <td>{{key}}</td>
+            <tr ng-repeat="(key,row) in table.edit.VAR">
+                <td>{{table.bez[key]}}</td>
                 <td ng-repeat="col in row">
                     <input ng-model="col.val" type="input" name="{{key}}.val" />
-                    <input ng-model="col.ind" type="checkbox" name="{{key}}.ind" />
-                    <input ng-model="col.an" type="checkbox" name="{{key}}.an" />
-                    <input ng-model="col.ab" type="checkbox" name="{{key}}.ab" />
+                    <input ng-model="col.ind" type="checkbox" name="{{key}}.ind"  data-placement="top-left" data-type="info" data-title="{{tooltip.ind.title}}" bs-tooltip />
+                    <input ng-model="col.an" type="checkbox" name="{{key}}.an" data-placement="top-left" data-type="info" data-title="{{tooltip.an.title}}" bs-tooltip />
+                    <input ng-model="col.ab" type="checkbox" name="{{key}}.ab" data-placement="top-left" data-type="info" data-title="{{tooltip.ab.title}}" bs-tooltip />
                 </td>
+            </tr>
 
+            <tr class="deviderrow"><td colspan="4"></td></tr>
+
+            <tr ng-repeat="(key,val) in table.edit.ALL">
+                <td>{{table.bez[key]}}</td>
+                <td colspan="3">
+                    <input ng-model="val" type="text" name="{{key}}" ng-change="table.editUpdateAll(val,'{{key}}')" />
+                </td>
             </tr>
         </tbody>
     </table>

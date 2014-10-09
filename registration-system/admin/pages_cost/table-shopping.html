@@ -27,7 +27,7 @@
                     {{row.price || 0 | currency}}
                 </span>
             </td>
-            <td class="cost-table-numeric">{{table.rowSum(row) | currency}}</td>
+            <td class="cost-table-numeric">{{dataService.rowSum(row) | currency}}</td>
             <td><button type="button" ng-show="tableform.$visible" ng-click="deleteRow($index)" class="button-delete">del</button></td>
         </tr>
         </tbody>
@@ -36,7 +36,7 @@
             <td class="cost-table-invisible"></td>
             <td class="cost-table-invisible"></td>
             <td class="cost-table-invisible"></td>
-            <td>{{table.sum() | currency}}</td>
+            <td>{{dataService.sum() | currency}}</td>
             <td></td>
         </tr>
         </tfoot>
@@ -54,5 +54,8 @@
 </form>
 
 <div class="debug" style="margin-top: 30px;">
-    {{ table.entries | json }}
+    {{ table.entries || "&nbsp;" | json }}
+</div>
+<div class="debug" style="margin-top: 30px;">
+    {{ dataService.entries || "&nbsp;" | json }}
 </div>
