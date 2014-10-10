@@ -64,9 +64,205 @@ defaultData.moneyio = {
 
 
 
-
-
+// module for shared data-management
 var dataapp = angular.module("dataapp", []);
+
+/*
+    Data Handler for price table
+ */
+dataapp.service('priceData', ["$http", "$rootScope", function ($http, $rootScope) {
+    var table = this;
+    table.base = [];
+
+    $http.get('?page=cost&ajax=get-price-json').success(function(data){
+        if(data !== ""){
+            table.base = data;
+            console.log("got price table from DB");
+        } else {
+            table.base = defaultData.price;
+            console.error("Price table not loaded from DB - took default!");
+        }
+        $rootScope.$broadcast('data::priceUpdated', table.base);
+    });
+
+    // == table data functions ==
+    table.bez = {
+        A_FAHRT: "Fahrt",
+        B_FIX: "Fix",
+        C_BW: "Bettwäsche",
+        D_UE: "Übernachtung",
+        E_ESS: "Essen (wir)",
+        F_FR: "Frühstück",
+        G_MI: "Mittag",
+        H_AB: "Abend"
+        ,
+        FAHRT: "Fahrtkosten",
+        ESSEN: "Verpflegung",
+        FIX: "Fixkosten",
+        WIR: "Zusatzverpflegung",
+        UE: "Übernachtung",
+        REFRA: "(Förderung)"
+    };
+
+    table.calc = {
+        FAHRT: {
+            "pos": table.bez.FAHRT,
+            "sum": function(){
+                if(!table.base.VAR || !table.base.VAR.A_FAHRT)
+                    return 0;
+
+                var tmp = 0;
+                for(var len = table.base.VAR.A_FAHRT.length; len--;)
+                    tmp += (table.base.VAR.A_FAHRT[len].val * 1);
+                return tmp;
+            },
+            "cnt": function(){
+                if(!table.base.VAR || !table.base.VAR.A_FAHRT)
+                    return 0;
+
+                var tmp = 0;
+                for(var len = table.base.VAR.A_FAHRT.length; len--;)
+                    if(table.base.VAR.A_FAHRT[len].val > 0)
+                        tmp++;
+                return tmp;
+            },
+            "val": function(){
+                var tmp = table.calc.FAHRT.cnt();
+                if(tmp > 0)
+                    return table.calc.FAHRT.sum() / tmp;
+                return table.calc.FAHRT.sum();
+            }
+        },
+        ESSEN: {
+            "pos": table.bez.ESSEN,
+            "sum": function(){
+                if(!table.base.VAR || !table.base.VAR.H_AB || !table.base.VAR.F_FR || !table.base.VAR.G_MI)
+                    return 0;
+
+                var tmp = 0;
+                for(var len = table.base.VAR.H_AB.length; len--;)
+                    tmp += (table.base.VAR.H_AB[len].val * 1);
+                for(var len = table.base.VAR.F_FR.length; len--;)
+                    tmp += (table.base.VAR.F_FR[len].val * 1);
+                for(var len = table.base.VAR.G_MI.length; len--;)
+                    tmp += (table.base.VAR.G_MI[len].val * 1);
+                return tmp;
+            },
+            "cnt": function(){
+                if(!table.base.VAR || !table.base.VAR.H_AB || !table.base.VAR.F_FR || !table.base.VAR.G_MI)
+                    return 0;
+
+                var tmp = 0;
+                for(var len = table.base.VAR.F_FR.length; len--;)
+                    if(table.base.VAR.F_FR[len].val > 0)
+                        tmp++;
+                for(var len = table.base.VAR.G_MI.length; len--;)
+                    if(table.base.VAR.G_MI[len].val > 0)
+                        tmp++;
+                for(var len = table.base.VAR.H_AB.length; len--;)
+                    if(table.base.VAR.H_AB[len].val > 0)
+                        tmp++;
+                return tmp;
+            },
+            "val": function(){
+                var tmp = table.calc.ESSEN.cnt();
+                if(tmp > 0)
+                    return table.calc.ESSEN.sum() / tmp;
+                return table.calc.ESSEN.sum();
+            }
+        },
+        FIX: {
+            "pos": table.bez.FIX,
+            "sum": function(){
+                if(!table.base.ALL || !table.base.ALL.B_FIX || !table.base.ALL.C_BW)
+                    return 0;
+                return (table.base.ALL.B_FIX * 1) + (table.base.ALL.C_BW * 1);
+            },
+            "cnt": function(){
+                if(!table.base.ALL || !table.base.ALL.B_FIX || !table.base.ALL.C_BW)
+                    return 0;
+                return (table.base.ALL.B_FIX > 0 ? 1 : 0) + (table.base.ALL.C_BW > 0 ? 1 : 0);
+            },
+            "val": function(){
+                var tmp = table.calc.FIX.cnt();
+                if(tmp > 0)
+                    return table.calc.FIX.sum() / tmp;
+                return table.calc.FIX.sum();
+            }
+        },
+        UE: {
+            "pos": table.bez.UE,
+            "sum": function(){
+                if(!table.base.VAR || !table.base.VAR.D_UE)
+                    return 0;
+
+                var tmp = 0;
+                for(var len = table.base.VAR.D_UE.length; len--;)
+                    tmp += (table.base.VAR.D_UE[len].val * 1);
+                return tmp;
+            },
+            "cnt": function(){
+                if(!table.base.VAR || !table.base.VAR.D_UE)
+                    return 0;
+
+                var tmp = 0;
+                for(var len = table.base.VAR.D_UE.length; len--;)
+                    if(table.base.VAR.D_UE[len].val > 0)
+                        tmp++;
+                return tmp;
+            },
+            "val": function(){
+                var tmp = table.calc.UE.cnt();
+                if(tmp > 0)
+                    return table.calc.UE.sum() / tmp;
+                return table.calc.UE.sum();
+            }
+        },
+        WIR: {
+            "pos": table.bez.WIR,
+            "sum": function(){
+                if(!table.base.ALL || !table.base.ALL.E_ESS)
+                    return 0;
+                return table.base.ALL.E_ESS * 1;
+            },
+            "cnt": function(){
+                if(!table.base.ALL || !table.base.ALL.E_ESS)
+                    return 0;
+                return table.base.ALL.E_ESS > 0 ? 1 : 0;
+            },
+            "val": function(){
+                var tmp = table.calc.WIR.cnt();
+                if(tmp>0)
+                    return table.calc.WIR.sum() / tmp;
+                return table.calc.WIR.sum();
+            }
+        },
+        X_REFRA: {
+            "pos": table.bez.REFRA,
+            "sum": function(){
+                if(!table.base.ALL || !table.base.ALL.REFRA)
+                    return 0;
+                return table.base.ALL.REFRA;
+            },
+            "cnt": function(){
+                return 1;
+            },
+            "val": function(){
+                return table.calc.X_REFRA.sum();
+            }
+        }
+    };
+
+    table.sum = function(){
+        return table.calc.ESSEN.sum() + table.calc.WIR.sum() + table.calc.FAHRT.sum() + table.calc.FIX.sum() + table.calc.UE.sum();
+    }
+
+}]);
+
+
+/*
+    Data Handler for shopping table
+ */
 dataapp.service('shoppingData', ["$http", "$rootScope", function ($http, $rootScope) {
     var table = this;
     table.entries = [];
@@ -99,6 +295,9 @@ dataapp.service('shoppingData', ["$http", "$rootScope", function ($http, $rootSc
 
 }]);
 
+/*
+    Data Handler for receipt table
+ */
 dataapp.service('receiptData', ["$http", "$rootScope", function ($http, $rootScope) {
     var table = this;
     table.entries = [];
@@ -131,6 +330,15 @@ dataapp.service('receiptData', ["$http", "$rootScope", function ($http, $rootSco
 }]);
 
 
+
+
+/*  END: Data Module
+
+========================================================================================================================
+
+now the individual controllers and modules for each table....
+
+ */
 
 /* MAIN module */
 (function() {
@@ -174,7 +382,7 @@ dataapp.service('receiptData', ["$http", "$rootScope", function ($http, $rootSco
  * pricetable module
  */
 (function() {
-    var app = angular.module('price', ['mgcrea.ngStrap.tooltip']);
+    var app = angular.module('price', ['mgcrea.ngStrap.tooltip', 'dataapp']);
 
     app.directive("tablePrice", function() {
         return {
@@ -206,23 +414,34 @@ dataapp.service('receiptData', ["$http", "$rootScope", function ($http, $rootSco
         };
     });
 
-    app.controller('TablePriceController', ["$http", "$scope", function($http, $scope){
+    app.controller('TablePriceController', ["$http", "$scope", "priceData", function($http, $scope, priceData){
         var table = this;
 
         table.editmode = false;
-        table.base = [];
         table.edit = [];
 
-        $http.get('?page=cost&ajax=get-price-json').success(function(data){
-            if(data !== ""){
-               table.base = data;
-            } else {
-                table.base = defaultData.price;
-                console.error("Price table not loaded from DB - took default!");
+        // === Data Binding stuff ==
+
+        $scope.dataService = priceData;
+
+        table.base = $scope.dataService.base;
+        table.calc = $scope.dataService.calc;
+        table.bez  = $scope.dataService.bez;
+
+        $scope.$on('data::priceUpdated', function(event, newTab) {
+            table.base = newTab;
+            console.log("data in price controller received");
+        });
+
+        $scope.$watch('table.base', function() {
+            if(table.base && $scope.dataService.base){
+                $scope.dataService.base = table.base;
             }
         });
 
+
         // == table manipulation functions ==
+
         table.toggleEditmode = function(){
             table.editmode = table.editmode == false;
         }
@@ -243,182 +462,8 @@ dataapp.service('receiptData', ["$http", "$rootScope", function ($http, $rootSco
             table.toggleEditmode();
         }
         table.editUpdateAll = function(val, pos){
-            console.log(val);
             table.edit.ALL[pos] = val;
         }
-
-        // == table data functions ==
-        table.bez = {
-            A_FAHRT: "Fahrt",
-            B_FIX: "Fix",
-            C_BW: "Bettwäsche",
-            D_UE: "Übernachtung",
-            E_ESS: "Essen (wir)",
-            F_FR: "Frühstück",
-            G_MI: "Mittag",
-            H_AB: "Abend"
-            ,
-            FAHRT: "Fahrtkosten",
-            ESSEN: "Verpflegung",
-            FIX: "Fixkosten",
-            WIR: "Zusatzverpflegung",
-            UE: "Übernachtung",
-            REFRA: "(Förderung)"
-        };
-
-        table.calc = {
-            FAHRT: {
-                "pos": table.bez.FAHRT,
-                "sum": function(){
-                    if(!table.base.VAR || !table.base.VAR.A_FAHRT)
-                        return 0;
-
-                    var tmp = 0;
-                    for(var len = table.base.VAR.A_FAHRT.length; len--;)
-                        tmp += (table.base.VAR.A_FAHRT[len].val * 1);
-                    return tmp;
-                },
-                "cnt": function(){
-                    if(!table.base.VAR || !table.base.VAR.A_FAHRT)
-                        return 0;
-
-                    var tmp = 0;
-                    for(var len = table.base.VAR.A_FAHRT.length; len--;)
-                        if(table.base.VAR.A_FAHRT[len].val > 0)
-                            tmp++;
-                    return tmp;
-                },
-                "val": function(){
-                    var tmp = table.calc.FAHRT.cnt();
-                    if(tmp > 0)
-                        return table.calc.FAHRT.sum() / tmp;
-                    return table.calc.FAHRT.sum();
-                }
-            },
-            ESSEN: {
-                "pos": table.bez.ESSEN,
-                "sum": function(){
-                    if(!table.base.VAR || !table.base.VAR.H_AB || !table.base.VAR.F_FR || !table.base.VAR.G_MI)
-                        return 0;
-
-                    var tmp = 0;
-                    for(var len = table.base.VAR.H_AB.length; len--;)
-                        tmp += (table.base.VAR.H_AB[len].val * 1);
-                    for(var len = table.base.VAR.F_FR.length; len--;)
-                        tmp += (table.base.VAR.F_FR[len].val * 1);
-                    for(var len = table.base.VAR.G_MI.length; len--;)
-                        tmp += (table.base.VAR.G_MI[len].val * 1);
-                    return tmp;
-                },
-                "cnt": function(){
-                    if(!table.base.VAR || !table.base.VAR.H_AB || !table.base.VAR.F_FR || !table.base.VAR.G_MI)
-                        return 0;
-
-                    var tmp = 0;
-                    for(var len = table.base.VAR.F_FR.length; len--;)
-                        if(table.base.VAR.F_FR[len].val > 0)
-                            tmp++;
-                    for(var len = table.base.VAR.G_MI.length; len--;)
-                        if(table.base.VAR.G_MI[len].val > 0)
-                            tmp++;
-                    for(var len = table.base.VAR.H_AB.length; len--;)
-                        if(table.base.VAR.H_AB[len].val > 0)
-                            tmp++;
-                    return tmp;
-                },
-                "val": function(){
-                    var tmp = table.calc.ESSEN.cnt();
-                    if(tmp > 0)
-                        return table.calc.ESSEN.sum() / tmp;
-                    return table.calc.ESSEN.sum();
-                }
-            },
-            FIX: {
-                "pos": table.bez.FIX,
-                "sum": function(){
-                    if(!table.base.ALL || !table.base.ALL.B_FIX || !table.base.ALL.C_BW)
-                        return 0;
-                    return (table.base.ALL.B_FIX * 1) + (table.base.ALL.C_BW * 1);
-                },
-                "cnt": function(){
-                    if(!table.base.ALL || !table.base.ALL.B_FIX || !table.base.ALL.C_BW)
-                        return 0;
-                    return (table.base.ALL.B_FIX > 0 ? 1 : 0) + (table.base.ALL.C_BW > 0 ? 1 : 0);
-                },
-                "val": function(){
-                    var tmp = table.calc.FIX.cnt();
-                    if(tmp > 0)
-                        return table.calc.FIX.sum() / tmp;
-                    return table.calc.FIX.sum();
-                }
-            },
-            UE: {
-                "pos": table.bez.UE,
-                "sum": function(){
-                    if(!table.base.VAR || !table.base.VAR.D_UE)
-                        return 0;
-
-                    var tmp = 0;
-                    for(var len = table.base.VAR.D_UE.length; len--;)
-                        tmp += (table.base.VAR.D_UE[len].val * 1);
-                    return tmp;
-                },
-                "cnt": function(){
-                    if(!table.base.VAR || !table.base.VAR.D_UE)
-                        return 0;
-
-                    var tmp = 0;
-                    for(var len = table.base.VAR.D_UE.length; len--;)
-                        if(table.base.VAR.D_UE[len].val > 0)
-                            tmp++;
-                    return tmp;
-                },
-                "val": function(){
-                    var tmp = table.calc.UE.cnt();
-                    if(tmp > 0)
-                        return table.calc.UE.sum() / tmp;
-                    return table.calc.UE.sum();
-                }
-            },
-            WIR: {
-                "pos": table.bez.WIR,
-                "sum": function(){
-                    if(!table.base.ALL || !table.base.ALL.E_ESS)
-                        return 0;
-                    return table.base.ALL.E_ESS * 1;
-                },
-                "cnt": function(){
-                    if(!table.base.ALL || !table.base.ALL.E_ESS)
-                        return 0;
-                    return table.base.ALL.E_ESS > 0 ? 1 : 0;
-                },
-                "val": function(){
-                    var tmp = table.calc.WIR.cnt();
-                    if(tmp>0)
-                        return table.calc.WIR.sum() / tmp;
-                    return table.calc.WIR.sum();
-                }
-            },
-            X_REFRA: {
-                "pos": table.bez.REFRA,
-                "sum": function(){
-                    if(!table.base.ALL || !table.base.ALL.REFRA)
-                        return 0;
-                    return table.base.ALL.REFRA;
-                },
-                "cnt": function(){
-                    return 1;
-                },
-                "val": function(){
-                    return table.calc.X_REFRA.sum();
-                }
-            }
-        };
-
-        table.sum = function(){
-            return table.calc.ESSEN.sum() + table.calc.WIR.sum() + table.calc.FAHRT.sum() + table.calc.FIX.sum() + table.calc.UE.sum();
-        }
-
 
     }]);
 
@@ -541,7 +586,7 @@ dataapp.service('receiptData', ["$http", "$rootScope", function ($http, $rootSco
  * receipttable module
  */
 (function() {
-    var app = angular.module('receipt', []);
+    var app = angular.module('receipt', ['dataapp']);
 
     app.directive("tableReceipt", function() {
         return {
@@ -681,7 +726,6 @@ dataapp.service('receiptData', ["$http", "$rootScope", function ($http, $rootSco
                 }
 
                 scope.curr = function(e){
-                    console.log(e);
                     return currency(e);
                 }
             }

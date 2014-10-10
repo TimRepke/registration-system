@@ -8,7 +8,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="row in table.calc">
+    <tr ng-repeat="row in dataService.calc">
         <td>{{row.pos}}</td>
         <td class="cost-table-numeric">{{row.cnt()}}</td>
         <td class="cost-table-numeric">{{row.val() | currency}}</td>
@@ -20,7 +20,7 @@
         <td class="cost-table-invisible"></td>
         <td class="cost-table-invisible"></td>
         <td class="cost-table-invisible"></td>
-        <td>{{table.sum() | currency}}</td>
+        <td>{{dataService.sum() | currency}}</td>
     </tr>
     </tfoot>
 </table>
@@ -28,5 +28,8 @@
 <table-price-edit></table-price-edit>
 
 <div class="debug" style="margin-top: 30px;">
-    {{ table.base | json }}
+    {{ table.base || "&nbsp;" | json }}
+</div>
+<div class="debug" style="margin-top: 30px;">
+    {{ dataService.base || "&nbsp;" | json }}
 </div>
