@@ -590,20 +590,15 @@ now the individual controllers and modules for each table....
             });
         };
 
+        // save copy of table before editing to have something to reset to
+        $scope.prepareForm = function(){
+            table.orig = jQuery.extend(true, {}, table.entries);
+        };
+
         // cancel all changes
         $scope.cancel = function() {
-            for (var i = table.entries.length; i--;) {
-                var row = table.entries[i];
-
-                // undelete
-                if (row.isDeleted) {
-                    delete row.isDeleted;
-                }
-                // remove new
-                if (row.isNew) {
-                    table.entries.splice(i, 1);
-                }
-            }
+            table.entries = jQuery.extend(true, {}, table.orig);
+            table.orig    = [];
         };
 
         // save edits
@@ -621,6 +616,7 @@ now the individual controllers and modules for each table....
                    delete row.isNew;
                 }
             }
+            table.orig    = [];
 
             $http.post('?page=cost&ajax=set-shopping-json', table.entries).success(function(data, status, headers, config){
                 toastr.success('Saved to Database!')
@@ -697,20 +693,15 @@ now the individual controllers and modules for each table....
             });
         };
 
+        // save copy of table before editing to have something to reset to
+        $scope.prepareForm = function(){
+            table.orig = jQuery.extend(true, {}, table.entries);
+        };
+
         // cancel all changes
         $scope.cancel = function() {
-            for (var i = table.entries.length; i--;) {
-                var row = table.entries[i];
-
-                // undelete
-                if (row.isDeleted) {
-                    delete row.isDeleted;
-                }
-                // remove new
-                if (row.isNew) {
-                    table.entries.splice(i, 1);
-                }
-            }
+            table.entries = jQuery.extend(true, {}, table.orig);
+            table.orig    = [];
         };
 
         // save edits
@@ -728,7 +719,8 @@ now the individual controllers and modules for each table....
                     delete row.isNew;
                 }
             }
-
+            table.orig    = [];
+            
             $http.post('?page=cost&ajax=set-receipt-json', table.entries).success(function(data, status, headers, config){
                 toastr.success('Saved to Database!')
             });
@@ -792,6 +784,7 @@ now the individual controllers and modules for each table....
         $scope.moneyioDataService = moneyioData;
 
         table.entries = $scope.moneyioDataService.entries;
+        table.orig = [];
 
         $scope.$on('data::moneyioUpdated', function(event, newTab) {
             table.entries = newTab;
@@ -823,24 +816,15 @@ now the individual controllers and modules for each table....
             });
         };
 
+        // save copy of table before editing to have something to reset to
+        $scope.prepareForm = function(){
+            table.orig = jQuery.extend(true, {}, table.entries);
+        };
+
         // cancel all changes
         $scope.cancel = function() {
-            var kanzlei = function(col){
-                for (var i = col.length; i--;) {
-                    var row = col[i];
-
-                    // undelete
-                    if (row.isDeleted) {
-                        delete row.isDeleted;
-                    }
-                    // remove new
-                    if (row.isNew) {
-                        col.splice(i, 1);
-                    }
-                }
-            }
-            kanzlei(table.entries.in);
-            kanzlei(table.entries.out);
+            table.entries = jQuery.extend(true, {}, table.orig);
+            table.orig    = [];
         };
 
         // save edits
@@ -864,6 +848,7 @@ now the individual controllers and modules for each table....
 
             salbei(table.entries.in);
             salbei(table.entries.out);
+            table.orig = [];
 
             $http.post('?page=cost&ajax=set-moneyio-json', table.entries).success(function(data, status, headers, config){
                 toastr.success('Saved to Database!')
