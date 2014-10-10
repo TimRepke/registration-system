@@ -45,6 +45,17 @@ if(isset($_REQUEST['ajax'])){
             $ajax = $admin_db->get("cost", "moneyIO", ["fahrt_id" => $fid]);
             break;
 
+        case "get-other-json":
+            header('Content-Type: application/json');
+            /*
+            "bezahlt" : 0, // number of people who payed
+            "count"   : 0, // number of valid registrations
+            "amount"  : 0, // amount of money to be collected per person
+            "back"    : [],// list of people, who received money back (structure: von, bis, antyp, abtyp)
+            "remain"  : [] // list of people, who haven't received money yet (structure: von, bis, antyp, abtyp)
+            */
+            break;
+
 
         // == SETTER ==
         case "set-price-json":

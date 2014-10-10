@@ -62,7 +62,13 @@ defaultData.moneyio = {
         { "pos": "Kaution", "val": "100" }
     ]
 };
-
+defaultData.other = {
+    "bezahlt" : 0, // number of people who payed
+    "count"   : 0, // number of valid registrations
+    "amount"  : 0, // amount of money to be collected per person
+    "back"    : [],// list of people, who received money back (structure: von, bis, antyp, abtyp)
+    "remain"  : [] // list of people, who haven't received money yet (structure: von, bis, antyp, abtyp)
+};
 
 
 // module for shared data-management
@@ -380,6 +386,25 @@ dataapp.service('moneyioData', ["$http", "$rootScope", function ($http, $rootSco
 
         return color;
     };
+
+}]);
+
+/*
+ Data Handler for other mixed data
+ */
+dataapp.service('otherData', ["$http", "$rootScope", function ($http, $rootScope) {
+
+    this.data = defaultData.other;
+
+    $http.get('?page=cost&ajax=get-other-json').success(function(data){
+        if(data !== ""){
+            this.data = data;
+            console.log("got moneyio table from DB");
+        } else {
+            console.error("other data not loaded from DB - took default!");
+        }
+        $rootScope.$broadcast('data::otherUpdated', this.data);
+    });
 
 }]);
 
@@ -720,7 +745,7 @@ now the individual controllers and modules for each table....
                 }
             }
             table.orig    = [];
-            
+
             $http.post('?page=cost&ajax=set-receipt-json', table.entries).success(function(data, status, headers, config){
                 toastr.success('Saved to Database!')
             });
