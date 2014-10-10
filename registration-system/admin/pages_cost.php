@@ -112,11 +112,11 @@ else {
 
 
         <div class="cost-anmerkung">
-            Achtung:<br />
+            Hinweise:<br />
              <ul>
                 <li>Zurückgezogene Registrierungen werden hier nicht beachtet! Wenn Bezahlung erhalten unbedingt seperat auf dem Notizzettel verwalten!</li>
-                <li></li>
-                <li></li>
+                <li>Eingesammelter Betrag wird nicht individuell gespeichert. Wird er geändert sind ggf. unterschiedliche Beträge nicht erfasst.</li>
+                <li>Für falsche Berechnungen wird keine Haftung übernommen. Wenn unsicher -> selbst rechnen und nachprüfen!</li>
              </ul>
         </div>
     ';
