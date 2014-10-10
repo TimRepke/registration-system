@@ -11,9 +11,9 @@
         </tr>
 
         <tr>
-            <td class="cost-table-numeric table-moneyio-sum">{{ table.colSum(table.entries.in) | currency }}</td>
-            <td class="cost-table-numeric table-moneyio-sum">{{ table.colSum(table.entries.out) | currency }}</td>
-            <td class="cost-table-numeric table-moneyio-sum" ng-class="{red:'red-text', yellow:'yellow-text', green: 'green-text'}[table.diffColor()]">{{ table.diff() | currency }}</td>
+            <td class="cost-table-numeric table-moneyio-sum">{{ moneyioDataService.colSum(table.entries.in) | currency }}</td>
+            <td class="cost-table-numeric table-moneyio-sum">{{ moneyioDataService.colSum(table.entries.out) | currency }}</td>
+            <td class="cost-table-numeric table-moneyio-sum" ng-class="{red:'red-text', yellow:'yellow-text', green: 'green-text'}[moneyioDataService.diffColor()]">{{ moneyioDataService.diff() | currency }}</td>
         </tr>
     </table>
 
@@ -29,5 +29,8 @@
 
 
 <div class="debug" style="margin-top: 30px;">
-    {{ table.entries | json }}
+    {{ table.entries || "&nbsp;" | json }}
+</div>
+<div class="debug" style="margin-top: 30px;">
+    {{ moneyioDataService.entries || "&nbsp;" | json }}
 </div>

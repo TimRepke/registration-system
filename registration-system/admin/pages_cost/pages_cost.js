@@ -54,7 +54,8 @@ defaultData.moneyio = {
     "in": [
         { "pos": "Förderung", "val": "1200" },
         { "pos": "Pfand", "val": "31" }
-    ], "out": [
+    ],
+    "out": [
         { "pos": "Einkaufen", "val": "354" },
         { "pos": "Busfahrt Hin", "val": "35" },
         { "pos": "Busfahrt Rück", "val": "40" },
@@ -329,7 +330,58 @@ dataapp.service('receiptData', ["$http", "$rootScope", function ($http, $rootSco
 
 }]);
 
+/*
+ Data Handler for receipt table
+ */
+dataapp.service('moneyioData', ["$http", "$rootScope", function ($http, $rootScope) {
+    var table = this;
 
+    table.entries = {
+        "in": [],
+        "out": []
+    };
+
+    $http.get('?page=cost&ajax=get-moneyio-json').success(function(data){
+        if(data !== ""){
+            table.entries = data;
+            console.log("got moneyio table from DB");
+        } else {
+            table.entries = defaultData.moneyio;
+            console.error("moneyio table not loaded from DB - took default!");
+        }
+        $rootScope.$broadcast('data::moneyioUpdated', table.entries);
+    });
+
+    // === basic table functions ===
+
+    table.colSum = function(col){
+        var ret = 0;
+        for(var i = col.length; i--;){
+            if(!col[i].isDeleted)
+                ret += 1*col[i].val;
+        }
+        return ret;
+    };
+
+    table.diff = function(){
+        return table.colSum(table.entries.in) - table.colSum(table.entries.out);
+    };
+
+    table.diffColor = function(){
+        var tolerance = 10; // specify the tolerance of diff
+        var diff = table.diff();
+        var color = "";
+        if(diff < 0)
+            color = "red";
+        else if(diff >= 0 && diff <= tolerance)
+            color = "green";
+        else if(diff > tolerance)
+            color = "yellow";
+
+        return color;
+    };
+
+}]);
 
 
 /*  END: Data Module
@@ -382,7 +434,7 @@ now the individual controllers and modules for each table....
  * pricetable module
  */
 (function() {
-    var app = angular.module('price', ['mgcrea.ngStrap.tooltip', 'dataapp']);
+    var app = angular.module('price', ["xeditable", 'mgcrea.ngStrap.tooltip', 'dataapp']);
 
     app.directive("tablePrice", function() {
         return {
@@ -586,7 +638,7 @@ now the individual controllers and modules for each table....
  * receipttable module
  */
 (function() {
-    var app = angular.module('receipt', ['dataapp']);
+    var app = angular.module('receipt', ["xeditable", 'dataapp']);
 
     app.directive("tableReceipt", function() {
         return {
@@ -597,7 +649,6 @@ now the individual controllers and modules for each table....
 
     app.controller('TableReceiptController', ["$scope", "$filter", "$q", "$http", "receiptData", function($scope, $filter, $q, $http, receiptData){
         var table = this;
-
 
         // === Data Binding stuff ==
 
@@ -696,7 +747,7 @@ now the individual controllers and modules for each table....
  * moneyIO module
  */
 (function() {
-    var app = angular.module('moneyio', [ ]);
+    var app = angular.module('moneyio', [ "xeditable", 'dataapp']);
 
     app.directive("tableMoneyio", function() {
         return {
@@ -733,52 +784,27 @@ now the individual controllers and modules for each table....
         };
     }]);
 
-    app.controller('TableMoneyioController', ["$scope", "$filter", "$q", "$http", "$rootScope", function($scope, $filter, $q, $http, $rootScope){
+    app.controller('TableMoneyioController', ["$scope", "$filter", "$q", "$http", "moneyioData", function($scope, $filter, $q, $http, moneyioData){
         var table = this;
 
-        table.entries = {
-                "in": [],
-                "out": []
-            };
+        // === Data Binding stuff ==
 
+        $scope.moneyioDataService = moneyioData;
 
-        $http.get('?page=cost&ajax=get-moneyio-json').success(function(data){
-            if(data !== "")
-                table.entries = data;
-            else {
-                table.entries = defaultData.moneyio;
-                console.error("MoneyIO table not loaded from DB - took default!");
+        table.entries = $scope.moneyioDataService.entries;
+
+        $scope.$on('data::moneyioUpdated', function(event, newTab) {
+            table.entries = newTab;
+            console.log("data in moneyio controller received");
+        });
+
+        $scope.$watch('table.entries', function() {
+            if(table.entries && $scope.moneyioDataService.entries){
+                $scope.moneyioDataService.entries = table.entries;
             }
         });
 
-        // === basic table functions ===
 
-        table.colSum = function(col){
-            var ret = 0;
-            for(var i = col.length; i--;){
-                if(!col[i].isDeleted)
-                    ret += 1*col[i].val;
-            }
-            return ret;
-        };
-
-        table.diff = function(){
-            return table.colSum(table.entries.in) - table.colSum(table.entries.out);
-        };
-
-        table.diffColor = function(){
-            var tolerance = 10; // specify the tolerance of diff
-            var diff = table.diff();
-            var color = "";
-            if(diff < 0)
-                color = "red";
-            else if(diff >= 0 && diff <= tolerance)
-                color = "green";
-            else if(diff > tolerance)
-                color = "yellow";
-
-            return color;
-        };
 
         // === edit table functions ===
 
