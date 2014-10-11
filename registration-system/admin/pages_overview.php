@@ -101,12 +101,12 @@ $text .= "<div style='float:left; margin-left: 15px'><h2>Zahlungen</h2>
                 <li>Ausgezahlt: ".$money['gezahlt']."</li>
                 <li>Ausstehende Rückzahlungen: ".$money['ausstehend']."</li>
             </ul>
-            <li>Einnahmen</li>
+            <!--li>Einnahmen</li>
             <ul>
                 <li>Soll:</li>
                 <li>Ist:</li>
                 <li>Differenz:</li>
-            </ul>
+            </ul-->
         </ul></div>";
 
 $text .= "<p style='clear:both'></p>";

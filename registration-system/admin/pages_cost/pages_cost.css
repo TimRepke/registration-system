@@ -89,6 +89,23 @@
     float: left;
     margin: 2.5pt 4pt 0 0;
 }
+.button-list:before{
+    content: "";
+    background: url('../../view/graphics/jqueryui.png') no-repeat -164px -131px;
+    width: 8px;
+    height: 11px;
+    float: left;
+    margin: 1.5pt 4pt 0 0;
+}
+.button-magnify:before{
+    content: "";
+    background: url('../../view/graphics/jqueryui.png') no-repeat -163px -116px;
+    width: 10px;
+    height: 9px;
+    float: left;
+    margin: 2pt 4pt 0 0;
+}
+
 /* == / end buttons == */
 
 .tooltip {
@@ -188,4 +205,59 @@
     right: 5px;
     border-width: 0 5px 5px;
     border-bottom-color: #000;
+}
+
+/* == END Tooltips ==
+*/
+
+.pages-cost-list{
+    position: fixed;
+    top:50px;
+    left: 50px;
+    width: 1000px;
+    height: 80%;
+    border: 1px solid #000000;
+    background-color: beige;
+    padding: 20px 10px 10px 10px;
+}
+.pages-cost-list-content{
+    display: block;
+    position:absolute;
+    height:auto;
+    bottom:0;
+    top:0;
+    left:0;
+    right:0;
+    overflow: auto;
+    padding: 10px;
+    margin: 20px 0 0 0;
+}
+.pages-cost-list-content ul li{
+    margin:0;
+    padding: 0;
+}
+.pages-cost-list-content td{
+    vertical-align: top;
+    border-bottom: 1px dotted darkgray;
+}
+
+.pages-cost-list-topbar {
+    background-color: #b0bed9;
+    height: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0;
+}
+.pages-cost-list-topbar p{
+    position: absolute;
+    float: right;
+    top: 0;
+    padding: 0;
+    margin: 0;
+    right: 5px;
+    cursor: none;
+    height: 20px;
+    display: block;
 }

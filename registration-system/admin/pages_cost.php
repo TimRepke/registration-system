@@ -47,13 +47,13 @@ if(isset($_REQUEST['ajax'])){
 
         case "get-other-json":
             header('Content-Type: application/json');
-            $ret['remain'] =  $admin_db->select("bachelor", ["anday(von)", "abday(bis)", "antyp", "abtyp"],
+            $ret['remain'] =  $admin_db->select("bachelor", ["forname", "sirname", "bachelor_id", "anday(von)", "abday(bis)", "antyp", "abtyp"],
                                                 ["AND"=> [
                                                     "backstepped" => NULL,
                                                     "fahrt_id"   => $fid,
                                                     "repaid"     => NULL
                                                 ]]);
-            $ret['back']   =  $admin_db->select("bachelor", ["anday(von)", "abday(bis)", "antyp", "abtyp"],
+            $ret['back']   =  $admin_db->select("bachelor", ["forname", "sirname", "bachelor_id", "anday(von)", "abday(bis)", "antyp", "abtyp"],
                                                 ["AND"=> [
                                                     "backstepped" => NULL,
                                                     "fahrt_id"   => $fid,
@@ -159,6 +159,8 @@ else {
                 <li>Für falsche Berechnungen wird keine Haftung übernommen. Wenn unsicher -> selbst rechnen und nachprüfen!</li>
                 <li>Die <strong>effektive</strong> Förderung muss in der "Kosten pro Person"-Tabelle angepasst werden</li>
                 <li>In der "Kosten pro Person"-Tabelle müssen die <strong>effektiven</strong> Kosten angegeben werden.</li>
+                <li>Es erfolgt keine Validierung eingegeber Typen. Dezimaltrennzeichen ist ".", nicht ",".</li>
+                <li>Berechnungen erfolgen mit eingegebener Präzision (ggf. abweichend von der auf zwei Stellen gerundeten Anzeige)</li>
              </ul>
         </div>
     ';

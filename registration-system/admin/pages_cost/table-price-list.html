@@ -1,0 +1,42 @@
+<div ng-show="table.listmode" class="pages-cost-list">
+    <div class="pages-cost-list-topbar"><p ng-click="table.toggleListmode()">X</p></div>
+    <div class="pages-cost-list-content">
+
+        <button type="button" ng-click="toggleDetails()" class="button-magnify">Details</button><br />
+        <br />
+
+        <div ng-repeat="(key,col) in table.list" style="float: left; width: 460px; border-right: 1px dashed #d3d3d3; padding: 10px 15px">
+            <h1>{{key}}</h1>
+            <table >
+                <thead>
+                    <tr>
+                        <th style="width: 30%; text-align: left;">Name + ID</th>
+                        <th style="width: 70%; text-align: left;">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="row in col">
+                        <td>{{row.name}} ({{row.id}})</td>
+                        <td>
+                            <strong>{{row.pay.val || 0 | currency}}</strong><br />
+                            {{row.person.von}} <br />
+                            ({{row.person.antyp}})<br />
+                            {{row.person.bis}}<br />
+                            ({{row.person.abtyp}})<br />
+                            <br />
+                            <ul ng-repeat="entry in row.pay.pos" ng-show="showdetails">
+                                <li>{{entry.pos}}: {{entry.val || 0 | currency}}</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!--div class="debug" style="margin-top: 30px;">
+        {{ otherDataService.getPaymentList() | json }}
+        </div-->
+
+    </div>
+</div>

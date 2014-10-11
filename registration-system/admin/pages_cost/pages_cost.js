@@ -411,6 +411,8 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
 
     var data = defaultData.other;
     var base = priceData.base;
+    var fdays = [];
+    var func = this;
 
     $http.get('?page=cost&ajax=get-other-json').success(function(dat){
         if(dat !== ""){
@@ -419,6 +421,7 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
         } else {
             console.error("other data not loaded from DB - took default!");
         }
+        fdays = func.getDays(data.fahrt.von, data.fahrt.bis);
         $rootScope.$broadcast('data::otherUpdated', data);
     });
 
@@ -429,20 +432,56 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
 
     // === Data aggregation functions ===
 
-    // product of amount to be paid and number of people who paid
-    this.intakeSum = function(){
-        return data.amount * data.bezahlt;
-    };
+    // == local functions ==
 
-    this.getDate = function(str){
+    // get js Date from a YYYY-mm-dd string (today if not a string or wrong format)
+    func.getDate = function(str){
+        if(!(typeof str == "string"))
+            return new Date();
+
         var split = str.split("-");
+
+        if(split.length<3 || split.length>3)
+            return new Date();
+
         return new Date(split[0],split[1]-1, split[2]);
     };
-    this.dateToStr = function(d){
+    // get YYYY-mm-dd string from js date object (today if not a date)
+    func.dateToStr = function(d){
+        if(!typeof d == "Date")
+            d = new Date();
         return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
     };
-    this.nextDay = function(d){
+    // get next day of js Date object (tomorrow if not a date)
+    func.nextDay = function(d){
+        if(!typeof d == "Date")
+            d = new Date();
         d.setDate(d.getDate()+1);
+    };
+    // get array of dates between two dates (given as YYYY-mm-dd string) returns datestrings as key and value is daycount
+    // maximum number of entries: 10
+    func.getDays = function(vonn, biss){
+        var von = func.getDate(vonn);
+        var tmp = func.getDate(vonn);
+        var bis = func.getDate(biss);
+        var days = [];
+        for(var i = 0; tmp <= bis && i < 10; i++){ // maximum of 10 days (just in case)
+            days[func.dateToStr(tmp)] = i;
+            func.nextDay(tmp);
+        }
+        return days;
+    };
+    // gets the difference of start days (returns 0 on errors)
+    func.startOffset = function(f,p){
+        for(var k in p){
+            if(p[k]==0){
+                if(k in f)
+                    return f[k];
+                else
+                    return 0;
+            }
+        }
+        return 0;
     };
 
     // amount to be paid to person (returns array: [val:<amount to pay>, pos:[{pos:<position>, val:<value>},...])
@@ -450,27 +489,46 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
         var pos = [];
 
         if(base.ALL && base.VAR){
-            pos[pos.length] = {"pos": priceData.bez.B_FIX, "val": base.ALL.B_FIX};
-            pos[pos.length] = {"pos": priceData.bez.C_BW, "val": base.ALL.C_BW};
-            pos[pos.length] = {"pos": priceData.bez.E_ESS, "val": base.ALL.E_ESS};
+            pos[pos.length] = {"pos": "(Vorkasse)", "val": data.amount};
             pos[pos.length] = {"pos": priceData.bez.REFRA, "val": base.ALL.REFRA};
+            pos[pos.length] = {"pos": priceData.bez.B_FIX, "val": (-1)*base.ALL.B_FIX};
+            pos[pos.length] = {"pos": priceData.bez.C_BW, "val": (-1)*base.ALL.C_BW};
+            pos[pos.length] = {"pos": priceData.bez.E_ESS, "val": (-1)*base.ALL.E_ESS};
 
             // person: Object {von: "2013-10-18", bis: "2013-10-20", antyp: "gemeinsam mit Bus/Bahn", abtyp: "gemeinsam mit Bus/Bahn"}
             // fahrt: Object {von: "2013-10-25", bis: "2013-10-27"}
 
-            var von = this.getDate(data.fahrt.von);
-            var tmp = this.getDate(data.fahrt.von);
-            var bis = this.getDate(data.fahrt.bis);
-            var days = [];
-            for(var i = 0; tmp <= bis && i < 10; i++){
-                days[this.dateToStr(tmp)] = i;
-                this.nextDay(tmp);
+            var pdays = func.getDays(person.von, person.bis);
+            var firstDay = true, lastDay = false;
+            var startOffset = func.startOffset(fdays,pdays);
+            var indAn = data.arten.BUSBAHN != person.antyp;
+            var indAb = data.arten.BUSBAHN != person.abtyp;
+            for(var pday in pdays){
+                firstDay = (pdays[pday] == 0               );
+                lastDay  = (pdays[pday] == (pdays.length-1));
+
+                var index = 0;
+                for(var tpos in base.VAR){ // for each position of base table
+                    index = pdays[pday]+startOffset;
+                    if(index in base.VAR[tpos] && base.VAR[tpos][index].val > 0){
+                        if(firstDay){
+                            if(base.VAR[tpos][index].an){
+                                if(!indAn || (indAn &&base.VAR[tpos][index].ind)){
+                                    pos[pos.length] = {"pos": priceData.bez[tpos], "val": (-1)*base.VAR[tpos][index].val};
+                                }
+                            }
+                        } else if(lastDay){
+                            if(base.VAR[tpos][index].ab){
+                                if(!indAb || (indAb &&base.VAR[tpos][index].ind)){
+                                    pos[pos.length] = {"pos": priceData.bez[tpos], "val": (-1)*base.VAR[tpos][index].val};
+                                }
+                            }
+                        } else {
+                            pos[pos.length] = {"pos": priceData.bez[tpos], "val": (-1)*base.VAR[tpos][index].val};
+                        }
+                    }
+                }
             }
-
-            
-
-            console.log(days);
-
         }
 
         var val = 0;
@@ -479,6 +537,33 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
         }
 
         return {"val": val, "pos": pos};
+    };
+
+    // get list of persons with the attached amounts + sum
+    this.getPaymentList = function(){
+        var ret = {
+            "repaid": [],
+            "toPay":  []
+        };
+
+        for(var len = data.back.length; len--;){
+            ret.repaid[ret.repaid.length] = {
+                "id":   data.back[len].bachelor_id,
+                "name": data.back[len].forname + " " + data.back[len].sirname,
+                "pay":  this.repayAmount(data.back[len]),
+                "person": data.back[len]
+            };
+        }
+        for(var len = data.remain.length; len--;){
+            ret.toPay[ret.toPay.length] = {
+                "id":   data.remain[len].bachelor_id,
+                "name": data.remain[len].forname + " " + data.remain[len].sirname,
+                "pay":  this.repayAmount(data.remain[len]),
+                "person": data.remain[len]
+            };
+        }
+
+        return ret;
     };
 
     // sum of all amounts that have been paid back
@@ -502,7 +587,12 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
     // sum of all amounts paid back or still to be paid back
     this.paySum = function(){
         return this.repaidSum() + this.toPaySum();
-    }
+    };
+
+    // product of amount to be paid and number of people who paid
+    this.intakeSum = function(){
+        return data.amount * data.bezahlt;
+    };
 
 }]);
 
@@ -562,7 +652,20 @@ now the individual controllers and modules for each table....
     app.directive("tablePrice", function() {
         return {
             restrict: 'E',
-            templateUrl: "pages_cost/table-price.html"
+            templateUrl: "pages_cost/table-price.html",
+            link: function(scope, parent){
+                scope.showdetails = false;
+                scope.toggleDetails = function(){
+                    scope.showdetails = scope.showdetails == false;
+                }
+            }
+        };
+    });
+
+    app.directive("tablePriceList", function() {
+        return {
+            restrict: 'E',
+            templateUrl: "pages_cost/table-price-list.html"
         };
     });
 
@@ -593,7 +696,9 @@ now the individual controllers and modules for each table....
         var table = this;
 
         table.editmode = false;
+        table.listmode = false;
         table.edit = [];
+        table.list = [];
 
         // === Data Binding stuff ==
 
@@ -625,6 +730,14 @@ now the individual controllers and modules for each table....
 
         table.toggleEditmode = function(){
             table.editmode = table.editmode == false;
+        };
+        table.toggleListmode = function(){
+            table.listmode = table.listmode == false;
+        };
+
+        table.listPay = function(){
+            table.list = $scope.otherDataService.getPaymentList();
+            table.toggleListmode();
         };
 
         table.editTable = function(){
