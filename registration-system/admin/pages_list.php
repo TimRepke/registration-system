@@ -84,9 +84,9 @@ if(isset($_REQUEST['ajax'])){
         $ajax .= admin_show_formular_helper_sel("Alter 18+?","virgin",array("Nein", "Ja"), (($bachelor["virgin"]==1) ? "Nein" : "Ja"), "Älter als 18?");
         $ajax .= admin_show_formular_helper_sel("Essenswunsch","essen",$config_essen, $bachelor["essen"],"Info für den Koch.");
         $ajax .= "<div style='clear: both;'></div>";
-        $ajax .= admin_show_formular_helper_sel2("Anreise","anday", array_slice($possible_dates,0, -1), $bachelor["anday"]
+        $ajax .= admin_show_formular_helper_sel2("Anreise","anday", array_slice($possible_dates,0, -1), comm_from_mysqlDate($bachelor["anday"])
             ,"antyp",$config_reisearten, $bachelor["antyp"],"");
-        $ajax .= admin_show_formular_helper_sel2("Abreise","abday", array_slice($possible_dates,1), $bachelor["abday"]
+        $ajax .= admin_show_formular_helper_sel2("Abreise","abday", array_slice($possible_dates,1), comm_from_mysqlDate($bachelor["abday"])
             ,"abtyp",$config_reisearten,$bachelor["abtyp"],"");
         $ajax .= '
         <label>Anmerkung</label>
