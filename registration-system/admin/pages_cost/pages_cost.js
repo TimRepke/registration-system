@@ -69,7 +69,8 @@ defaultData.other = {
     "back"    : [],// list of people, who received money back (structure: von, bis, antyp, abtyp)
     "remain"  : [],// list of people, who haven't received money yet (structure: von, bis, antyp, abtyp)
     "fahrt"   : [],// dates of the trip (structure: von, bis)
-    "arten"   : []
+    "arten"   : [],
+    "cnt"     : {"all":0, "geman": 0, "gemab":0}
 };
 
 
@@ -692,7 +693,52 @@ now the individual controllers and modules for each table....
         };
     });
 
-    app.controller('TablePriceController', ["$http", "$scope", "priceData", "otherData", function($http, $scope, priceData, otherData){
+    app.directive("tablePriceHelper", function() {
+        return {
+            restrict: 'E',
+            templateUrl: "pages_cost/table-price-helper.html",
+            link: function(scope, parent){
+                scope.helpermod = 0;
+                scope.cnt = 0;
+
+                scope.summy = function(tab){
+                    var ret = 0;
+                    var mul = 1;
+                    for(var len = tab.in.length; len--;){
+                        mul = 1;
+                        if(tab.in[len].selected){
+                            if(tab.in[len].neg) mul = -1;
+                            ret += tab.in[len].val*mul;
+                        }
+                    }
+                    for(var len = tab.out.length; len--;){
+                        mul = 1;
+                        if(tab.out[len].selected){
+                            if(tab.in[len].neg) mul = -1;
+                            ret += tab.out[len].val*mul;
+                        }
+                    }
+                    return ret;
+                };
+                scope.resetty = function(tab){
+                    for(var len = tab.in.length; len--;){
+                        delete tab.in[len].selected;
+                        delete tab.in[len].neg;
+                    }
+                    for(var len = tab.out.length; len--;){
+                        delete tab.out[len].selected;
+                        delete tab.out[len].neg;
+                    }
+                };
+                scope.meaner = function(tab){
+                    if(scope.cnt<1) scope.cnt = 1;
+                    return scope.summy(tab) / scope.cnt;
+                }
+            }
+        };
+    });
+
+    app.controller('TablePriceController', ["$http", "$scope", "priceData", "otherData", "moneyioData", function($http, $scope, priceData, otherData, moneyioData){
         var table = this;
 
         table.editmode = false;
@@ -704,11 +750,14 @@ now the individual controllers and modules for each table....
 
         $scope.dataService = priceData;
         $scope.otherDataService = otherData;
+        $scope.moneyioDataService = moneyioData;
 
         table.base = $scope.dataService.base;
         table.calc = $scope.dataService.calc;
         table.bez  = $scope.dataService.bez;
         table.amount = $scope.otherDataService.amount;
+        table.io   = $scope.moneyioDataService.entries;
+        table.cnt = [];
 
         $scope.$on('data::priceUpdated', function(event, newTab) {
             table.base = newTab;
@@ -716,6 +765,11 @@ now the individual controllers and modules for each table....
         });
         $scope.$on('data::otherUpdated', function(event, newTab) {
             table.amount = newTab.amount;
+            table.cnt    = newTab.cnt;
+            console.log("amount in price controller received");
+        });
+        $scope.$on('data::moneyioUpdated', function(event, newTab) {
+            table.io = newTab;
             console.log("amount in price controller received");
         });
 
@@ -742,6 +796,7 @@ now the individual controllers and modules for each table....
 
         table.editTable = function(){
             table.edit = jQuery.extend(true, {}, table.base);
+            table.io   = jQuery.extend(true, {}, table.io);
             table.toggleEditmode();
         };
         table.saveTable = function(){
