@@ -7,6 +7,13 @@
     </tr>
     </thead>
     <tbody>
+<!-- extra -->
+    <tr ng-repeat="(key,row) in extra">
+        <td>{{row.pos || "&nbsp;" }}</td>
+        <td class="cost-table-numeric">{{row.val || 0  | currency}}</td>
+        <td ng-show="tform.$visible"></td>
+    </tr>
+<!-- editable stuff -->
     <tr ng-repeat="row in col | filter:filterRow">
         <td>
             <span editable-text="row.pos" e-form="tableform" e-ng-change="chang(row, 'pos', $data)">
@@ -16,9 +23,9 @@
         <td class="cost-table-numeric">
             <span editable-text="row.val" e-form="tableform"  e-style="width: 35pt" e-ng-change="chang(row, 'val', $data)">
                 {{row.val || 0  | currency}}
-
+            </span>
         </td>
-        <td ng-show="tform.$visible"><button type="button" ng-click="$parent.$parent.deleteRow(io,$index)" class="button-delete">del</button></td>
+        <td ng-show="tform.$visible" style="vertical-align: bottom;"><button type="button" ng-click="$parent.$parent.deleteRow(io,$index)" class="button-delete">del</button></td>
     </tr>
     </tbody>
 </table>
