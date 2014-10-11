@@ -714,7 +714,7 @@ now the individual controllers and modules for each table....
                     for(var len = tab.out.length; len--;){
                         mul = 1;
                         if(tab.out[len].selected){
-                            if(tab.in[len].neg) mul = -1;
+                            if(tab.out[len].neg) mul = -1;
                             ret += tab.out[len].val*mul;
                         }
                     }
