@@ -70,6 +70,19 @@ if(isset($_REQUEST['ajax'])){
                                                     "backstepped" => NULL,
                                                     "fahrt_id"   => $fid
                                                 ]]);
+            $ret['cnt']['all']   = $ret['count'];
+            $ret['cnt']['geman'] = $admin_db->count("bachelor",
+                                                ["AND"=> [
+                                                    "backstepped" => NULL,
+                                                    "fahrt_id"   => $fid,
+                                                    "antyp" => $config_reisearten_o["BUSBAHN"]
+                                                ]]);
+            $ret['cnt']['gemab'] = $admin_db->count("bachelor",
+                                                ["AND"=> [
+                                                    "backstepped" => NULL,
+                                                    "fahrt_id"   => $fid,
+                                                    "abtyp" => $config_reisearten_o["BUSBAHN"]
+                                                ]]);
             $ret['amount']=  $admin_db->get("cost", "collected",[ "fahrt_id" => $fid]);
             $ret['fahrt'] =  $admin_db->get("fahrten", ["von", "bis"], ["fahrt_id" => $fid]);
             $ret['arten'] = $config_reisearten_o;

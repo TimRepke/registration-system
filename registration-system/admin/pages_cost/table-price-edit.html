@@ -1,43 +1,51 @@
 <div ng-show="table.editmode" class="pages-cost-edit">
-    <table>
-        <thead>
-            <tr>
-                <th>&nbsp;</th>
-                <th>Tag 1</th>
-                <th>Tag 2</th>
-                <th>Tag 3</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="(key,row) in table.edit.VAR">
-                <td>{{table.bez[key]}}</td>
-                <td ng-repeat="col in row">
-                    <input ng-model="col.val" type="input" name="{{key}}.val" />
-                    <input ng-model="col.ind" type="checkbox" name="{{key}}.ind"  data-placement="top-left" data-type="info" data-title="{{tooltip.ind.title}}" bs-tooltip />
-                    <input ng-model="col.an" type="checkbox" name="{{key}}.an" data-placement="top-left" data-type="info" data-title="{{tooltip.an.title}}" bs-tooltip />
-                    <input ng-model="col.ab" type="checkbox" name="{{key}}.ab" data-placement="top-left" data-type="info" data-title="{{tooltip.ab.title}}" bs-tooltip />
-                </td>
-            </tr>
+    <div style="float: left">
+        <table>
+            <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Tag 1</th>
+                    <th>Tag 2</th>
+                    <th>Tag 3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="(key,row) in table.edit.VAR">
+                    <td>{{table.bez[key]}}</td>
+                    <td ng-repeat="col in row">
+                        <input ng-model="col.val" type="input" name="{{key}}.val" />
+                        <input ng-model="col.ind" type="checkbox" name="{{key}}.ind"  data-placement="top-left" data-type="info" data-title="{{tooltip.ind.title}}" bs-tooltip />
+                        <input ng-model="col.an" type="checkbox" name="{{key}}.an" data-placement="top-left" data-type="info" data-title="{{tooltip.an.title}}" bs-tooltip />
+                        <input ng-model="col.ab" type="checkbox" name="{{key}}.ab" data-placement="top-left" data-type="info" data-title="{{tooltip.ab.title}}" bs-tooltip />
+                    </td>
+                </tr>
 
-            <tr class="deviderrow"><td colspan="4"></td></tr>
+                <tr class="deviderrow"><td colspan="4"></td></tr>
 
-            <tr ng-repeat="(key,val) in table.edit.ALL">
-                <td>{{table.bez[key]}}</td>
-                <td colspan="3">
-                    <input ng-model="val" type="text" name="{{key}}" ng-change="table.editUpdateAll(val,'{{key}}')" />
-                </td>
-            </tr>
-            <tr>
-                <td>(Vorkasse)</td>
-                <td colspan="3">
-                    <input ng-model="table.amount" type="text" name="table.amount" />
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                <tr ng-repeat="(key,val) in table.edit.ALL">
+                    <td>{{table.bez[key]}}</td>
+                    <td colspan="3">
+                        <input ng-model="val" type="text" name="{{key}}" ng-change="table.editUpdateAll(val,'{{key}}')" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>(Vorkasse)</td>
+                    <td colspan="3">
+                        <input ng-model="table.amount" type="text" name="table.amount" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-    <button type="button" ng-click="table.saveTable()"   class="button-save">save</button> |
-    <button type="button" ng-click="table.cancelTable()" class="button-cancel">cancel</button>
+        <button type="button" ng-click="table.saveTable()"   class="button-save">save</button> |
+        <button type="button" ng-click="table.cancelTable()" class="button-cancel">cancel</button>
+    </div>
+
+    <div style="float: left; margin-left: 20px; width: 350px;">
+        <table-price-helper></table-price-helper>
+    </div>
+
+    <div style="clear: both"></div>
 
     <div class="debug" style="margin-top: 30px;">
         {{ table.edit | json }}

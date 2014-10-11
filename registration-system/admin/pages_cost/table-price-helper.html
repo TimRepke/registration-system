@@ -1,0 +1,28 @@
+<h2 style="margin-top: 0">Hilfsrechner</h2>
+
+Zu verteilende Posten wählen: <span ng-click="resetty(table.io)">[reset]</span><br />
+<br />
+IN:
+<ul style="list-style: none;">
+    <li ng-repeat="entry in table.io.in">
+        <input type="checkbox" ng-model="entry.neg"  data-placement="top-left" data-type="info" data-title="negative" bs-tooltip  />
+        <label><input type="checkbox" ng-model="entry.selected" /> {{entry.pos}} ({{entry.val || 0 | currency}})</label>
+    </li>
+</ul>
+OUT:
+<ul style="list-style: none;">
+    <li ng-repeat="entry in table.io.out">
+        <input type="checkbox" ng-model="entry.neg"  data-placement="top-left" data-type="info" data-title="negative" bs-tooltip />
+        <label><input type="checkbox" ng-model="entry.selected" /> {{entry.pos}} ({{entry.val || 0 | currency}})</label>
+    </li>
+</ul>
+
+Einschränken auf:<br />
+<label><input type="radio" ng-model="cnt" value="{{table.cnt.geman}}"> gemeinsam hin</label>
+<label><input type="radio" ng-model="cnt" value="{{table.cnt.gemab}}"> gemeinsam rück</label><br />
+<label><input type="radio" ng-model="cnt" value="{{table.cnt.all}}" ng-selected="{{table.cnt.all}}"> none</label>
+<br />
+
+Gewählte Summe: {{summy(table.io) || 0 | currency}}<br />
+Anzahl Personen: {{cnt}} <br />
+Betrag pro Person: {{meaner(table.io) || 0 | currency}}
