@@ -14,6 +14,12 @@
         <td class="cost-table-numeric">{{row.val() | currency}}</td>
         <td class="cost-table-numeric">{{row.sum() | currency}}</td>
     </tr>
+    <tr>
+        <td>(Vorkasse)</td>
+        <td></td>
+        <td></td>
+        <td>{{table.amount || 0 | currency}}</td>
+    </tr>
     </tbody>
     <tfoot>
     <tr>

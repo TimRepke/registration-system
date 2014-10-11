@@ -2,18 +2,18 @@
     <table class="table-moneyio">
         <tr>
             <td>
-                <table-moneyio-col col="table.entries.in" io="in" tform="tableform"></table-moneyio-col>
+                <table-moneyio-col col="table.entries.in"  extra="table.extra.in"  io="in"  tform="tableform"></table-moneyio-col>
             </td>
             <td>
-                <table-moneyio-col col="table.entries.out" io="out" tform="tableform"></table-moneyio-col>
+                <table-moneyio-col col="table.entries.out" extra="table.extra.out" io="out" tform="tableform"></table-moneyio-col>
             </td>
             <td></td>
         </tr>
 
         <tr>
-            <td class="cost-table-numeric table-moneyio-sum">{{ moneyioDataService.colSum(table.entries.in) | currency }}</td>
-            <td class="cost-table-numeric table-moneyio-sum">{{ moneyioDataService.colSum(table.entries.out) | currency }}</td>
-            <td class="cost-table-numeric table-moneyio-sum" ng-class="{red:'red-text', yellow:'yellow-text', green: 'green-text'}[moneyioDataService.diffColor()]">{{ moneyioDataService.diff() | currency }}</td>
+            <td class="cost-table-numeric table-moneyio-sum">{{ moneyioDataService.colSum(table.entries.in, table.extra.in) | currency }}</td>
+            <td class="cost-table-numeric table-moneyio-sum">{{ moneyioDataService.colSum(table.entries.out, table.extra.out) | currency }}</td>
+            <td class="cost-table-numeric table-moneyio-sum" ng-class="{red:'red-text', yellow:'yellow-text', green: 'green-text'}[moneyioDataService.diffColor(table.extra)]">{{ moneyioDataService.diff(table.extra) | currency }}</td>
         </tr>
     </table>
 
@@ -32,5 +32,5 @@
     {{ table.entries || "&nbsp;" | json }}
 </div>
 <div class="debug" style="margin-top: 30px;">
-    {{ moneyioDataService.entries || "&nbsp;" | json }}
+    {{ table.extra || "&nbsp;" | json }}
 </div>

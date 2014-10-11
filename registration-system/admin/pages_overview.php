@@ -49,7 +49,22 @@ $warte['ntran'] = $admin_db->count("waitlist", ["AND"=>
                                         ["transferred" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id]]);
 $warte['gesam'] = $admin_db->count("waitlist", ["fahrt_id"    => $config_current_fahrt_id]);
-
+$money['erhalten'] = $admin_db->count("bachelor", ["AND"=>
+                                        ["backstepped" => NULL,
+                                         "fahrt_id"    => $config_current_fahrt_id,
+                                         "paid[!]"     => NULL]]);
+$money['aus'] = $admin_db->count("bachelor", ["AND"=>
+                                        ["backstepped" => NULL,
+                                         "fahrt_id"    => $config_current_fahrt_id,
+                                         "paid"     => NULL]]);
+$money['gezahlt'] = $admin_db->count("bachelor", ["AND"=>
+                                        ["backstepped" => NULL,
+                                         "fahrt_id"    => $config_current_fahrt_id,
+                                         "repaid[!]"     => NULL]]);
+$money['ausstehend'] = $admin_db->count("bachelor", ["AND"=>
+                                        ["backstepped" => NULL,
+                                         "fahrt_id"    => $config_current_fahrt_id,
+                                         "repaid"     => NULL]]);
 
 $text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
         <ul class='list-nodeco'>
@@ -81,8 +96,10 @@ $text .= "<div style='float:left; margin-left: 15px'><h2>Zahlungen</h2>
         <ul>
             <li>Zahlungen</li>
             <ul>
-                <li>Erhalten:</li>
-                <li>Ausstehend:</li>
+                <li>Erhalten:".$money['erhalten']."</li>
+                <li>Ausstehende Zahlungen:".$money['aus']."</li>
+                <li>Ausgezahlt: ".$money['gezahlt']."</li>
+                <li>Ausstehende Rückzahlungen: ".$money['ausstehend']."</li>
             </ul>
             <li>Einnahmen</li>
             <ul>

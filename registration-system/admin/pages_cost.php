@@ -15,8 +15,8 @@ if(isset($_REQUEST['ajax'])){
     $fid  = $config_current_fahrt_id;
     $task = $_REQUEST['ajax'];
 
-    if(isset($_REQUEST['json-data'])){
-        $data = $_REQUEST['json-data'];
+    if(isset($_REQUEST['data'])){
+        $data = $_REQUEST['data'];
     } elseif( strpos($task, "set")!==false && strpos($task, "json")!==false ){
         $data = file_get_contents("php://input");
     }
@@ -47,13 +47,38 @@ if(isset($_REQUEST['ajax'])){
 
         case "get-other-json":
             header('Content-Type: application/json');
-            /*
-            "bezahlt" : 0, // number of people who payed
-            "count"   : 0, // number of valid registrations
-            "amount"  : 0, // amount of money to be collected per person
-            "back"    : [],// list of people, who received money back (structure: von, bis, antyp, abtyp)
-            "remain"  : [] // list of people, who haven't received money yet (structure: von, bis, antyp, abtyp)
-            */
+            $ret['remain'] =  $admin_db->select("bachelor", ["anday(von)", "abday(bis)", "antyp", "abtyp"],
+                                                ["AND"=> [
+                                                    "backstepped" => NULL,
+                                                    "fahrt_id"   => $fid,
+                                                    "repaid"     => NULL
+                                                ]]);
+            $ret['back']   =  $admin_db->select("bachelor", ["anday(von)", "abday(bis)", "antyp", "abtyp"],
+                                                ["AND"=> [
+                                                    "backstepped" => NULL,
+                                                    "fahrt_id"   => $fid,
+                                                    "repaid[!]"     => NULL
+                                                ]]);
+            $ret['bezahlt']=  $admin_db->count("bachelor",
+                                                ["AND"=> [
+                                                    "backstepped" => NULL,
+                                                    "fahrt_id"   => $fid,
+                                                    "paid[!]"     => NULL
+                                                ]]);
+            $ret['count']  =  $admin_db->count("bachelor",
+                                                ["AND"=> [
+                                                    "backstepped" => NULL,
+                                                    "fahrt_id"   => $fid
+                                                ]]);
+            $ret['amount']=  $admin_db->get("cost", "collected",[ "fahrt_id" => $fid]);
+            $ret['fahrt'] =  $admin_db->get("fahrten", ["von", "bis"], ["fahrt_id" => $fid]);
+            $ret['arten'] = $config_reisearten_o;
+
+            if(!$ret['remain'])
+                $ret['remain'] = [];
+            if(!$ret['back'])
+                $ret['back'] = [];
+            $ajax = json_encode($ret);
             break;
 
 
@@ -72,6 +97,10 @@ if(isset($_REQUEST['ajax'])){
 
         case "set-moneyio-json":
             $admin_db->update("cost",["moneyIO" => $data], ["fahrt_id" => $fid]);
+            break;
+
+        case "set-amount":
+            $admin_db->update("cost",["collected" => $data], ["fahrt_id" => $fid]);
             break;
 
         // == DEFAULT ==
@@ -128,6 +157,8 @@ else {
                 <li>Zurückgezogene Registrierungen werden hier nicht beachtet! Wenn Bezahlung erhalten unbedingt seperat auf dem Notizzettel verwalten!</li>
                 <li>Eingesammelter Betrag wird nicht individuell gespeichert. Wird er geändert sind ggf. unterschiedliche Beträge nicht erfasst.</li>
                 <li>Für falsche Berechnungen wird keine Haftung übernommen. Wenn unsicher -> selbst rechnen und nachprüfen!</li>
+                <li>Die <strong>effektive</strong> Förderung muss in der "Kosten pro Person"-Tabelle angepasst werden</li>
+                <li>In der "Kosten pro Person"-Tabelle müssen die <strong>effektiven</strong> Kosten angegeben werden.</li>
              </ul>
         </div>
     ';

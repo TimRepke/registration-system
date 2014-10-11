@@ -67,7 +67,9 @@ defaultData.other = {
     "count"   : 0, // number of valid registrations
     "amount"  : 0, // amount of money to be collected per person
     "back"    : [],// list of people, who received money back (structure: von, bis, antyp, abtyp)
-    "remain"  : [] // list of people, who haven't received money yet (structure: von, bis, antyp, abtyp)
+    "remain"  : [],// list of people, who haven't received money yet (structure: von, bis, antyp, abtyp)
+    "fahrt"   : [],// dates of the trip (structure: von, bis)
+    "arten"   : []
 };
 
 
@@ -337,7 +339,7 @@ dataapp.service('receiptData', ["$http", "$rootScope", function ($http, $rootSco
 }]);
 
 /*
- Data Handler for receipt table
+ Data Handler for moneyio table
  */
 dataapp.service('moneyioData', ["$http", "$rootScope", function ($http, $rootScope) {
     var table = this;
@@ -360,22 +362,25 @@ dataapp.service('moneyioData', ["$http", "$rootScope", function ($http, $rootSco
 
     // === basic table functions ===
 
-    table.colSum = function(col){
+    table.colSum = function(col, ecol){
         var ret = 0;
         for(var i = col.length; i--;){
             if(!col[i].isDeleted)
                 ret += 1*col[i].val;
         }
+        for(var row in ecol){
+            ret += ecol[row].val;
+        }
         return ret;
     };
 
-    table.diff = function(){
-        return table.colSum(table.entries.in) - table.colSum(table.entries.out);
+    table.diff = function(ex){
+        return table.colSum(table.entries.in, ex.in) - table.colSum(table.entries.out, ex.out);
     };
 
-    table.diffColor = function(){
+    table.diffColor = function(ex){
         var tolerance = 10; // specify the tolerance of diff
-        var diff = table.diff();
+        var diff = table.diff(ex);
         var color = "";
         if(diff < 0)
             color = "red";
@@ -392,19 +397,112 @@ dataapp.service('moneyioData', ["$http", "$rootScope", function ($http, $rootSco
 /*
  Data Handler for other mixed data
  */
-dataapp.service('otherData', ["$http", "$rootScope", function ($http, $rootScope) {
+dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($http, $rootScope, priceData) {
 
-    this.data = defaultData.other;
+    /*defaultData.other = {
+        "bezahlt" : 0, // number of people who payed
+        "count"   : 0, // number of valid registrations
+        "amount"  : 0, // amount of money to be collected per person
+        "back"    : [],// list of people, who received money back (structure: von, bis, antyp, abtyp)
+        "remain"  : [],// list of people, who haven't received money yet (structure: von, bis, antyp, abtyp)
+        "fahrt"   : [] // dates of the trip (structure: von, bis)
+        "arten"
+    };*/
 
-    $http.get('?page=cost&ajax=get-other-json').success(function(data){
-        if(data !== ""){
-            this.data = data;
+    var data = defaultData.other;
+    var base = priceData.base;
+
+    $http.get('?page=cost&ajax=get-other-json').success(function(dat){
+        if(dat !== ""){
+            data = dat;
             console.log("got moneyio table from DB");
         } else {
             console.error("other data not loaded from DB - took default!");
         }
-        $rootScope.$broadcast('data::otherUpdated', this.data);
+        $rootScope.$broadcast('data::otherUpdated', data);
     });
+
+    $rootScope.$on('data::priceUpdated', function(event, newTab) {
+        base = newTab;
+        console.log("data in other service received");
+    });
+
+    // === Data aggregation functions ===
+
+    // product of amount to be paid and number of people who paid
+    this.intakeSum = function(){
+        return data.amount * data.bezahlt;
+    };
+
+    this.getDate = function(str){
+        var split = str.split("-");
+        return new Date(split[0],split[1]-1, split[2]);
+    };
+    this.dateToStr = function(d){
+        return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+    };
+    this.nextDay = function(d){
+        d.setDate(d.getDate()+1);
+    };
+
+    // amount to be paid to person (returns array: [val:<amount to pay>, pos:[{pos:<position>, val:<value>},...])
+    this.repayAmount = function(person){
+        var pos = [];
+
+        if(base.ALL && base.VAR){
+            pos[pos.length] = {"pos": priceData.bez.B_FIX, "val": base.ALL.B_FIX};
+            pos[pos.length] = {"pos": priceData.bez.C_BW, "val": base.ALL.C_BW};
+            pos[pos.length] = {"pos": priceData.bez.E_ESS, "val": base.ALL.E_ESS};
+            pos[pos.length] = {"pos": priceData.bez.REFRA, "val": base.ALL.REFRA};
+
+            // person: Object {von: "2013-10-18", bis: "2013-10-20", antyp: "gemeinsam mit Bus/Bahn", abtyp: "gemeinsam mit Bus/Bahn"}
+            // fahrt: Object {von: "2013-10-25", bis: "2013-10-27"}
+
+            var von = this.getDate(data.fahrt.von);
+            var tmp = this.getDate(data.fahrt.von);
+            var bis = this.getDate(data.fahrt.bis);
+            var days = [];
+            for(var i = 0; tmp <= bis && i < 10; i++){
+                days[this.dateToStr(tmp)] = i;
+                this.nextDay(tmp);
+            }
+
+            
+
+            console.log(days);
+
+        }
+
+        var val = 0;
+        for(var len = pos.length; len--;){
+            val += pos[len].val*1;
+        }
+
+        return {"val": val, "pos": pos};
+    };
+
+    // sum of all amounts that have been paid back
+    this.repaidSum = function(){
+        var ret = 0;
+        for(var len = data.back.length; len--;){
+            ret += this.repayAmount(data.back[len]).val;
+        }
+        return ret;
+    };
+
+    // sum of all amounts that still have to be paid back
+    this.toPaySum = function(){
+        var ret = 0;
+        for(var len = data.remain.length; len--;){
+            ret += this.repayAmount(data.remain[len]).val;
+        }
+        return ret;
+    };
+
+    // sum of all amounts paid back or still to be paid back
+    this.paySum = function(){
+        return this.repaidSum() + this.toPaySum();
+    }
 
 }]);
 
@@ -491,7 +589,7 @@ now the individual controllers and modules for each table....
         };
     });
 
-    app.controller('TablePriceController', ["$http", "$scope", "priceData", function($http, $scope, priceData){
+    app.controller('TablePriceController', ["$http", "$scope", "priceData", "otherData", function($http, $scope, priceData, otherData){
         var table = this;
 
         table.editmode = false;
@@ -500,14 +598,20 @@ now the individual controllers and modules for each table....
         // === Data Binding stuff ==
 
         $scope.dataService = priceData;
+        $scope.otherDataService = otherData;
 
         table.base = $scope.dataService.base;
         table.calc = $scope.dataService.calc;
         table.bez  = $scope.dataService.bez;
+        table.amount = $scope.otherDataService.amount;
 
         $scope.$on('data::priceUpdated', function(event, newTab) {
             table.base = newTab;
             console.log("data in price controller received");
+        });
+        $scope.$on('data::otherUpdated', function(event, newTab) {
+            table.amount = newTab.amount;
+            console.log("amount in price controller received");
         });
 
         $scope.$watch('table.base', function() {
@@ -521,26 +625,30 @@ now the individual controllers and modules for each table....
 
         table.toggleEditmode = function(){
             table.editmode = table.editmode == false;
-        }
+        };
 
         table.editTable = function(){
             table.edit = jQuery.extend(true, {}, table.base);
             table.toggleEditmode();
-        }
+        };
         table.saveTable = function(){
             table.base = jQuery.extend(true, {}, table.edit);
             $http.post('?page=cost&ajax=set-price-json', table.edit).success(function(data, status, headers, config){
-                toastr.success('Saved to Database!')
+                toastr.success('Saved to Database! (price)');
             });
+            $http.get('?page=cost&ajax=set-amount&data='+table.amount).success(function(data){
+                toastr.success('Saved to Database! (amount)');
+            });
+            $scope.otherDataService.amount = table.amount;
             table.toggleEditmode();
-        }
+        };
         table.cancelTable = function(){
             table.edit = [];
             table.toggleEditmode();
-        }
+        };
         table.editUpdateAll = function(val, pos){
             table.edit.ALL[pos] = val;
-        }
+        };
 
     }]);
 
@@ -782,7 +890,8 @@ now the individual controllers and modules for each table....
             scope: {
                 col: '=',
                 io: '@',
-                tform: '='
+                tform: '=',
+                extra: '='
             },
             link: function(scope, element) {
                 scope.filterRow = function(row) {
@@ -801,19 +910,47 @@ now the individual controllers and modules for each table....
         };
     }]);
 
-    app.controller('TableMoneyioController', ["$scope", "$filter", "$q", "$http", "moneyioData", function($scope, $filter, $q, $http, moneyioData){
+    app.controller('TableMoneyioController',
+            ["$scope", "$filter", "$q", "$http", "moneyioData", "otherData", "receiptData",
+            function($scope, $filter, $q, $http, moneyioData, otherData, receiptData){
         var table = this;
 
         // === Data Binding stuff ==
 
         $scope.moneyioDataService = moneyioData;
+        $scope.otherDataService   = otherData;
+        $scope.receiptDataService = receiptData;
 
         table.entries = $scope.moneyioDataService.entries;
         table.orig = [];
 
+        table.extra = {
+            "in": {
+                VOR: {"pos": "Vorkasse", "val": 0}
+            },
+            "out":{
+                REC: {"pos": "Herberge", "val": 0},
+                OUT: {"pos": "Rückzahlungen (getätigt)", "val": 0},
+                POUT: {"pos": "Rückzahlungen (ausstehend)", "val": 0}
+            }
+        };
+
         $scope.$on('data::moneyioUpdated', function(event, newTab) {
             table.entries = newTab;
             console.log("data in moneyio controller received");
+        });
+        $scope.$on('data::otherUpdated', function(event, newTab) {
+            table.extra.in.VOR.val  = $scope.otherDataService.intakeSum();
+            table.extra.out.OUT.val = $scope.otherDataService.repaidSum();
+            table.extra.out.POUT.val = $scope.otherDataService.toPaySum();
+            console.log("other in moneyio controller received");
+        });
+        $scope.$on('data::receiptUpdated', function(event, newTab) {
+            table.extra.out.REC.val = $scope.receiptDataService.sum();
+            table.extra.in.VOR.val  = $scope.otherDataService.intakeSum();
+            table.extra.out.OUT.val = $scope.otherDataService.repaidSum();
+            table.extra.out.POUT.val = $scope.otherDataService.toPaySum();
+            console.log("receipt in moneyio controller received");
         });
 
         $scope.$watch('table.entries', function() {
