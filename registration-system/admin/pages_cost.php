@@ -21,6 +21,8 @@ if(isset($_REQUEST['ajax'])){
         $data = file_get_contents("php://input");
     }
 
+    if(!$admin_db->has("cost", ["fahrt_id" => $fid]))
+        $admin_db->insert("cost", ["fahrt_id" => $fid, "tab1"=>"", "tab2"=>"", "tab3" => "", "moneyIO"=>"", "collected"=>60]);
 
     switch($task){
 
