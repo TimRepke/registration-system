@@ -16,11 +16,12 @@ OUT:
         <label><input type="checkbox" ng-model="entry.selected" /> {{entry.pos}} ({{entry.val || 0 | currency}})</label>
     </li>
 </ul>
-
+<label>Sontiges: <input type="text" style="width: 30pt" ng-model="special" /></label><br />
+<br />
 Einschränken auf:<br />
 <label><input type="radio" ng-model="cnt" value="{{table.cnt.geman}}"> gemeinsam hin</label>
 <label><input type="radio" ng-model="cnt" value="{{table.cnt.gemab}}"> gemeinsam rück</label><br />
-<label><input type="radio" ng-model="cnt" value="{{table.cnt.all}}" ng-selected="{{table.cnt.all}}"> none</label>
+<label><input type="radio" ng-model="cnt" value="{{table.cnt.all}}" ng-selected="{{table.cnt.all}}"> none</label><br />
 <br />
 
 Gewählte Summe: {{summy(table.io) || 0 | currency}}<br />
