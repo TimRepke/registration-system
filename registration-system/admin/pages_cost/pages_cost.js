@@ -267,6 +267,11 @@ dataapp.service('priceData', ["$http", "$rootScope", function ($http, $rootScope
         return table.calc.ESSEN.sum() + table.calc.WIR.sum() + table.calc.FAHRT.sum() + table.calc.FIX.sum() + table.calc.UE.sum();
     }
 
+    // receive new base
+    this.updateBase = function(b){
+        table.base = b;
+        $rootScope.$broadcast('data::priceUpdated', table.base);
+    }
 }]);
 
 
@@ -375,12 +380,25 @@ dataapp.service('moneyioData', ["$http", "$rootScope", function ($http, $rootSco
         return ret;
     };
 
+    table.diffR = function(ex){
+        var cp = jQuery.extend(true, {}, ex);
+        delete cp.out.POUT;
+        delete cp.in.PVOR;
+        return table.diff(cp);
+    };
+    table.diffRColor = function(ex){
+        var cp = jQuery.extend(true, {}, ex);
+        delete cp.out.POUT;
+        delete cp.in.PVOR;
+        return table.diffColor(cp);
+    };
+
     table.diff = function(ex){
         return table.colSum(table.entries.in, ex.in) - table.colSum(table.entries.out, ex.out);
     };
 
     table.diffColor = function(ex){
-        var tolerance = 10; // specify the tolerance of diff
+        var tolerance = 50; // specify the tolerance of diff
         var diff = table.diff(ex);
         var color = "";
         if(diff < 0)
@@ -485,6 +503,8 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
         return 0;
     };
 
+    // == public functions ==
+
     // amount to be paid to person (returns array: [val:<amount to pay>, pos:[{pos:<position>, val:<value>},...])
     this.repayAmount = function(person){
         var pos = [];
@@ -506,7 +526,7 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
             var indAb = data.arten.BUSBAHN != person.abtyp;
             for(var pday in pdays){
                 firstDay = (pdays[pday] == 0               );
-                lastDay  = (pdays[pday] == (pdays.length-1));
+                lastDay  = (pdays[pday] == (Object.keys(pdays).length - 1));
 
                 var index = 0;
                 for(var tpos in base.VAR){ // for each position of base table
@@ -537,7 +557,7 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
             val += pos[len].val*1;
         }
 
-        return {"val": val, "pos": pos};
+        return {"val": ((val>data.amount) ? data.amount : val), "rval": val, "pos": pos};
     };
 
     // get list of persons with the attached amounts + sum
@@ -571,7 +591,7 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
     this.repaidSum = function(){
         var ret = 0;
         for(var len = data.back.length; len--;){
-            ret += this.repayAmount(data.back[len]).val;
+            ret += this.repayAmount(data.back[len]).val * 1;
         }
         return ret;
     };
@@ -580,20 +600,28 @@ dataapp.service('otherData', ["$http", "$rootScope", "priceData", function ($htt
     this.toPaySum = function(){
         var ret = 0;
         for(var len = data.remain.length; len--;){
-            ret += this.repayAmount(data.remain[len]).val;
+            ret += this.repayAmount(data.remain[len]).val * 1;
         }
         return ret;
     };
 
     // sum of all amounts paid back or still to be paid back
     this.paySum = function(){
-        return this.repaidSum() + this.toPaySum();
+        return this.repaidSum() * 1 + this.toPaySum() * 1;
     };
 
     // product of amount to be paid and number of people who paid
     this.intakeSum = function(){
         return data.amount * data.bezahlt;
     };
+    this.toIntakeSum = function(){
+        return data.amount * (data.count-data.bezahlt);
+    };
+
+    // update amount function
+    this.updateAmount = function(a){
+        data.amount = a;
+    }
 
 }]);
 
@@ -700,6 +728,7 @@ now the individual controllers and modules for each table....
             link: function(scope, parent){
                 scope.helpermod = 0;
                 scope.cnt = 0;
+                scope.special = 0;
 
                 scope.summy = function(tab){
                     var ret = 0;
@@ -718,6 +747,7 @@ now the individual controllers and modules for each table....
                             ret += tab.out[len].val*mul;
                         }
                     }
+                    ret += scope.special*1;
                     return ret;
                 };
                 scope.resetty = function(tab){
@@ -729,6 +759,7 @@ now the individual controllers and modules for each table....
                         delete tab.out[len].selected;
                         delete tab.out[len].neg;
                     }
+                    scope.special = 0;
                 };
                 scope.meaner = function(tab){
                     if(scope.cnt<1) scope.cnt = 1;
@@ -807,7 +838,8 @@ now the individual controllers and modules for each table....
             $http.get('?page=cost&ajax=set-amount&data='+table.amount).success(function(data){
                 toastr.success('Saved to Database! (amount)');
             });
-            $scope.otherDataService.amount = table.amount;
+            $scope.otherDataService.updateAmount(table.amount);
+            $scope.dataService.updateBase(table.base);
             table.toggleEditmode();
         };
         table.cancelTable = function(){
@@ -1094,7 +1126,8 @@ now the individual controllers and modules for each table....
 
         table.extra = {
             "in": {
-                VOR: {"pos": "Vorkasse", "val": 0}
+                VOR: {"pos": "Vorkasse", "val": 0},
+                PVOR: {"pos": "Vorkasse (ausstehend)", "val": 0}
             },
             "out":{
                 REC: {"pos": "Herberge", "val": 0},
@@ -1109,6 +1142,7 @@ now the individual controllers and modules for each table....
         });
         $scope.$on('data::otherUpdated', function(event, newTab) {
             table.extra.in.VOR.val  = $scope.otherDataService.intakeSum();
+            table.extra.in.PVOR.val  = $scope.otherDataService.toIntakeSum();
             table.extra.out.OUT.val = $scope.otherDataService.repaidSum();
             table.extra.out.POUT.val = $scope.otherDataService.toPaySum();
             console.log("other in moneyio controller received");
@@ -1116,6 +1150,7 @@ now the individual controllers and modules for each table....
         $scope.$on('data::receiptUpdated', function(event, newTab) {
             table.extra.out.REC.val = $scope.receiptDataService.sum();
             table.extra.in.VOR.val  = $scope.otherDataService.intakeSum();
+            table.extra.in.PVOR.val  = $scope.otherDataService.toIntakeSum();
             table.extra.out.OUT.val = $scope.otherDataService.repaidSum();
             table.extra.out.POUT.val = $scope.otherDataService.toPaySum();
             console.log("receipt in moneyio controller received");

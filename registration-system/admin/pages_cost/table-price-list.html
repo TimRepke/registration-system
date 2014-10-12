@@ -18,7 +18,7 @@
                     <tr ng-repeat="row in col">
                         <td>{{row.name}} ({{row.id}})</td>
                         <td>
-                            <strong>{{row.pay.val || 0 | currency}}</strong><br />
+                            <strong>{{row.pay.val || 0 | currency}}</strong> ({{row.pay.rval || 0 | currency}})<br />
                             {{row.person.von}} <br />
                             ({{row.person.antyp}})<br />
                             {{row.person.bis}}<br />
@@ -34,9 +34,9 @@
         </div>
 
 
-        <!--div class="debug" style="margin-top: 30px;">
-        {{ otherDataService.getPaymentList() | json }}
-        </div-->
+        <div class="debug" style="margin-top: 30px;">
+            {{ otherDataService.getPaymentList() | json }}
+        </div>
 
     </div>
 </div>

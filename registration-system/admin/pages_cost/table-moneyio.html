@@ -8,12 +8,14 @@
                 <table-moneyio-col col="table.entries.out" extra="table.extra.out" io="out" tform="tableform"></table-moneyio-col>
             </td>
             <td></td>
+            <td></td>
         </tr>
 
         <tr>
             <td class="cost-table-numeric table-moneyio-sum">{{ moneyioDataService.colSum(table.entries.in, table.extra.in) | currency }}</td>
             <td class="cost-table-numeric table-moneyio-sum">{{ moneyioDataService.colSum(table.entries.out, table.extra.out) | currency }}</td>
-            <td class="cost-table-numeric table-moneyio-sum" ng-class="{red:'red-text', yellow:'yellow-text', green: 'green-text'}[moneyioDataService.diffColor(table.extra)]">{{ moneyioDataService.diff(table.extra) | currency }}</td>
+            <td class="cost-table-numeric table-moneyio-sum" ng-class="{red:'red-text', yellow:'yellow-text', green: 'green-text'}[moneyioDataService.diffColor(table.extra)]" data-type="info" data-title="Differenz (Prognose)" bs-tooltip>{{ moneyioDataService.diff(table.extra) | currency }}</td>
+            <td class="cost-table-numeric table-moneyio-sum" ng-class="{red:'red-text', yellow:'yellow-text', green: 'green-text'}[moneyioDataService.diffRColor(table.extra)]" data-type="info" data-title="Differenz (Real)" bs-tooltip>{{ moneyioDataService.diffR(table.extra) | currency }}</td>
         </tr>
     </table>
 

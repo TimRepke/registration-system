@@ -176,6 +176,8 @@ else {
                 <li>In der "Kosten pro Person"-Tabelle müssen die <strong>effektiven</strong> Kosten angegeben werden.</li>
                 <li>Es erfolgt keine Validierung eingegeber Typen. Dezimaltrennzeichen ist ".", nicht ",".</li>
                 <li>Berechnungen erfolgen mit eingegebener Präzision (ggf. abweichend von der auf zwei Stellen gerundeten Anzeige)</li>
+                <li>Manche Variablen updaten sich nicht automatisch. Seite neu laden hilft in dem Fall.</li>
+                <li>Die CSS-Klasse debug blendet debugdaten aus. Zum "Export" können die Werte kopiert werden, wenn man sich die Elemente einblenden lässt.</li>
              </ul>
         </div>
     ';
