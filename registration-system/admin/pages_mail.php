@@ -122,7 +122,7 @@ $(function(){
 </form>';
 
 $query = "SELECT mehl, forname, sirname FROM bachelor";
-$where = array();
+$where = array("fahrt_id = ".$config_current_fahrt_id);
 $dsa = "";
 if(!isset($_REQUEST['submit'])){
     // not submitted
@@ -182,16 +182,15 @@ if(!isset($_REQUEST['submit'])){
             array_push($where,"backstepped IS NULL");
     }
 
+}
 
+if(count($where)>0){
+    $query .= " WHERE ";
 
-    if(count($where)>0){
-        $query .= " WHERE ";
+    foreach($where AS $w)
+        $query .= "(".$w.") AND ";
 
-        foreach($where AS $w)
-            $query .= "(".$w.") AND ";
-
-        $query = substr($query,0,-4); // cut last AND
-    }
+    $query = substr($query,0,-4); // cut last AND
 }
 
 //$config_verbose_level = 4;
