@@ -12,7 +12,10 @@ $config_verbose_level = 0;
 if(isset($_POST['note-content'])){
     comm_admin_verbose(2,"received submit");
     $cont = $_REQUEST['note-content'];
-    $admin_db->update("notes",array("note"=>$cont),array("fahrt_id"=>$config_current_fahrt_id));
+    if($admin_db->has("notes", array("fahrt_id"=>$config_current_fahrt_id)))
+        $admin_db->update("notes",array("note"=>$cont),array("fahrt_id"=>$config_current_fahrt_id));
+    else
+        $admin_db->insert("notes",array("note"=>$cont, "fahrt_id"=>$config_current_fahrt_id));
 }
 
 $content = $admin_db->get("notes", "note", array("fahrt_id"=>$config_current_fahrt_id));
