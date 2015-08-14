@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        #gamecanvas {
+            width: 1000px;
+            height: 800px;
+            overflow: hidden;
+            position: fixed;
+            top: 100px;
+            left: 70px;
+            border: 1px solid red;
+        }
+        #map {
+            position: absolute;
+        }
+    </style>
+    <script src="../view/js/jquery-1.11.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+</head>
+<body>
+<div id="gamecanvas">
+    <!--object id="map" type="image/svg+xml" data="" onload="startGameLoop()">Your browser does not support SVG</object-->
+</div>
+
+<script type="text/javascript">
+
+    d3.xml("map_castle.svg", "image/svg+xml", function(xml) {
+        $('#gamecanvas').append(xml.documentElement).attr('id','map');
+        startGameLoop();
+    });
+
+    function startGameLoop() {
+        console.log('asd');
+        background = {
+            elem: $('#map'),
+            pos: {
+                right: 0,
+                bottom: -300
+            },
+            width: $('#map').width(),
+            height: $('#map').height()
+        };
+        background.elem.css('right', '0px').css('bottom','-300px');
+
+        var ship = d3.select('#shipGroup');
+        ship.transition()
+                .duration(2000)
+                .attr("transform", function(d, i){
+                    return "translate(100,200)";
+                });
+
+       smoothBGScrollTest();
+    }
+
+    function smoothBGScrollTest() {
+
+        var cnt = 0;
+        var maxCnt = 30;
+
+        helper();
+
+        function helper(){
+            if(maxCnt > cnt) {
+                moveBG({left: 3});
+                setTimeout(helper, 50);
+            }
+            cnt++;
+        }
+    }
+
+    function moveObject(id, options){
+        var elem = $('#'+id);
+        console.log(elem.id);
+        if(options && options.left) {
+            elem.css('-webkit-transform', 'translate('+options.left+')');
+        }
+    }
+
+    function moveBG(options) {
+        if (options && options.left) {
+            background.pos.right = background.pos.right - options.left;
+            console.log(background.pos);
+            if(background.pos.right > 0) background.pos.right = 0;
+            if(background.pos.right < -background.width) background.pos.right = background.width;
+            background.elem.css('right', background.pos.right + 'px');
+        }
+        if (options && options.bottom) {
+            background.pos.bottom = background.pos.bottom + options.up;
+            if(background.pos.bottom > -250 ) background.pos.right = -250;
+            if(background.pos.bottom < -background.height) background.pos.bottom = -background.height;
+            background.elem.css('bottom', background.pos.bottom + 'px');
+        }
+    }
+
+</script>
+
+</body>
+</html>
