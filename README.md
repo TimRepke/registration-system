@@ -6,6 +6,10 @@ annual freshers weekend trips. Since the attendance grew over the years we neede
 all the registrations, messaging and a powerful admin panel to plan costs, take notes, manage waiting list and registration
 and much more.
 
+Props go to 
+
+- Manuel Herrmann (mostly frontend, graphics, games)
+- Tim Repke (mostly backend and admin stuff)
 
 # Features
 
@@ -62,7 +66,7 @@ Folder structure:
 Check out the folger `other/sqlDumps`. There is an SQL file that creates the database. We also tried to make sure
 to provide migrations in case updates are needed.
 
-#### Configuration
+### Configuration
 
 Make adjustments in `config.inc.php`
 
