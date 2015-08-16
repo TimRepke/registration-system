@@ -199,7 +199,6 @@ function index_check_form(){
         return $data;
 
     }
-
 }
 
 /**
