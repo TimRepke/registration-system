@@ -94,6 +94,11 @@ div.headerboxshade {
   background-color: rgba(20,20,20,0.5);
 }
 
+div.headerboxshade h1 {
+    color: white;
+    font-size: 3.3em;
+}
+
 div#storybox {
 	position:absolute;
 	top:0px;
