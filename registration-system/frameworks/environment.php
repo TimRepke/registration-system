@@ -120,6 +120,13 @@ class Environment {
         $this->dangling_form_data = $data;
     }
 
+    /**
+     * @return bool true iff formdata is received
+     */
+    public function formDataReceived() {
+        return isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit']);
+    }
+
     public function getBachelor($bid = NULL) {
         if(!is_null($this->dangling_form_data))
             return $this->dangling_form_data;
