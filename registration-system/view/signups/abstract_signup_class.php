@@ -61,8 +61,21 @@ abstract class SignupMethod implements SignupMethodStatics {
 
     // =================================================================================================================
     // Shared functions
-    // available to each method
+    // available to each signup method
     // =================================================================================================================
 
-    // ...
+    /**
+     * @return string containing the basic form submit parameters
+     */
+    protected function getFormSubmitBaseParams() {
+        $environment    = Environment::getEnv();
+        $waitlist_mode  = $environment->isInWaitlistMode();
+        $bachelor       = $environment->getBachelor();
+
+        return '?fid=' . $environment->getSelectedTripId() .
+            '&method=' . SignupMethods::getInstance()->getActiveMethodId() .
+            (isset($bachelor['id']) ? '&bid=' . $bachelor['id'] : '') .
+            ($waitlist_mode         ? '&waitlist'               : '');
+    }
+
 }

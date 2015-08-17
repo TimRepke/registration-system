@@ -86,8 +86,7 @@ th { padding: 0 1px 0 1px; }
 h1 {
   padding-top: 10px;
   margin-left: 20px;
-  color: white;
-  font-size: 3.3em;
+  font-size: 2em;
   font-family: sans-serif;
 }
 
@@ -352,6 +351,9 @@ a.fahrthead:hover {
 
 ul#method-list {
     list-style-type: square;
+}
+ul#method-list li {
+    padding-bottom: 0.5em;
 }
 
 ul#method-list a {
