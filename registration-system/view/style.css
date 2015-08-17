@@ -49,22 +49,6 @@ div#menubox {
   /*height: 40px;*/
 }
 
-div#menubox a {
-  padding-left: 10px;
-  padding-right: 10px;
-  line-height: 40px;
-  text-decoration: none;
-  color: black;
-  display: block;
-  float: left;
-}
-
-div#menubox a:hover {
-  font-weight: bold;
-  background-color: #4e7dac;
-  color: white;
-}
-
 div#mainbox {
   padding: 10px 0 20px 0;
 }
@@ -102,13 +86,17 @@ th { padding: 0 1px 0 1px; }
 h1 {
   padding-top: 10px;
   margin-left: 20px;
-  color: white;
-  font-size: 3.3em;
+  font-size: 2em;
   font-family: sans-serif;
 }
 
 div.headerboxshade {
   background-color: rgba(20,20,20,0.5);
+}
+
+div.headerboxshade h1 {
+    color: white;
+    font-size: 3.3em;
 }
 
 div#storybox {
@@ -169,8 +157,8 @@ div#headerbox p {
 }
 
 h2 {
-  margin: 5px;
-  margin-bottom: 15px;
+  margin: 0 0 15px 0;
+  padding-left: 1em;
   border-bottom: 1px dotted black;
 }
 
@@ -324,9 +312,22 @@ a.editenum { display: block; height: 20px; line-height: 20px; width: 20px; font-
     margin-bottom: 15px;
     border-bottom: 1px dotted black;
     margin-left: -10px;
-    float: none !important;
     font-weight: bold;
     font-size: 1.5em;
+}
+
+a.fahrthead {
+    padding-left: 10px;
+    padding-right: 10px;
+    line-height: 40px;
+    text-decoration: none;
+    color: black;
+    display: block;
+}
+a.fahrthead:hover {
+    font-weight: bold;
+    background-color: #4e7dac;
+    color: white;
 }
 
 .fahrt pre a, .fahrt p a{
@@ -353,65 +354,24 @@ a.editenum { display: block; height: 20px; line-height: 20px; width: 20px; font-
     background-color: #FFBABA;
 }
 
-/* ----------- My Form ----------- */
-.myform{
-    margin:0 auto;
-    width:400px;
-    padding:14px;
+ul#method-list {
+    list-style-type: square;
+}
+ul#method-list li {
+    padding-bottom: 0.5em;
 }
 
-/* ----------- stylized ----------- */
-#stylized{
-    border:solid 2px #b7ddf2;
-    background:#ebf4fb;
-}
-#stylized h1 {
-    font-size:1.5em;
-
-    color:black;
-    font-weight:bold;
-    margin-bottom:8px;
-}
-#stylized p{
-    font-size:11px;
-    color:#666666;
-    margin-bottom:20px;
-    border-bottom:solid 1px #b7ddf2;
-    padding-bottom:10px;
-}
-#stylized label{
-    display:block;
-    font-weight:bold;
-    text-align:right;
-    width:140px;
-    float:left;
-}
-#stylized .small{
-    color:#666666;
-    display:block;
-    font-size:11px;
-    font-weight:normal;
-    text-align:right;
-    width:140px;
-}
-#stylized input, #stylized select, #stylized textarea{
-    float:left;
-    font-size:12px;
-    padding:4px 2px;
-    border:solid 1px #aacfe4;
-    width:200px;
-    margin:2px 0 20px 10px;
-}
-#stylized button{
-    clear:both;
-    margin-left:150px;
-    width:125px;
-    height:31px;
-    background:#666666 url(img/button.png) no-repeat;
-    text-align:center;
-    line-height:31px;
-    color:#FFFFFF;
-    font-size:11px;
-    font-weight:bold;
+ul#method-list a {
+    font-weight: bold;
 }
 
+ul#method-list a:hover {
+    padding: 10px;
+    background-color: #4D4DFF;
+    color: #FF00FF;
+    font-weight: bold;
+}
+
+#signup-container {
+    margin: 2em 0;
+}

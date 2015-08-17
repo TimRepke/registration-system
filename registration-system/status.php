@@ -77,4 +77,6 @@ function show_content(){
 
 }
 
-?>
+function echo_headers() {
+    echo '<link rel="stylesheet" href="view/style.css" />';
+}
