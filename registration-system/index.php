@@ -46,19 +46,19 @@ function show_content() {
 
     if(!$environment->isSelectedTripIdValid()) {
         index_show_alleFahrten();
+    } else {
+        $fid = $environment->getSelectedTripId();
+
+        // --- Fahrtinfos
+        index_show_fahrtHeader($fid);
+        index_show_fahrtHeader_js($fid);
+
+        // --- Anmeldebox
+        index_show_signup();
+
+        // --- Liste der Anmeldungen
+        index_show_signupTable($fid);
     }
-
-    $fid = $environment->getSelectedTripId();
-
-    // --- Fahrtinfos
-    index_show_fahrtHeader($fid);
-    index_show_fahrtHeader_js($fid);
-
-    // --- Anmeldebox
-    index_show_signup();
-
-    // --- Liste der Anmeldungen
-    index_show_signupTable($fid);
 }
 
 
@@ -67,38 +67,80 @@ function show_content() {
 // SIGNUP AREA
 
 function index_show_signup() {
-    // --- Formular
-    // storySubmit wg JQuery .submit() auf forms geht sonst nicht
+
+    $environment   = Environment::getEnv();
+    $signup_method = new SignupMethods();
+
+    $fid        = $environment->getSelectedTripId();
+    $openstatus = $environment->getRegistrationState($fid);
+    $waitlist_confirmed = $environment->isInWaitlistMode();
+
+    // Anmeldung erfolgreich
     if(isset($_REQUEST['success'])) {
         echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung war erfolgreich.</div>';
-    } elseif(isset($_REQUEST['full'])) {
+    }
+
+    // Anmeldung fehlgeschlagen, weil voll
+    elseif (isset($_REQUEST['full'])) {
         echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Anmeldung leider fehlgeschlagen.</div>';
         echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Die Anmeldegrenze wurde leider erreicht.</div>';
-        echo '<div style="text-align:center; font-size: 14pt; ">Es besteht die Möglichkeit sich auf der Warteliste einzutragen.<br /> Wenn du das möchtest, klicke hier: <a class="normallink" href="?fid='.$fid.'&waitlist">&#8694; Warteliste</a></div>';
-    } elseif(isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit'])){ // Formular auswerten
+        echo '<div style="text-align:center; font-size: 14pt; ">Es besteht die Möglichkeit sich auf der Warteliste einzutragen.<br />
+              Wenn du das möchtest, klicke hier: <a class="normallink" href="?fid='.$fid.'&waitlist">&#8694; Warteliste</a></div>';
+    }
+
+    // Formulardaten empfangen -> auswerten!
+    elseif(isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit'])){
         comm_verbose(1,"Formular bekommen");
-        $data = index_check_form();
-        if(!is_null($data))
-        {
-            if (index_form_to_db($data))
+
+        $sub = $signup_method->validateSubmission();
+
+        if ($sub['valid']) {
+            if (index_form_to_db($sub['data']))
                 header("Location: ?fid=".$fid."&success");
             else
                 header("Location: ?fid=".$fid."&full");
             die();
+        } else {
+            //TODO include that behaviour:
+            // index_show_errors($errors);
+            // index_show_formular($fid, NULL, $data);
         }
-    } /*elseif(isset($_REQUEST['bid'])){ // Änderungsformular anzeigen, Anmeldung noch offen?
-            index_show_formular($fid, $_REQUEST['bid']);
-        } */ else {                       // leeres Formular anzeigen
-        $openstatus = comm_isopen_fid_helper($index_db, $fid);
-        if ($openstatus == 0 || isset($_REQUEST['waitlist']))
-            index_show_formular($fid);
-        else {
+    }
+
+    // Anmeldung anzeigen (Form or game)
+    elseif ($signup_method->signupMethodExists() &&
+        ($openstatus == 0 || ($waitlist_confirmed && $openstatus < 2 ))) {
+
+        $signup_method->getActiveMethod()->showInlineHTML();
+    }
+
+    // Anmeldeoptionen anzeigen
+    else {
+
+        if($openstatus > 0 && !$waitlist_confirmed) {
             echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung wurde geschlossen.</div>';
-            if( $openstatus != 2 ){
-                echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Ein Auge offen halten, ob Plätze frei werden.</div>';
-                echo '<div style="text-align:center; font-size: 14pt;">Es gibt aber auch eine Warteliste.<br /> Wenn du da rauf möchtest, klicke hier: <a class="normallink" href="?fid='.$fid.'&waitlist">&#8694; Warteliste</a></div>';
+
+            if ($openstatus != 2) {
+                echo '
+                <div style="text-align:center; font-size: 16pt; font-weight: bold">
+                    Ein Auge offen halten, ob Plätze frei werden.
+                </div><div style="text-align:center; font-size: 14pt;">
+                    Es gibt aber auch eine Warteliste.<br />
+                    Wenn du da rauf möchtest, klicke hier:
+                    <a class="normallink" href="?fid=' . $fid . '&waitlist">&#8694; Warteliste</a>
+                </div>';
             }
+        } elseif ($openstatus < 2) {
+            $methods = $signup_method->getSignupMethodsBaseInfo();
+            $link = '?fid=' . $fid . ($waitlist_confirmed ? '&waitlist' : '') . '&method=';
+
+            echo '<ul id="method-list">';
+            foreach ($methods as $method) {
+                echo '<li><a href="' . $link . $method['id'] . '">' . $method["name"] . '</a> <br />' . $method['description'] . '</li>';
+            }
+            echo '</ul>';
         }
+
     }
 }
 

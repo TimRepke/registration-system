@@ -12,6 +12,7 @@ class Environment {
 
     public $database;
     public $config;
+    private $dangling_form_data;
 
     public static function getEnv() {
         if(self::$__instance == NULL) self::$__instance = new Environment();
@@ -99,8 +100,24 @@ class Environment {
         return $valid;
     }
 
+    /**
+     * @return bool true iff user confirmed to enter waitlist
+     */
+    public function isInWaitlistMode() {
+        return isset($_REQUEST['waitlist']);
+    }
+
+    /**
+     * Stash form data in this class (i.e. for edit)
+     * @param $data
+     */
+    public function setDanglingFormData($data) {
+        $this->dangling_form_data = $data;
+    }
 
     public function getBachelor($bid = NULL) {
+        if(!is_null($this->dangling_form_data))
+            return $this->dangling_form_data;
         if(is_null($bid))
             return $this->getEmptyBachelor();
         else
@@ -115,12 +132,13 @@ class Environment {
      */
     public function getBachelorFromDB($bid) {
         if(!is_null($bid) &&
-            $this->database->has('bachelor',array('bachelor_id' => $bid))){
+            $this->database->has('bachelor', ['bachelor_id' => $bid])){
 
             $bachelor = $this->database->select('bachelor',
-                array('forname','sirname','anday','abday','antyp','abtyp','pseudo',
-                    'mehl','essen','public','virgin','studityp','comment'),
-                array('bachelor_id'=>$bid));
+                ['forname','sirname','anday','abday','antyp','abtyp','pseudo',
+                    'mehl','essen','public','virgin','studityp','comment'],
+                ['bachelor_id'=>$bid]);
+            $bachelor['id'] = $bid;
             return $bachelor[0];
         }
         return $this->getEmptyBachelor();
@@ -132,7 +150,7 @@ class Environment {
      * @return array
      */
     public function getEmptyBachelor() {
-        $possible_dates = comm_get_possible_dates($this->database, $this->getSelectedTrip());
+        $possible_dates = comm_get_possible_dates($this->database, $this->getSelectedTripId());
 
         return [
             'forname' => "", 'sirname' => "",
