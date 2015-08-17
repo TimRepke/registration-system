@@ -1,6 +1,7 @@
 var debug = false;
 
 var story; // global access for links
+var FAPI = new FAPI();
 
 function Story(_storyhead, _storycanvas, _storybox)
 {
@@ -636,7 +637,7 @@ Story.prototype.storyImage = function(filename)
 }
 Story.prototype.storyImageDiv = function(filename)
 {
-	return $('<div style="position:absolute; width:900px; height:500px; background: url('+API.methodBasepath+'graphics/'+filename+');"></div>');
+	return $('<div style="position:absolute; width:900px; height:500px; background: url('+FAPI.resolvePath('graphics/'+filename)+');"></div>');
 }
 
 Story.prototype.addComboBox = function(parentNode, label, fieldName, options, x, y)
