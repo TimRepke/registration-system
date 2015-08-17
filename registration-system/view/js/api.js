@@ -84,7 +84,7 @@ function Bachelor() {
 }
 
 function FAPI() {
-    var bachelor = new Bachelor();
+    this.data = new Bachelor();
     this.methodBasepath = 'view/signups/' + UrlComponents.getValueOf('method') + '/';
 }
 
@@ -93,21 +93,17 @@ FAPI.prototype.resolvePath = function(file) {
 };
 
 /**
- *
- * params will contain the attributes to send (as an object)
- *   -> will be defined later
+ * params to send have to be set earlier (see the Bachelor)
  *
  * callback is called, once the request was sent to the server.
  * It'll transmit an object containing the
  *    -> state (0 = successful, 1 = error, 2 = ?)
  *    -> main message (string)
  *    -> errors (null, if non; array of strings with messages else)
- *
- * @param params
+
  * @param callback
  */
-function api_send_signup(params, callback) {
-
+FAPI.prototype.submitSignup = function(callback) {
     // TODO evaluate params and send them
 
     callback({
@@ -115,9 +111,45 @@ function api_send_signup(params, callback) {
         messages: 'Successful signup',
         errors: null
     })
-}
+};
 
-function api_soft_protect(elementIds, regex) {
+/**
+ * Helper function for FAPI.prototype.submitSignup
+ * it creates a hidden form to be submitted.
+ */
+FAPI.prototype.prepareSubmission = function () {
+    var formWrapper = $('<div style="display:none"/>');
+    var form = $('<form name="storySubmitForm" method="POST"/>');
+    formWrapper.append(form);
+    $('#signup-container').append(formWrapper);
+
+    function formAppendText (name, value) {
+        form.append('<input name="' + name + '" value="' + value.replace(/[\r\n]/g, "<br/>").replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"/>');
+    }
+
+    if(window.location.pathname.search("waitlist")>0)
+        formAppendText("waitlist", "waitlist");
+    formAppendText('forname', story.form_variables.forname);
+    formAppendText('sirname', story.form_variables.name);
+    formAppendText('pseudo', story.form_variables.anzeig);
+    formAppendText('mehl', story.form_variables.mehl);
+    formAppendText('studityp', $('#story_summary_studityp').val());
+    formAppendText('virgin', Story.ageMap[story.form_variables.age]);
+    formAppendText('essen', Story.eatMapPhp[Story.eatMap[story.form_variables.eat]]);
+    formAppendText('anday', story.form_variables.travelStartDate);
+    formAppendText('antyp', Story.travelMapPhp[Story.travelMap[story.form_variables.travelStartType]]);
+    formAppendText('abday', story.form_variables.travelEndDate);
+    formAppendText('abtyp', Story.travelMapPhp[Story.travelMap[story.form_variables.travelEndType]]);
+    formAppendText('comment', $('#story_summary_comment').val());
+    if ($('#story_summary_public').is(':checked'))
+        formAppendText('public', 'public');
+    formAppendText('captcha', $('#story_summary_captcha').val());
+    formAppendText('storySubmit', 'storySubmit');
+
+    form.submit();
+};
+
+FAPI.prototype.attachSoftProtector = function (elementIds, regex) {
     for(var i = 0; i < elementIds.length; ++i) {
         $('#'+elementIds[i]).keyup(function(event) {
             if (!event.target.value.match(regex))
@@ -126,5 +158,5 @@ function api_soft_protect(elementIds, regex) {
                 event.target.style.backgroundColor="#fff";
         });
     }
-}
+};
 
