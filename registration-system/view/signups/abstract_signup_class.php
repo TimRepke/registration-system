@@ -1,21 +1,15 @@
 <?php
 
-abstract class SignupMethod {
-
-    // =================================================================================================================
-    // Abstract functions
-    // to be implemented by each method
-    // =================================================================================================================
-
+interface SignupMethodStatics {
     /**
      * @return string with humanly readable name of this method
      */
-    abstract public static function getName();
+    public static function getName();
 
     /**
      * @return string with a short description
      */
-    abstract public static function getAltText();
+    public static function getAltText();
 
     /**
      * This method will return some meta info about that method. It should return an associative array of that form:
@@ -28,7 +22,17 @@ abstract class SignupMethod {
      *
      * @return object containing meta info (see description)
      */
-    abstract public static function getMetaInfo();
+    public static function getMetaInfo();
+}
+
+abstract class SignupMethod implements SignupMethodStatics {
+
+    // =================================================================================================================
+    // Abstract functions
+    // to be implemented by each method
+    // =================================================================================================================
+
+
 
     /**
      * @return array of (relative to '/view/signups/<folder>/') scripts to include in frontend

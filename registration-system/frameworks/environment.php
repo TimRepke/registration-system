@@ -1,7 +1,7 @@
 <?php
 
-require '../config.inc.php';
-require '../lang.php';
+require __DIR__.'/../config.inc.php';
+require __DIR__.'/../lang.php';
 require 'medoo.php';
 require 'commons.php';
 require 'soft_protect.php';

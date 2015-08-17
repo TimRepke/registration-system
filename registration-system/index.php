@@ -75,6 +75,10 @@ function index_show_signup() {
     $openstatus = $environment->getRegistrationState($fid);
     $waitlist_confirmed = $environment->isInWaitlistMode();
 
+
+    echo '<div id="signup-container">';
+    echo '<h2>Anmeldung</h2>';
+
     // Anmeldung erfolgreich
     if(isset($_REQUEST['success'])) {
         echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung war erfolgreich.</div>';
@@ -90,7 +94,7 @@ function index_show_signup() {
 
     // Formulardaten empfangen -> auswerten!
     elseif(isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit'])){
-        comm_verbose(1,"Formular bekommen");
+        comm_verbose(1, "Formular bekommen");
 
         $sub = $signup_method->validateSubmission();
 
@@ -112,11 +116,12 @@ function index_show_signup() {
         ($openstatus == 0 || ($waitlist_confirmed && $openstatus < 2 ))) {
 
         $signup_method->getActiveMethod()->showInlineHTML();
+
+        // future feature: option to show edit view (when $_GET['bid'] isset)
     }
 
     // Anmeldeoptionen anzeigen
     else {
-
         if($openstatus > 0 && !$waitlist_confirmed) {
             echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung wurde geschlossen.</div>';
 
@@ -134,6 +139,8 @@ function index_show_signup() {
             $methods = $signup_method->getSignupMethodsBaseInfo();
             $link = '?fid=' . $fid . ($waitlist_confirmed ? '&waitlist' : '') . '&method=';
 
+            echo '<p>Es stehen verschiedene Methoden zur Anmeldung offen. Wähle eine davon:';
+
             echo '<ul id="method-list">';
             foreach ($methods as $method) {
                 echo '<li><a href="' . $link . $method['id'] . '">' . $method["name"] . '</a> <br />' . $method['description'] . '</li>';
@@ -142,6 +149,8 @@ function index_show_signup() {
         }
 
     }
+
+    echo '</div>'; // close signup-container
 }
 
 
@@ -164,6 +173,12 @@ function index_show_alleFahrten() {
     $foos = $environment->database->select("fahrten",
         ['fahrt_id','titel','ziel','von','bis','beschreibung','leiter','kontakt', 'max_bachelor'],
         "ORDER BY fahrt_id DESC");
+
+    if(!$foos) {
+        echo 'Keine Fahrten im System gefunden';
+        return;
+    }
+
     $fids = [];
     foreach($foos as $foo){
         index_show_fahrtHeader($foo);
@@ -230,11 +245,16 @@ function index_show_fahrtHeader_js($fahrten){
             };';
 
     foreach($pins as $p){
-        echo'
-            var ziel_'.$p['fahrt_id'].' = new google.maps.LatLng('.str_replace(" ", ", ", $p["map_pin"] ).');
-            var marker_'.$p['fahrt_id'].';
-            var map_'.$p['fahrt_id'].';
+        // if not valid GPS pos, fallback to Kheta!
+        if(!preg_match("/\\d+\\.\\d+ \\d+\\.\\d+/m", $p["map_pin"]))
+            $p["map_pin"] = '71.555267 99.690962';
+
+        echo '
+            var ziel_' . $p['fahrt_id'] . ' = new google.maps.LatLng(' . str_replace(" ", ", ", $p["map_pin"]) . ');
+            var marker_' . $p['fahrt_id'] . ';
+            var map_' . $p['fahrt_id'] . ';
             ';
+
     }
     echo'
             function initialize() {
@@ -287,7 +307,7 @@ function index_show_signupTable($fid){
     $environment = Environment::getEnv();
 
 
-    echo '<h2>Angemeldet</h2>';
+    echo '<h2>Anmeldungen</h2>';
 
     $data = $environment->database->select('bachelor',
         ["pseudo","antyp","abtyp","anday","abday","comment","studityp"],
