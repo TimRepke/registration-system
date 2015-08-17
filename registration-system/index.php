@@ -16,16 +16,53 @@ function echo_headers() {
 }
 
 function index_get_css_includes() {
-    return '<link rel="stylesheet" href="view/style.css" />';
+    $basefolder         = 'view/';
+
+    $base_styles       = ['style.css'];
+    $additional_styles = index_get_dependencies_helper('getCSSDependencies');
+
+    $styles = array_merge($base_styles, $additional_styles);
+
+    $ret = '';
+    foreach ($styles as $style) {
+        $ret .= "<link rel=\"stylesheet\" href=\"" . $basefolder . $style . "\" />\n";
+    }
+    return $ret;
 }
 
 function index_get_js_includes() {
-    return '
-        <script type="text/javascript" src="view/js/jquery-1.11.1.min.js"></script>
-        <script type="text/javascript" src="view/js/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="view/js/angular.min.js"></script>
-        <script type="text/javascript" src="view/js/soft_protect.js"></script>
-        <script type="text/javascript" src="view/js/story.js"></script>';
+    $basefolder         = 'view/';
+
+    $base_js = [
+        'js/jquery-1.11.1.min.js',
+        'js/jquery-ui.min.js',
+        'js/angular.min.js',
+        'js/api.js'
+    ];
+    $additional_js = index_get_dependencies_helper('getJSDependencies');
+
+    $scripts = array_merge($base_js, $additional_js);
+
+    $ret = '';
+    foreach ($scripts as $script) {
+        $ret .= "<script type=\"text/javascript\" src=\"" . $basefolder . $script . "\"></script>\n";
+    }
+    return $ret;
+}
+
+function index_get_dependencies_helper($dependency_function_name) {
+    $methods_basefolder = 'signups/';
+
+    $signup_method = SignupMethods::getInstance();
+
+    if($signup_method->signupMethodExists()){
+        $method_folder = $signup_method->getActiveMethodId();
+
+        return array_map(function($d) use ($methods_basefolder, $method_folder) {
+            return $methods_basefolder . $method_folder . '/' . $d;
+        }, $signup_method->getActiveMethod()->$dependency_function_name());
+    }
+    return [];
 }
 
 function index_get_additional_headers() {
@@ -67,9 +104,8 @@ function show_content() {
 // SIGNUP AREA
 
 function index_show_signup() {
-
     $environment   = Environment::getEnv();
-    $signup_method = new SignupMethods();
+    $signup_method = SignupMethods::getInstance();
 
     $fid        = $environment->getSelectedTripId();
     $openstatus = $environment->getRegistrationState($fid);

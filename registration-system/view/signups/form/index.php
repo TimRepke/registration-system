@@ -36,13 +36,10 @@ class FormSignupMethod extends SignupMethod {
         $soft_prot   = new soft_protect();
 
         $bachelor = $environment->getBachelor();
-        $possible_dates = comm_get_possible_dates($environment->database, $environment->getSelectedTrip());
+        $possible_dates = comm_get_possible_dates($environment->database, $environment->getSelectedTripId());
         $waitlist_mode  = $environment->isInWaitlistMode();
 
-        $link_params = '?fid=' . $environment->getSelectedTripId() .
-            (isset($bachelor['id']) ? '&bid=' . $bachelor['id'] : '') .
-            ($waitlist_mode         ? '&waitlist'               : '');
-
+        $link_params = $this->getFormSubmitBaseParams();
 
         if($waitlist_mode)
             echo '<h1 style="color: red;">Warteliste</h1>

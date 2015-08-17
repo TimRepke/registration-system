@@ -4,9 +4,15 @@ require_once "abstract_signup_class.php";
 
 class SignupMethods {
 
+    private static $__instance = NULL;
     private $signup_methods = [];
 
-    function __construct() {
+    public static function getInstance() {
+        if(self::$__instance == NULL) self::$__instance = new SignupMethods();
+        return self::$__instance;
+    }
+
+    protected function __construct() {
         $this->signup_methods = $this->loadSignupMethods();
     }
 
@@ -38,6 +44,7 @@ class SignupMethods {
             $this->getActiveMethod();
             return true;
         } catch (Exception $e) {
+            //echo $e;
             return false;
         }
     }
@@ -47,11 +54,29 @@ class SignupMethods {
      * @throws ErrorException when $_GET["method"] is missing or not available in the list
      */
     public function getActiveMethod() {
-        if(!isset($_GET["method"])) throw new ErrorException("No signup-method selected!");
-        $mode = $_GET["method"];
+        $method = $this->getActiveMethodObj();
+        return new $method['class']();
+    }
+
+    /**
+     * @return id of the class (and with that the folder)
+     * @throws ErrorException when $_GET["method"] is missing or not available in the list
+     */
+    public function getActiveMethodId() {
+        $method = $this->getActiveMethodObj();
+        return $method['id'];
+    }
+
+    /**
+     * @return array
+     * @throws ErrorException when $_GET["method"] is missing or not available in the list
+     */
+    private function getActiveMethodObj() {
+        if(!isset($_REQUEST["method"])) throw new ErrorException("No signup-method selected!");
+        $mode = $_REQUEST["method"];
         if(!isset($this->signup_methods[$mode])) throw new ErrorException("Signup-method does not exist!");
 
-        return new $this->signup_methods->$mode->class();
+        return [ 'id' => $mode, 'class' => $this->signup_methods[$mode]['class']];
     }
 
     private function getMethodDirs() {
@@ -86,7 +111,7 @@ class SignupMethods {
 
         foreach ($tmp_method_dirs as $method_dir) {
             $tmp_method = $this->loadSignupMethod($method_dir);
-            if ($tmp_method) $tmp_methods[$method_dir] =  $tmp_method;
+            if ($tmp_method) $tmp_methods[basename($method_dir)] =  $tmp_method;
         }
 
         return $tmp_methods;
