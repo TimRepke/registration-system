@@ -83,6 +83,7 @@ class SignupMethods {
     }
 
     private function getMethodObj($mode) {
+        if(Environment::getEnv()->formDataReceived()) $mode = $this->fallback_method;
         if(!isset($this->signup_methods[$mode])) throw new ErrorException("Signup-method does not exist!");
         return [ 'id' => $mode, 'class' => $this->signup_methods[$mode]['class']];
     }

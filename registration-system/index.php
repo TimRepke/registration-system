@@ -133,7 +133,7 @@ function index_show_signup() {
     }
 
     // Formulardaten empfangen -> auswerten!
-    elseif(isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit'])){
+    elseif($environment->formDataReceived()){
         comm_verbose(1, "Formular bekommen");
 
         $sub = $signup_method->validateSubmission();
@@ -145,7 +145,6 @@ function index_show_signup() {
                 header("Location: ?fid=".$fid."&full");
             die();
         } else {
-            //TODO include that behaviour:
             index_show_errors($sub['errors']);
             $environment->setDanglingFormData($sub['data']);
             $signup_method->getFallbackMethod()->showInlineHTML();
