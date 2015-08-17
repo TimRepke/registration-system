@@ -66,6 +66,10 @@ function index_get_dependencies_helper($dependency_function_name) {
 }
 
 function index_get_additional_headers() {
+    $signup_method = SignupMethods::getInstance();
+    if($signup_method->signupMethodExists()){
+        return $signup_method->getActiveMethod()->getAdditionalHeader();
+    }
     return '';
 }
 
@@ -135,15 +139,16 @@ function index_show_signup() {
         $sub = $signup_method->validateSubmission();
 
         if ($sub['valid']) {
-            if (index_form_to_db($sub['data']))
+            if ($environment->sendBachelorToDB($sub['data']))
                 header("Location: ?fid=".$fid."&success");
             else
                 header("Location: ?fid=".$fid."&full");
             die();
         } else {
             //TODO include that behaviour:
-            // index_show_errors($errors);
-            // index_show_formular($fid, NULL, $data);
+            index_show_errors($sub['errors']);
+            $environment->setDanglingFormData($sub['data']);
+            $signup_method->getFallbackMethod()->showInlineHTML();
         }
     }
 
@@ -189,7 +194,17 @@ function index_show_signup() {
     echo '</div>'; // close signup-container
 }
 
-
+/**
+ * puts out a list of all errors
+ * @param $errors
+ */
+function index_show_errors($errors){
+    echo '<div class="message error"><ul>';
+    foreach($errors as $e){
+        echo '<li>'.$e.'</li>';
+    }
+    echo'</ul></div>';
+}
 
 
 

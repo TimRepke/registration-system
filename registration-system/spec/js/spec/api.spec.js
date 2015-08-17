@@ -21,9 +21,11 @@ describe("Bachelor prototype behaviour", function() {
 
     it("should handle single property setting/getting", function() {
         expect(bachelor.getValue('forname')).toBe(null);
+        expect(bachelor.isSet('forname')).toBe(false);
 
         bachelor.setValue('forname', 'Franz');
         expect(bachelor.getValue('forname')).toBe('Franz');
+        expect(bachelor.isSet('forname')).toBe(true);
 
         expect(bachelor.getProperties()).toEqual({
             'forname': 'Franz',
@@ -65,6 +67,22 @@ describe("Bachelor prototype behaviour", function() {
             'studityp':null,
             'comment': null
         });
+
+        expect(bachelor.isComplete()).toBe(false);
+
+        bachelor.setValues({
+            'anday':   'bla',
+            'abday':   'bla',
+            'antyp':   'bla',
+            'abtyp':   'bla',
+            'pseudo':  'bla',
+            'mehl':    'bla',
+            'essen':   'bla',
+            'public':  'bla',
+            'studityp':'bla',
+            'comment': 'bla'
+        });
+        expect(bachelor.isComplete()).toBe(true);
     });
 
     it("should revoke setting/getting invalid attributes", function() {
@@ -74,6 +92,10 @@ describe("Bachelor prototype behaviour", function() {
 
         expect(function () {
             bachelor.resetValue('illegalAttribute')
+        }).toThrow();
+
+        expect(function () {
+            bachelor.isSet('illegalAttribute')
         }).toThrow();
 
         expect(function () {
