@@ -12,14 +12,14 @@ class Game1SignupMethod extends SignupMethod {
 
     public static function getMetaInfo() {
         return [
-            "version" => '1.1',
-            "date" => '20.09.2014',
-            "contributors" => ['Tim Repke <tim@repke.eu>']
+            "version" => '1.0',
+            "date" => '15.09.2015',
+            "contributors" => ['Manu Herrmann']
         ];
     }
 
     public function getJSDependencies() {
-        return [];
+        return ['jslibs/d3.min.js', 'game.js'];
     }
 
     public function getCSSDependencies() {
@@ -31,7 +31,12 @@ class Game1SignupMethod extends SignupMethod {
     }
 
     public function showInlineHTML() {
-
+        echo '<div id="coords">(0, 0)</div>
+            <div id="gameCanvas" style="overflow:hidden;position:relative">
+                <div id="gameRoot" style="position:relative">
+                </div>
+            </div>
+            <script>load_game();</script>';
     }
 
 }
