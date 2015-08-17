@@ -19,10 +19,9 @@ class soft_protect
 			{
 				array_push($elems, "'".addslashes($protectkey)."'");
 			}
-			array_push($lines, "soft_protect([".implode(",", $elems)."], ".$element[1].");");
+			array_push($lines, "FAPI.attachSoftProtector([".implode(",", $elems)."], ".$element[1].");");
 		}
 		array_push($lines, "</script>");
 		return implode("\r\n", $lines);
 	}
 }
-?>
