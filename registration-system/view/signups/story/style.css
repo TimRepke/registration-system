@@ -1,0 +1,50 @@
+
+div#storybox {
+    position:absolute;
+    top:0px;
+    left:0px;
+    margin: 0 auto;
+    width:900px;
+    height:500px;
+    overflow:hidden;
+}
+div#storycanvas {
+    margin:0 auto;
+    position:relative;
+    width:900px;
+    height:500px;
+    overflow:hidden;
+}
+div.storyTip {
+    position: absolute;
+    border: 1px solid;
+    background: #fff;
+    padding: 2px;
+}
+div.storyWarn {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: url('graphics/warn.png');
+}
+div.storyToolTip {
+    position: absolute;
+    padding: 2px;
+    background: #fff;
+    border: 1px solid #000;
+}
+table.story_summary td {
+    padding-left: 5px;
+    padding-right: 10px;
+}
+
+#story_umleitung {
+    position:absolute;
+    left:0px;
+    bottom:-70px;
+    background:#f0f;
+    cursor:pointer;
+    background:url('graphics/umleitung.png');
+    width:120px;
+    height: 70px
+}

@@ -31,136 +31,58 @@ class FormSignupMethod extends SignupMethod {
         return '';
     }
 
-    public function getInlineHTML() {
-
+    public function showInlineHTML() {
         $environment = Environment::getEnv();
+        $soft_prot   = new soft_protect();
 
-        // TODO: wartelisten note
-
+        $bachelor = $environment->getBachelor();
         $possible_dates = comm_get_possible_dates($environment->database, $environment->getSelectedTrip());
+        $waitlist_mode  = $environment->isInWaitlistMode();
 
-        if(is_null($bachelor))
-            $bachelor = array('forname' => "", 'sirname' => "", 'anday' => $possible_dates[0], 'abday' => $possible_dates[count($possible_dates)-1], 'antyp' => "", 'abtyp' => "", 'pseudo' => "", 'mehl' => "", 'essen' => "", 'public' => "", 'studityp' => "", 'comment'=>"");
-        if(!is_null($bid)){
-            if($index_db->has('bachelor',array('bachelor_id' => $bid))){
-                $bachelor = $index_db->select('bachelor', array('forname','sirname','anday','abday','antyp','abtyp','pseudo','mehl','essen','public','virgin','studityp','comment'), array('bachelor_id'=>$bid));
-                $bachelor = $bachelor[0];
-            }
-        }
-        $fidd = is_null($bid) ? $fid : $fid."&bid=".$bid;
-        echo '<div id="stylized" class="myform">
-        <form id="form" name="form" method="post" action="index.php?fid='.$fidd.(isset($_REQUEST['waitlist']) ? '&waitlist' : '').'">';
-        if(isset($_REQUEST['waitlist'])){
+        $link_params = '?fid=' . $environment->getSelectedTripId() .
+            (isset($bachelor['id']) ? '&bid=' . $bachelor['id'] : '') .
+            ($waitlist_mode         ? '&waitlist'               : '');
+
+
+        if($waitlist_mode)
             echo '<h1 style="color: red;">Warteliste</h1>
-        <p>Bitte in die Warteliste eintragen.</p>';
-        } else {
+                  <p>Eintragen und hoffen...</p>';
+        else
             echo '<h1>Anmeldeformular</h1>
-        <p>Bitte hier verbindlich anmelden.</p>';
-        }
+                  <p>Bitte hier verbindlich anmelden.</p>';
 
-        $tmp_vir = "";
-        if(isset($bachelor['virgin']))
-            $tmp_vir = $bachelor['virgin']==0 ? "Ja" : "Nein";
 
-        index_show_formular_helper_input("Vorname", "forname", $bachelor["forname"], "");
-        index_show_formular_helper_input("Nachname","sirname",$bachelor["sirname"],"");
-        index_show_formular_helper_input("Anzeigename","pseudo",$bachelor["pseudo"],"");
-        index_show_formular_helper_input("E-Mail-Adresse","mehl",$bachelor["mehl"],"regelmäßig lesen!");
-        index_show_formular_helper_sel("Du bist","studityp",$config_studitypen, $bachelor["studityp"],"");
-        index_show_formular_helper_sel("Alter 18+?","virgin",array("", "Nein", "Ja"), $tmp_vir, "Bist du älter als 18 Jahre?");
-        index_show_formular_helper_sel("Essenswunsch","essen",$config_essen, $bachelor["essen"],"Info für den Koch.");
-        index_show_formular_helper_sel2("Anreise","anday", array_slice($possible_dates,0, -1), $bachelor["anday"]
-            ,"antyp",$config_reisearten, $bachelor["antyp"],"");
-        index_show_formular_helper_sel2("Abreise","abday", array_slice($possible_dates,1), $bachelor["abday"]
-            ,"abtyp",$config_reisearten,$bachelor["abtyp"],"");
+        echo '<div id="stylized" class="myform">
+                <form id="form" name="form" method="post" action="index.php' . $link_params . '">';
 
-        $soft_prot = new soft_protect();
-        echo $soft_prot->add(array('forname', 'sirname', 'pseudo'), $invalidCharsRegEx)->write();
+        $this->show_formular_helper_input("Vorname",        "forname", $bachelor["forname"], "");
+        $this->show_formular_helper_input("Nachname",       "sirname", $bachelor["sirname"], "");
+        $this->show_formular_helper_input("Anzeigename",    "pseudo",  $bachelor["pseudo"],  "");
+        echo $soft_prot->add(array('forname', 'sirname', 'pseudo'), $environment->config['invalidChars'])->write();
 
-        echo'
-        <label>Anmerkung</label>
-        <textarea id="comment" name ="comment" rows="3" cols="50">'.$bachelor["comment"].'</textarea>
-        <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">Anmeldung verstecken</span><br/>
-        <div style="clear:both"></div>';
-        index_show_formular_helper_input("Captcha eingeben","captcha","","");
-        echo '
-        <img src="view/captcha.php" /><br/>
-        <button type="submit" name="submit" id="submit" value="submit">Anmelden!</button>
-        <div class="spacer"></div>
-        </form>
-        </div>';
-        if ($withStoryMode)
-        {
-            function putTypesInObject($obj)
-            {
-                $text = '{ ';
-                $first = true;
-                foreach($obj as $key => $value)
-                {
-                    if ($first)
-                        $first = false;
-                    else
-                        $text .= ', ';
-                    $text .= '"'.$key.'":"'.$value.'"';
-                }
-                $text .= ' }';
-                return $text;
-            }
+        $this->show_formular_helper_input("E-Mail-Adresse", "mehl",    $bachelor["mehl"],    "regelmäßig lesen!");
 
-            echo '</noscript>';
-            echo '<h2>Anmeldeformular</h2>';
-            echo<<<END
-		<div id="storyhead"></div>
-		<div id="storycanvas">
-			<div id="storybox"></div>
-			<div id="story_umleitung" style="position:absolute; left:0px; bottom:-70px; background:#f0f; cursor:pointer; background:url(view/graphics/story/umleitung.png); width:120px; height: 70px" onclick="story.next(true)">&nbsp;</div>
-			<script type="text/javascript">
-				function comm_get_possible_dates()
-				{
-					return [
-END;
-            $dates = comm_get_possible_dates($index_db, $fid);
-            foreach($dates as &$date)
-                $date = '"'.$date.'"';
-            echo implode(', ', $dates);
-            echo<<<END
- ];
-				}
-				function comm_get_food_types()
-				{
-					return [
-END;
-            $dates = comm_get_possible_dates($index_db, $fid);
-            foreach($dates as &$date)
-                $date = '"'.$date.'"';
-            echo implode(', ', $dates);
-            echo<<<END
- ];
-				}
-				function config_get_travel_types()
-				{
-					return
-END;
-            global $config_reisearten_o;
-            echo putTypesInObject($config_reisearten_o);
-            echo<<<END
-;
-				}
-				function config_get_food_types()
-				{
-					return
-END;
-            global $config_essen_o;
-            echo putTypesInObject($config_essen_o);
-            echo<<<END
-;
-				}
-			</script>
-		</div>
-		<div style="text-align:center;font-weight:bold"><a style="float:none;margin:0 auto;"
-END;
-            echo ' href="'.$_SERVER['REQUEST_URI'].'&noscript">Seite funktioniert nicht / zu bunt?</a></div>';
-        }
+        $this->show_formular_helper_sel("Du bist", "studityp",   $environment->config['studitypen'], $bachelor["studityp"], "");
+        $this->show_formular_helper_sel("Alter 18+?", "virgin",  array("", "Nein", "Ja"),
+            isset($bachelor['virgin']) ?  ($bachelor['virgin'] == 0 ? "Ja" : "Nein") : '', "Bist du älter als 18 Jahre?");
+        $this->show_formular_helper_sel("Essenswunsch", "essen", $environment->config['essen'], $bachelor["essen"],"Info für den Koch.");
+        $this->show_formular_helper_sel2("Anreise","anday", array_slice($possible_dates,0, -1), $bachelor["anday"],
+            "antyp", $environment->config['reisearten'], $bachelor["antyp"], "");
+        $this->show_formular_helper_sel2("Abreise","abday", array_slice($possible_dates,1), $bachelor["abday"],
+            "abtyp", $environment->config['reisearten'], $bachelor["abtyp"], "");
+
+        echo'<label>Anmerkung</label>
+            <textarea id="comment" name ="comment" rows="3" cols="50">' . $bachelor["comment"] . '</textarea>
+            <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">Anmeldung verstecken</span><br/>
+            <div style="clear:both"></div>';
+
+        $this->show_formular_helper_input("Captcha eingeben", "captcha", "", "");
+        echo '<img src="view/captcha.php" /><br/>
+            <button type="submit" name="submit" id="submit" value="submit">Anmelden!</button>
+            <div class="spacer"></div>';
+
+        echo '</form>
+            </div>';
     }
 
     /**
@@ -172,7 +94,7 @@ END;
      * @param $selected
      * @param $subtext
      */
-    function index_show_formular_helper_sel($name, $id, $values, $selected, $subtext){
+    private function show_formular_helper_sel($name, $id, $values, $selected, $subtext){
         echo '<label>'.$name.'
         <span class="small">'.$subtext.'</span>
         </label>
@@ -197,7 +119,7 @@ END;
      * @param $selected2
      * @param $subtext
      */
-    function index_show_formular_helper_sel2($name, $id, $values, $selected, $id2, $values2, $selected2, $subtext){
+    private function show_formular_helper_sel2($name, $id, $values, $selected, $id2, $values2, $selected2, $subtext){
         echo '<label style="text-align:left">'.$name.'
         <span class="small">'.$subtext.'</span>
         </label><table><tr><td>
@@ -216,7 +138,7 @@ END;
         echo '</select></td></tr></table>';
     }
 
-    function index_show_formular_helper_input($name, $id, $value, $subtext){
+    private function show_formular_helper_input($name, $id, $value, $subtext){
         echo '<label>'.$name.'
         <span class="small">'.$subtext.'</span>
         </label>
