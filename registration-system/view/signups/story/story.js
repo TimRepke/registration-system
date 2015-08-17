@@ -636,7 +636,7 @@ Story.prototype.storyImage = function(filename)
 }
 Story.prototype.storyImageDiv = function(filename)
 {
-	return $('<div style="position:absolute; width:900px; height:500px; background: url(view/graphics/story/'+filename+');"></div>');
+	return $('<div style="position:absolute; width:900px; height:500px; background: url('+API.methodBasepath+'graphics/'+filename+');"></div>');
 }
 
 Story.prototype.addComboBox = function(parentNode, label, fieldName, options, x, y)
