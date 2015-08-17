@@ -4,10 +4,13 @@
 - Anreise Art
 - Abreise Tag
 - Abreise Art
-- Alter
+- Alter (18+ ja/nein)
 - Essen
 - Name (Vor und Nachname einzeln)
+- E-Mail
 - Kommentar
+- Ersti/Tutor/Hörsti
+- Anmeldung verstecken (ja/nein)
 
 # Eastereggs
 
