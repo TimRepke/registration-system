@@ -56,8 +56,13 @@ class Environment {
      * 0 = registration open (slots available)
      * 1 = all slots taken -> waitlist open
      * 2 = registration closed!
+     *
+     * @param $fid (optional) to pass this parameter
+     * @returns int the state of the trip (see above)
      */
-    public function getRegistrationState($fid) {
+    public function getRegistrationState($fid = NULL) {
+        if(is_null($fid)) $fid = $this->getSelectedTripId();
+
         comm_verbose(3,"checking if fid ". $fid . " is open");
         $open = $this->database->has('fahrten', ['AND' => ['fahrt_id'=>$fid, 'regopen'=>1]]);
         if(!$open)
@@ -84,7 +89,7 @@ class Environment {
      */
     public function getSelectedTripId() {
         if(isset($_REQUEST['fid']))
-            return $_REQUEST['fid'];
+            return (int) $_REQUEST['fid'];
         else
             return null;
     }
@@ -159,5 +164,70 @@ class Environment {
             'pseudo' => "", 'mehl' => "", 'essen' => "", 'public' => "",
             'studityp' => "", 'comment'=>""
         ];
+    }
+
+    /**
+     * @param $data
+     * @return bool
+     */
+    public function sendBachelorToDB($data) {
+
+        // === prepare data to insert ===
+        $data['anm_time'] = time();
+        $data['anday'] = date('Y-m-d', DateTime::createFromFormat('d.m.Y',$data['anday'])->getTimestamp());
+        $data['abday'] = date('Y-m-d', DateTime::createFromFormat('d.m.Y',$data['abday'])->getTimestamp());
+
+        if($this->isInWaitlistMode()){
+            if($this->getRegistrationState($data['fahrt_id'])==1){
+                // === prepare data to insert ===
+                $data['waitlist_id'] = comm_generate_key($this->database,
+                    ["bachelor" => "bachelor_id", "waitlist" => "waitlist_id"],
+                    ['fahrt_id'=>$data['fahrt_id']]);
+
+                // === insert data ===
+                $this->database->insert("waitlist", $data);
+
+                // === notify success ===
+                $this->feedbackHelper("lang_waitmail", $data['mehl'], $data['waitlist_id'], $data['fahrt_id']);
+            }
+            else return false;
+        } else {
+            // === prepare data to insert ===
+            $data['version'] = 1;
+            $data['bachelor_id'] = comm_generate_key($this->database,
+                ["bachelor" => "bachelor_id"],
+                ['fahrt_id'=>$data['fahrt_id']]);
+
+            // === check regstration full ===
+            $res = $this->database->get("fahrten",
+                ["regopen", "max_bachelor"],
+                ["fahrt_id" => $data['fahrt_id']]);
+            if (!$res || $res['regopen'] != "1")
+                return false;
+
+            $this->database->exec("LOCK TABLES fahrten, bachelor WRITE"); // count should not be calculated in two scripts at once
+
+            $insertOk = $this->isRegistrationOpen($data['fahrt_id']);
+
+            if ($insertOk)
+                $this->database->insert("bachelor", $data);
+            $this->database->exec("UNLOCK TABLES"); // insert is done now, count may be recalculated in other threads
+            if (!$insertOk)
+                return false; // full
+
+            // === notify success ===
+            $this->feedbackHelper("lang_regmail", $data['mehl'], $data['bachelor_id'], $data['fahrt_id']);
+        }
+
+        return true;
+    }
+
+    private function feedbackHelper($mail_lang, $to, $hash, $fid) {
+        global $config_baseurl;
+
+        $from = $this->database->get("fahrten", ["kontakt","leiter"], ["fahrt_id"=>$fid]);
+        $mail = comm_get_lang($mail_lang, array( "{{url}}"         => $config_baseurl."status.php?hash=".$hash,
+            "{{organisator}}" => $from['leiter']));
+        comm_send_mail($this->database, $to, $mail, $from['kontakt']);
     }
 }

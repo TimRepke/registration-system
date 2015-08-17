@@ -52,9 +52,9 @@ class FormSignupMethod extends SignupMethod {
         echo '<div id="stylized" class="myform">
                 <form id="form" name="form" method="post" action="index.php' . $link_params . '">';
 
-        $this->show_formular_helper_input("Vorname",        "forname", $bachelor["forname"], "");
-        $this->show_formular_helper_input("Nachname",       "sirname", $bachelor["sirname"], "");
-        $this->show_formular_helper_input("Anzeigename",    "pseudo",  $bachelor["pseudo"],  "");
+        $this->show_formular_helper_input("Vorname",     "forname", $bachelor["forname"], "");
+        $this->show_formular_helper_input("Nachname",    "sirname", $bachelor["sirname"], "");
+        $this->show_formular_helper_input("Anzeigename", "pseudo",  $bachelor["pseudo"],  "");
         echo $soft_prot->add(array('forname', 'sirname', 'pseudo'), $environment->config['invalidChars'])->write();
 
         $this->show_formular_helper_input("E-Mail-Adresse", "mehl",    $bachelor["mehl"],    "regelmäßig lesen!");

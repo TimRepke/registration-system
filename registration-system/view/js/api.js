@@ -21,6 +21,10 @@ var UrlComponents = {
             })(q.split("&"));
         }
     },
+    isSet: function(param) {
+        var tmp = this.getParams();
+        return tmp && param in tmp;
+    },
     getValueOf: function(param) {
         return this.getParams()[param];
     }
@@ -53,7 +57,15 @@ function Bachelor() {
     };
 
     this.isSet = function (attribute) {
-        return !!properties[attribute];
+        if(! (attribute in properties)) throw new Error("Attribute does not exist!");
+        return properties[attribute] !== null;
+    };
+
+    this.isComplete = function () {
+        for (var key in properties) {
+            if(!this.isSet(key)) return false;
+        }
+        return true;
     };
 
     this.setValue = function (attribute, value) {
@@ -85,6 +97,8 @@ function Bachelor() {
 
 function FAPI() {
     this.data = new Bachelor();
+    this.captcha = '';
+
     this.methodBasepath = 'view/signups/' + UrlComponents.getValueOf('method') + '/';
 }
 
@@ -93,63 +107,49 @@ FAPI.prototype.resolvePath = function(file) {
 };
 
 /**
- * params to send have to be set earlier (see the Bachelor)
+ * Submit the registration send-and-pray style!
  *
- * callback is called, once the request was sent to the server.
- * It'll transmit an object containing the
- *    -> state (0 = successful, 1 = error, 2 = ?)
- *    -> main message (string)
- *    -> errors (null, if non; array of strings with messages else)
-
- * @param callback
+ * All error handling will be done by the simple form (if needed).
  */
-FAPI.prototype.submitSignup = function(callback) {
-    // TODO evaluate params and send them
-
-    callback({
-        state: 0,
-        messages: 'Successful signup',
-        errors: null
-    })
-};
-
-/**
- * Helper function for FAPI.prototype.submitSignup
- * it creates a hidden form to be submitted.
- */
-FAPI.prototype.prepareSubmission = function () {
+FAPI.prototype.submitSignup = function() {
     var formWrapper = $('<div style="display:none"/>');
     var form = $('<form name="storySubmitForm" method="POST"/>');
     formWrapper.append(form);
     $('#signup-container').append(formWrapper);
 
-    function formAppendText (name, value) {
-        form.append('<input name="' + name + '" value="' + value.replace(/[\r\n]/g, "<br/>").replace(/&/g, "&amp;").replace(/"/g, "&quot;") + '"/>');
+
+    var data = this.data.getProperties();
+
+    for (var key in data) {
+        var value = data[key];
+        var leaveOut = false;
+        switch (key) {
+            case 'public':
+                if(value === true) value = 'public';
+                else leaveOut = true;
+                break;
+            default: /* does nothing */
+        }
+
+        if(!leaveOut) {
+            value = value.replace(/[\r\n]/g, "<br/>").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+            addToForm(key, value);
+        }
     }
 
-    if(window.location.pathname.search("waitlist")>0)
-        formAppendText("waitlist", "waitlist");
-    formAppendText('forname', story.form_variables.forname);
-    formAppendText('sirname', story.form_variables.name);
-    formAppendText('pseudo', story.form_variables.anzeig);
-    formAppendText('mehl', story.form_variables.mehl);
-    formAppendText('studityp', $('#story_summary_studityp').val());
-    formAppendText('virgin', Story.ageMap[story.form_variables.age]);
-    formAppendText('essen', Story.eatMapPhp[Story.eatMap[story.form_variables.eat]]);
-    formAppendText('anday', story.form_variables.travelStartDate);
-    formAppendText('antyp', Story.travelMapPhp[Story.travelMap[story.form_variables.travelStartType]]);
-    formAppendText('abday', story.form_variables.travelEndDate);
-    formAppendText('abtyp', Story.travelMapPhp[Story.travelMap[story.form_variables.travelEndType]]);
-    formAppendText('comment', $('#story_summary_comment').val());
-    if ($('#story_summary_public').is(':checked'))
-        formAppendText('public', 'public');
-    formAppendText('captcha', $('#story_summary_captcha').val());
-    formAppendText('storySubmit', 'storySubmit');
+    addToForm('captcha', this.captcha);
+    addToForm('storySubmit', 'storySubmit');
+    if(UrlComponents.isSet('waitlist'))
+        addToForm('waitlist', 'waitlist');
 
     form.submit();
+
+    function addToForm(key, value) {
+        form.append('<input name="' + key + '" value="' + value + '"/>');
+    }
 };
 
-FAPI.prototype.attachSoftProtector = function (elementIds, regex) {
+FAPI.attachSoftProtector = function (elementIds, regex) {
     for(var i = 0; i < elementIds.length; ++i) {
         $('#'+elementIds[i]).keyup(function(event) {
             if (!event.target.value.match(regex))

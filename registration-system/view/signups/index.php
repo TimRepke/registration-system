@@ -6,6 +6,7 @@ class SignupMethods {
 
     private static $__instance = NULL;
     private $signup_methods = [];
+    private $fallback_method = 'form';
 
     public static function getInstance() {
         if(self::$__instance == NULL) self::$__instance = new SignupMethods();
@@ -49,6 +50,11 @@ class SignupMethods {
         }
     }
 
+    public function getFallbackMethod() {
+        $method = $this->getMethodObj($this->fallback_method);
+        return new $method['class']();
+    }
+
     /**
      * @return class (instantiated) of the active signup method
      * @throws ErrorException when $_GET["method"] is missing or not available in the list
@@ -73,9 +79,11 @@ class SignupMethods {
      */
     private function getActiveMethodObj() {
         if(!isset($_REQUEST["method"])) throw new ErrorException("No signup-method selected!");
-        $mode = $_REQUEST["method"];
-        if(!isset($this->signup_methods[$mode])) throw new ErrorException("Signup-method does not exist!");
+        return $this->getMethodObj($_REQUEST["method"]);
+    }
 
+    private function getMethodObj($mode) {
+        if(!isset($this->signup_methods[$mode])) throw new ErrorException("Signup-method does not exist!");
         return [ 'id' => $mode, 'class' => $this->signup_methods[$mode]['class']];
     }
 
