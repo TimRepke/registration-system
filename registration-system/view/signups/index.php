@@ -24,7 +24,7 @@ class SignupMethods {
                 "id"           => $method["id"],
                 "name"         => $method["class"]::getName(),
                 "description"  => $method["class"]::getAltText(),
-                "contributors" => $method["class"]::getMetaInfo()
+                "meta"         => $method["class"]::getMetaInfo()
             ]);
         }
         return $tmp;
@@ -59,16 +59,17 @@ class SignupMethods {
     }
 
     private function loadSignupMethod($folder_name) {
-        $tmp_file_name = __DIR__ . '/' . $folder_name . '/index.php';
+        $tmp_method_folder = basename($folder_name);
+        $tmp_file_name     = __DIR__ . '/' . $tmp_method_folder . '/index.php';
 
         try {
             if (file_exists($tmp_file_name)) {
                 require_once $tmp_file_name;
 
-                $tmp_class_name = ucfirst($folder_name . 'SignupMethod');
+                $tmp_class_name = ucfirst($tmp_method_folder . 'SignupMethod');
                 if (class_exists($tmp_class_name)) {
                     return [
-                        'id'        => $folder_name,
+                        'id'        => $tmp_method_folder,
                         'class'     => $tmp_class_name,
                         'classFile' => $tmp_file_name
                     ];
