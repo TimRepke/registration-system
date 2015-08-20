@@ -18,11 +18,13 @@ PathFinder.prototype.scanWalkables = function() {
 		if (!self.noWalkNode && label == "NOWALK")
 			self.noWalkNode = this;
 	});
+	var walkTranslation = getTranslation(this.svg[0][0], this.walkNode);
 	d3.select(self.walkNode).selectAll('path').each(function() {
-		self.walkNodes.push(new Path(this.getAttribute("d")));
+		self.walkNodes.push(new Path(this.getAttribute("d"), walkTranslation));
 	});
+	var noWalkTranslation = getTranslation(this.svg[0][0], this.noWalkNode);
 	d3.select(self.noWalkNode).selectAll('path').each(function() {
-		self.noWalkNodes.push(new Path(this.getAttribute("d")));
+		self.noWalkNodes.push(new Path(this.getAttribute("d"), noWalkTranslation));
 	});
 }
 PathFinder.prototype.generateRaster = function() {
