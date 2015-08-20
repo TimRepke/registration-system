@@ -26,11 +26,13 @@ Game.prototype.run = function() {
 	
 		// animate
 		setInterval(function() {
-			// move player
-			char.physics();
-			char.animate();
-			// cam movement
-			cam.movement();
+			if (char.loaded) {
+				// move player
+				char.physics();
+				char.animate();
+				// cam movement
+				cam.movement();
+			}
 		}, 10);
 	
 		svg.on("click", function(d) {
