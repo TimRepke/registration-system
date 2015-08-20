@@ -5,7 +5,7 @@ function Game(config) {
 	Game.instance = this;
 }
 Game.prototype.run = function() {
-	d3.xml('maps/map_castle.svg', 'image/svg+xml', function(xml) {
+	d3.xml('maps/'+Game.config.startMap, 'image/svg+xml', function(xml) {
 		var gameCanvas = document.getElementById("gameCanvas");
 		var gameRoot = document.getElementById("gameRoot");
 		gameCanvas.style.width = Game.config.size[0]+'px';
