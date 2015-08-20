@@ -7,18 +7,23 @@ function Char(svg, options) {
 	this.moveTarget = [];
 	this.maxSpeed = 2;
 
-	this.rect = this.svg.append("rect");
-	this.rect.attr("backgroundColor", "#f0f")
-		.attr("width", "20")
-		.attr("height", "20");
-	
-	this.updatePosition();
+	var self = this;
+	d3.xml('chars/bernd.svg', 'image/svg+xml', function(xml) {
+		self.image = self.svg.append('g').attr('id', 'player');
+		var layers = d3.select(xml.documentElement).selectAll('g').filter(function() {
+			return this.getAttribute('inkscape:groupmode') == 'layer';
+		}).each(function() {
+			self.image[0][0].appendChild(this);
+		});
+
+		self.updatePosition();
+	});
 }
 Char.prototype.findSpawn = function() {
 	// [1320, svgFlipY(svg[0][0], 500)]
 	var spawn = this.svg.select("#player_spawn");
-	var b = spawn[0][0].getBBox();
-	return [b.x, b.y];
+	var bbox = spawn[0][0].getBBox();
+	return Vec.add(getTranslation(this.svg[0][0], spawn[0][0]), [bbox.x, bbox.y]);
 }
 Char.prototype.animate = function() {
 }
@@ -47,14 +52,13 @@ Char.prototype.physics = function() {
 	this.updatePosition();
 }
 Char.prototype.updatePosition = function() {
+	if (!this.image) return;
 	var self = this;
-	this.rect.attr("transform", function() {
+	this.image.attr("transform", function() {
 		return translate.apply(null, self.translation);
 	});
 }
 Char.prototype.setMoveTarget = function(newX, newY) {
-	if (!this.rect) return;
-
 	var matrix = this.svg[0][0].getScreenCTM();
 	var x = newX-matrix.e;
 	var y = newY-matrix.f;

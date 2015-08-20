@@ -7,12 +7,17 @@ function showCoords(x, y) {
 function svgFlipY(svg, y) {
 	return svg.getBBox().height - y;
 }
+function getTranslation(svg, node) {
+	var matrix = svg.getTransformToElement(node);
+	return [matrix.e, matrix.f];
+}
 
 
-function Path(svgPathData) {
+function Path(svgPathData, offset) {
 	this.edges = [];
 
 	var currentPosition = [0,0];
+	if (!offset) offset = [0,0];
 	var relativeCommand = true;
 	var currentCommand = 'm';
 
@@ -32,7 +37,7 @@ function Path(svgPathData) {
 		if (isNumber) {
 			currentPosition = part.split(",");
 			for (var i = 0; i < currentPosition.length; ++i)
-				currentPosition[i] = (relativeCommand ? lastPosition[i] : 0) + Number(currentPosition[i]);
+				currentPosition[i] = offset[i]+(relativeCommand ? lastPosition[i] : 0) + Number(currentPosition[i]);
 
 			if (currentCommand == 'l')
 				this.edges.push([lastPosition, currentPosition]);
