@@ -17,8 +17,8 @@ function Char(svg, options) {
 Char.prototype.findSpawn = function() {
 	// [1320, svgFlipY(svg[0][0], 500)]
 	var spawn = this.svg.select("#player_spawn");
-	var b = spawn[0][0].getBBox();
-	return [b.x, b.y];
+	var bbox = spawn[0][0].getBBox();
+	return Vec.add(getTranslation(this.svg[0][0], spawn[0][0]), [bbox.x, bbox.y]);
 }
 Char.prototype.animate = function() {
 }
