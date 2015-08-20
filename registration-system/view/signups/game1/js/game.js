@@ -4,7 +4,7 @@ function Game(config) {
 	Game.config = config;
 	Game.instance = this;
 }
-Game.eventLayers = ['CLICKABLE', 'WALK', 'NOWALK', 'EVENTS'];
+Game.eventLayers = ['CLICKABLE', 'WALK', 'NOWALK', 'EVENT'];
 Game.prototype.run = function() {
 	d3.xml('maps/'+Game.config.startMap, 'image/svg+xml', function(xml) {
 		var gameCanvas = document.getElementById("gameCanvas");
