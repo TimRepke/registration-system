@@ -14,12 +14,14 @@ class Game1SignupMethod extends SignupMethod {
         return [
             "version" => '1.0',
             "date" => '15.09.2015',
-            "contributors" => ['Manu Herrmann']
+            "contributors" => ['Manu Herrmann', 'Tim Repke']
         ];
     }
 
     public function getJSDependencies() {
-        return ['jslibs/d3.min.js', 'game.js'];
+        return ['jslib/d3.min.js', 'jslib/checkLineIntersection.js', 'jslib/priority-queue.min.js',
+            'js/camera.js','js/character.js','js/pathFinder.js', 'js/svgUtils.js', 'js/vector.js',
+            'js/game.js'];
     }
 
     public function getCSSDependencies() {
@@ -36,7 +38,17 @@ class Game1SignupMethod extends SignupMethod {
                 <div id="gameRoot" style="position:relative">
                 </div>
             </div>
-            <script>load_game();</script>';
+            <script>
+            g_smallValue = 0.000001; // fun with floats
+
+            var game = new Game({
+                pathFindingGridSize: 5,
+                usePathFinding: true,
+                size: [800, 600]
+            });
+            game.run();
+
+            </script>';
     }
 
 }
