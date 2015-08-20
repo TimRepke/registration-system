@@ -6,6 +6,7 @@ function Char(svg, options) {
 	this.translation = options.spawn ? options.spawn : this.findSpawn();
 	this.moveTarget = [];
 	this.maxSpeed = 2;
+	this.loaded = false;
 
 	var self = this;
 	d3.xml('chars/bernd.svg', 'image/svg+xml', function(xml) {
@@ -16,7 +17,10 @@ function Char(svg, options) {
 			self.image[0][0].appendChild(this);
 		});
 
+		self.initializeAnimations();
 		self.updatePosition();
+
+		self.loaded = true;
 	});
 }
 Char.prototype.findSpawn = function() {
@@ -25,7 +29,82 @@ Char.prototype.findSpawn = function() {
 	var bbox = spawn[0][0].getBBox();
 	return Vec.add(getTranslation(this.svg[0][0], spawn[0][0]), [bbox.x, bbox.y]);
 }
+Char.prototype.initializeAnimations = function() {
+	var self = this;
+
+	this.animateStep = 0;
+	this.lastPosition = this.translation.slice();
+	this.lastDirection = 2;
+	this.currentFrame = 0;
+	this.frames = null;
+
+	this.animations = {};
+
+	this.image.selectAll('g').filter(function() {
+		return this.getAttribute('inkscape:groupmode') == 'layer';
+	}).each(function() {
+		var label = this.getAttribute('inkscape:label');
+
+		var element = d3.select(this)
+			.style('display', 'block');
+
+		var frames = [];
+		element.selectAll('image')
+			.style('display', 'none')
+			.each(function() {
+				frames.push(this);
+			});
+
+		self.animations[label] = frames;
+	});
+}
+Char.directionToName = ["UP", "RIGHT", "DOWN", "LEFT"];
 Char.prototype.animate = function() {
+	this.animateStep += 1;
+	if (this.animateStep <= 8) return;
+	while (this.animateStep > 8)
+		this.animateStep -= 8;
+
+	var xSpeed = this.translation[0] - this.lastPosition[0];
+	var ySpeed = - this.translation[1] + this.lastPosition[1];
+	this.lastPosition = this.translation.slice();
+	var speed = Math.max(Math.abs(xSpeed), Math.abs(ySpeed)); // estimate
+
+	var direction = this.lastDirection;
+	if (speed > g_smallValue) {
+		if (Math.abs(xSpeed) >= Math.abs(ySpeed))
+			direction = (xSpeed >= 0) ? 1 : 3;
+		else
+			direction = (ySpeed >= 0) ? 0 : 2;
+	}
+
+	// hide last visible frame
+	if (this.frames && this.frames[this.currentFrame]) {
+		var lastFrame = this.frames[this.currentFrame];
+		lastFrame.style.display = 'none';
+	}
+	// change animation
+	if (direction != this.lastDirection) {
+		this.lastDirection = direction;
+		this.currentFrame = 0;
+		this.frames = this.animations[Char.directionToName[direction]];
+	}
+	// if no current frames available show fallback downwards frame
+	if (!this.frames || this.frames.length == 0)
+		this.frames = this.animations['DOWN'];
+	// if everything fails..
+	if (!this.frames || this.frames.length == 0)
+		return;
+
+	// frames depending on speed
+	if (speed < g_smallValue)
+		this.currentFrame = 0; // stand still
+	else
+		this.currentFrame += 1; // walk
+	this.currentFrame %= this.frames.length;
+
+	// show current frame
+	this.frames[this.currentFrame].style.display = 'block';
 }
 Char.prototype.physics = function() {
 	if (this.moveTarget && this.moveTarget.length == 0) return;
@@ -47,7 +126,7 @@ Char.prototype.physics = function() {
 	if (this.pathFinder.canWalkOn(nextPosition[0], nextPosition[1]))
 		Vec.assign(this.translation, nextPosition);
 	else
-		this.moveTarget.shift();
+		this.moveTarget.shift();	
 
 	this.updatePosition();
 }
