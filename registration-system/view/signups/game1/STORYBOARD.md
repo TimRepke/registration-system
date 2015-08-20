@@ -40,6 +40,11 @@ Ins Schloss gehen. Dort landet man in Eingangshalle mit drei Fahrstuhltüren.
 In der FS bekommt man Rüstung gegen Geld und man schreibt sich in die Anmeldeliste auf dem Tisch ein (oder geht zu Fr Lindner).
 -> damit greifen wir den Namen ab.
 
+#### Interactions:
+
+- Beim Reingehen in die Fachschaft fragt jemand: "Kenne ich dich?" -> Antwort: ("Ne, bin neu hier" | "Klar, bin doch schon länger hier" | "Ja, bin Tutor dieses Jahr")
+- George brüllt durch den Raum: "Ey, meld dich mal bei der FS Fahrt an! Schreib' einfach Name und E-Mail-Adresse an die Tafel." -> An die Tafel gehen, anschreiben.
+
 ## Part 3
 
 Entlang des Weges steht eine Person. Dieser Wanderer sagt, man solle auf dem Weg bleiben, hohes Gras ist gefährlich.
