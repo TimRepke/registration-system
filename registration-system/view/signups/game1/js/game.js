@@ -4,6 +4,7 @@ function Game(config) {
 	Game.config = config;
 	Game.instance = this;
 }
+Game.eventLayers = ['CLICKABLE', 'WALK', 'NOWALK', 'EVENTS'];
 Game.prototype.run = function() {
 	d3.xml('maps/'+Game.config.startMap, 'image/svg+xml', function(xml) {
 		var gameCanvas = document.getElementById("gameCanvas");
@@ -11,10 +12,20 @@ Game.prototype.run = function() {
 		gameCanvas.style.width = Game.config.size[0]+'px';
 		gameCanvas.style.height = Game.config.size[1]+'px';
 		gameRoot.appendChild(xml.documentElement);
-	
+
 		var svg = d3.select("svg");
+
+		var displayEvents = Game.config.showEventLayers ? 'block' : 'none';
+		svg.selectAll('g').filter(function() {
+			return (
+				this.getAttribute('inkscape:groupmode') == 'layer'
+			 && Game.eventLayers.indexOf(this.getAttribute('inkscape:label')) >= 0
+			);
+		}).style('display', displayEvents);
+
 		var char = new Char(svg);
 		var cam = new Camera(svg, char.translation);
+
 	
 		// test animation
 		var ship = svg.select("#shipGroup");
