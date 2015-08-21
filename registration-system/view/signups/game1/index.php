@@ -82,6 +82,23 @@ class Game1SignupMethod extends SignupMethod {
                 });
                 game.run();
 
+                // this following stuff is to prevent the page from scrolling, when the user
+                // actually just wants to scroll inside the logs.
+                // it removes the main scrollbar and adds a padding of its size to replace the space
+                window.onload = function() {
+                    var scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+                    var x = document.getElementsByClassName("sidebar-log");
+                    for (var i = 0; i < x.length; i++) {
+                        x[i].addEventListener("mouseout", function(){
+                            document.body.style.overflow=\'auto\';
+                            document.body.style.paddingRight = "0px";
+                        }, false);
+                        x[i].addEventListener("mouseover", function(){
+                            document.body.style.overflow=\'hidden\';
+                            document.body.style.paddingRight = scrollbarWidth+"px";
+                        }, false);
+                    }
+                };
             </script>';
     }
 
