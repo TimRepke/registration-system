@@ -12,6 +12,9 @@ function getTranslation(svg, node) {
 	return [matrix.e, matrix.f];
 }
 
+function euclidianDistance(a_x, a_y, b_x, b_y){
+	return Math.sqrt((a_x-b_x)*(a_x-b_x) + (a_y-b_y)*(a_y-b_y));
+}
 
 function Path(svgPathData, offset) {
 	this.edges = [];

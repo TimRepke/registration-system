@@ -2,7 +2,12 @@ function Achievements() {
     this.achievements = {
         'started_game': 'Bestes Anmeldesystem gestartet',
         'first_step': 'Erster Schritt getan',
-        'some_water': 'An frischem Brunnenwasser gerochen',
+        'some_water': {
+            message: 'An frischem Brunnenwasser gerochen',
+            condition: function(context) {
+                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 150;
+            }
+        },
         'saw_devs1': 'Wilde Informatiker auf Wiese gesehen',
         // TODO: add more!
         'achievement42': 'You just found the answer to everything!'
@@ -54,15 +59,30 @@ Achievements.prototype.logMessage = function (message) {
     list.insertBefore(newElem, list.childNodes[0]);
 };
 
-Achievements.prototype.triggerAchievement = function (achievementId) {
+Achievements.prototype.getMessage = function (achievementId) {
+    if (typeof this.achievements[achievementId] === 'object') {
+        return this.achievements[achievementId].message;
+    }
+    return this.achievements[achievementId];
+};
+
+Achievements.prototype.isTriggerable = function (achievementId, context) {
+    var achievement = this.achievements[achievementId];
+    if (typeof achievement === 'object' && 'condition' in achievement){
+        return achievement.condition(context);
+    }
+    return true;
+};
+
+Achievements.prototype.triggerAchievement = function (achievementId, context) {
     if (!this.achievements[achievementId]){
         console.error("No such achievement: " + achievementId);
     }
-    else if (! (this.achievedAchievements.indexOf(achievementId) >= 0)) {
+    else if (this.achievedAchievements.indexOf(achievementId) < 0 && this.isTriggerable(achievementId, context)) {
         this.achievedAchievements.push(achievementId);
         this.updateStatusBar();
         this.updateStatusText();
-        this.logMessage(this.achievements[achievementId]);
+        this.logMessage(this.getMessage(achievementId));
     }
     // else console.warn("Achievement already achieved: " + achievementId);
 
