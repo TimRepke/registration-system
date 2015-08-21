@@ -9,7 +9,7 @@ function Char(svg, options) {
 	this.loaded = false;
 
 	var self = this;
-	d3.xml('chars/bernd.svg', 'image/svg+xml', function(xml) {
+	d3.xml(FAPI.resolvePath('chars/bernd.svg'), 'image/svg+xml', function(xml) {
 		self.image = self.svg.append('g').attr('id', 'player');
 		var layers = d3.select(xml.documentElement).selectAll('g').filter(function() {
 			return this.getAttribute('inkscape:groupmode') == 'layer';
