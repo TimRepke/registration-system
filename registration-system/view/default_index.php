@@ -35,21 +35,21 @@
 </head>
 <body>
 <div class="shadowbox">
-<div id="headerbox">
-    <div class="headerboxshade"><h1>Fachschaftsfahrt</h1></div>
-	<div class="headerboxshade"><h2>Informatik</h2></div>
-    <p></p>
-</div>
-<div id="menubox">
+    <div id="headerbox">
+        <div class="headerboxshade"><h1>Fachschaftsfahrt</h1></div>
+        <div class="headerboxshade"><h2>Informatik</h2></div>
+        <p></p>
+    </div>
+    <div id="menubox">
 
-    <?php
-        show_content();
-    ?>
+        <?php
+            show_content();
+        ?>
 
 
-</div>
-<div id="footerbox">&copy;<?php echo date("Y"); ?> Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin.</div>
-<img src="view/graphics/studityp_5.gif" style="position: fixed;bottom: 5px;left:0px" />
+    </div>
+    <div id="footerbox">&copy;<?php echo date("Y"); ?> Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin.</div>
+    <img src="view/graphics/studityp_5.gif" style="position: fixed;bottom: 5px;left:0px" />
 
 </div>
 </body>
