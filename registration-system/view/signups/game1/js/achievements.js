@@ -2,6 +2,8 @@ function Achievements() {
     this.achievements = {
         'started_game': 'Bestes Anmeldesystem gestartet',
         'first_step': 'Erster Schritt getan',
+        'some_water': 'An frischem Brunnenwasser gerochen',
+        'saw_devs1': 'Wilde Informatiker auf Wiese gesehen',
         // TODO: add more!
         'achievement42': 'You just found the answer to everything!'
     };
