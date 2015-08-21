@@ -5,7 +5,7 @@ function Game(config) {
 	Game.instance = this;
 
 	Game.achievements = new Achievements();
-	Game.eventHandler = new EventHandler();
+	Game.eventHandler = null;
 	Game.char = null;
 	Game.cam  = null;
 }
@@ -30,6 +30,7 @@ Game.prototype.run = function() {
 			);
 		}).style('display', displayEvents);
 
+		Game.eventHandler = new EventHandler(svg);
 
 		// -------------------------------------
 		// init view stuff
@@ -57,9 +58,12 @@ Game.prototype.run = function() {
 		}, 10);
 
 		svg.on("click", function(d) {
-			Game.char.setMoveTarget(d3.event.pageX, d3.event.pageY);
+			var matrix = svg[0][0].getScreenCTM();
+			var x = d3.event.pageX-matrix.e;
+			var y = d3.event.pageY-matrix.f;
+			Game.char.setMoveTarget(x, y);
+			Game.eventHandler.triggerEventOn('click', x, y);
 		});
 	});
-
 
 };

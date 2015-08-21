@@ -128,8 +128,7 @@ Char.prototype.physics = function() {
 	else
 		this.moveTarget.shift();
 
-	var event = this.pathFinder.getEventOn(nextPosition[0], nextPosition[1]);
-	if (event) Game.eventHandler.handleEvent(event);
+	Game.eventHandler.triggerEventOn('walkon', nextPosition[0], nextPosition[1]);
 
 	this.updatePosition();
 };
@@ -140,10 +139,7 @@ Char.prototype.updatePosition = function() {
 		return translate.apply(null, self.translation);
 	});
 };
-Char.prototype.setMoveTarget = function(newX, newY) {
-	var matrix = this.svg[0][0].getScreenCTM();
-	var x = newX-matrix.e;
-	var y = newY-matrix.f;
+Char.prototype.setMoveTarget = function(x,y) {
 
 	if (Game.config.usePathFinding)
 		this.moveTarget = this.pathFinder.smoothPath(this.pathFinder.findPath(this.translation[0], this.translation[1], x, y));
