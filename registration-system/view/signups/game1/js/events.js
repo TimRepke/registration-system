@@ -41,7 +41,7 @@ EventHandler.prototype.getEventOn = function(trigger, x, y) {
 
 EventHandler.prototype.triggerEventOn = function (trigger, x, y) {
     var event = this.getEventOn(trigger, x, y);
-    if (event) this.handleEvent(event);
+    if (event) this.handleEvent(event, {trigger: trigger, x: x, y: y});
 };
 
 /**
@@ -55,10 +55,10 @@ EventHandler.prototype.triggerEventOn = function (trigger, x, y) {
  *
  * @param event
  */
-EventHandler.prototype.handleEvent = function (event) {
+EventHandler.prototype.handleEvent = function (event, context) {
     switch (event.type) {
         case 'achievement':
-            Game.achievements.triggerAchievement(event.id);
+            Game.achievements.triggerAchievement(event.id, context);
             break;
     }
 
