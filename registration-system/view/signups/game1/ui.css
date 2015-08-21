@@ -1,0 +1,123 @@
+#game-root-container {
+    height: 600px;
+    width: 1000px;
+    overflow: hidden; /* just to be on the save side... */
+    position: relative;
+    margin: 0;
+    padding: 0;
+    background-color: #323232;
+}
+
+#game-game {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 800px;
+    height: 600px;
+}
+
+#game-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 189px;
+    font-family: ‘Lucida Console’, Monaco, monospace;
+    color: white;
+    background-color: #323232;
+    border: 3px solid #4E8260;
+    outline: 3px solid #2E2E2E;
+    margin: 3px 2px 3px 3px;
+}
+/*
+#2E2E2E dark
+#4E8260 green
+#A7ACA6 light bg
+#323232 dark bg
+ */
+
+.sidebar-section {
+
+}
+
+.sidebar-section-head {
+    border-top: 2px solid #4E8260;
+    border-bottom: 2px solid #4E8260;
+    margin: 1em 4px 0.5em 4px;
+    padding: 0.2em 0 0.2em 0.5em;
+
+}
+
+.sidebar-log {
+    position: relative;
+    overflow: hidden;
+    border: 1px dotted #A7ACA6;
+    margin: 0 3px;
+    padding: 0.5em 0;
+}
+/* following some css fun to hide the scrollbar */
+.sidebar-log, .sidebar-log > div > ul {
+    height: 100px;
+}
+
+.sidebar-log > div {
+    position: absolute;
+    left: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.sidebar-log > div > ul {
+    font-size: 8pt;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-log > div::-webkit-scrollbar {
+    display: none;
+}
+
+.sidebar-log  > div > ul > li {
+    padding: 0.2em 0.5em 0.2em 0.5em;
+    margin: 0;
+    border-top: 1px dotted #424242;
+    text-align: left;
+}
+
+.sidebar-log  > div > ul > li:first-child {
+    border-top: 0;
+}
+
+.status-bar {
+    height: 8px;
+    position: relative;
+    background: #A7ACA6;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    border-radius: 12px;
+    padding: 1px 2px;
+    margin: 0 5px;
+}
+
+.status-bar > span.status-bar-bar {
+    display: block;
+    height: 100%;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    background-color: #4E8260;
+    position: relative;
+    overflow: hidden;
+}
+.status-bar > div.status-bar-text {
+    position: absolute;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    top: 2px;
+    font-size: 5pt;
+    text-align: center;
+    color: black;
+}
