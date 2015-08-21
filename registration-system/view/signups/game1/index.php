@@ -20,7 +20,7 @@ class Game1SignupMethod extends SignupMethod {
 
     public function getJSDependencies() {
         return ['jslib/d3.min.js', 'jslib/priority-queue.min.js', 'jslib/checkLineIntersection.js',
-            'js/svgUtils.js', 'js/pathFinder.js', 'js/vector.js', 'js/character.js','js/camera.js',
+            'js/achievements.js', 'js/svgUtils.js', 'js/pathFinder.js', 'js/vector.js', 'js/character.js','js/camera.js',
             'js/game.js'];
     }
 
@@ -53,10 +53,7 @@ class Game1SignupMethod extends SignupMethod {
                         <div class="sidebar-section-head">Achievements</div>
                         <div class="status-bar" id="achievement-progress" style="margin-bottom: 0.5em"><span style="width:25%" class="status-bar-bar"></span> <div class="status-bar-text">5/43</div> </div>
                         <div class="sidebar-log"><div>
-                            <ul id="achievement-log">
-                                <li>Five clicks in 2 seconds!</li>
-                                <li>Took first step!</li>
-                            </ul>
+                            <ul id="achievement-log"></ul>
                         </div></div>
                     </div>
                 </div>

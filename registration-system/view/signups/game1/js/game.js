@@ -3,6 +3,8 @@ function Game(config) {
 	if (Game.instance) throw "'Game' already constructed";
 	Game.config = config;
 	Game.instance = this;
+
+	this.achievements = new Achievements();
 }
 Game.eventLayers = ['CLICKABLE', 'WALK', 'NOWALK', 'EVENT'];
 Game.prototype.run = function() {
@@ -50,4 +52,6 @@ Game.prototype.run = function() {
 			char.setMoveTarget(d3.event.pageX, d3.event.pageY);
 		});
 	});
-}
+
+
+};
