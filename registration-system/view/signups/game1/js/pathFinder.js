@@ -3,7 +3,6 @@ function PathFinder(svg) {
 
 	this.walkNodes = [];
 	this.noWalkNodes = [];
-	this.walkEventNodes = [];
 
 	this.raster = null;
 
@@ -19,8 +18,6 @@ PathFinder.prototype.scanWalkables = function() {
 			self.walkNode = this;
 		if (!self.noWalkNode && label == "NOWALK")
 			self.noWalkNode = this;
-		if (!self.eventNode && label == "EVENT")
-			self.eventNode = this;
 	});
 	var walkTranslation = getTranslation(this.svg[0][0], this.walkNode);
 	d3.select(self.walkNode).selectAll('path').each(function() {
@@ -29,17 +26,6 @@ PathFinder.prototype.scanWalkables = function() {
 	var noWalkTranslation = getTranslation(this.svg[0][0], this.noWalkNode);
 	d3.select(self.noWalkNode).selectAll('path').each(function() {
 		self.noWalkNodes.push(new Path(this.getAttribute("d"), noWalkTranslation));
-	});
-	var eventTranslation = getTranslation(this.svg[0][0], this.eventNode);
-	d3.select(self.eventNode).selectAll('path').each(function() {
-		if (this.getAttribute('trigger') == 'walkon' )
-			self.walkEventNodes.push({
-				path: new Path(this.getAttribute("d"), eventTranslation),
-				id: this.getAttribute('id'),
-				type: this.getAttribute('type'),
-				trigger: 'walkon',
-				stopsWalk: this.getAttribute('stopsWalk') === 'true'
-			});
 	});
 };
 
@@ -58,8 +44,7 @@ PathFinder.prototype.generateRaster = function() {
 			subraster[x] = {
 				walkable: this.canWalkOn(x*Game.config.pathFindingGridSize, y*Game.config.pathFindingGridSize),
 				score: -1,
-				from: null,
-				event: this.getEventOn(x*Game.config.pathFindingGridSize, y*Game.config.pathFindingGridSize) !== null
+				from: null
 			};
 		}
 	}
@@ -191,12 +176,3 @@ PathFinder.prototype.canWalkOn = function(x, y) {
 	}
 	return canWalk;
 };
-PathFinder.prototype.getEventOn = function(x, y) {
-	for (var i = 0; i < this.walkEventNodes.length; ++i) {
-		if (this.walkEventNodes[i].path.isInside(x, y)) {
-			return this.walkEventNodes[i];
-		}
-	}
-	return null;
-};
-
