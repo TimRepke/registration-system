@@ -56,14 +56,13 @@ Achievements.prototype.triggerAchievement = function (achievementId) {
     if (!this.achievements[achievementId]){
         console.error("No such achievement: " + achievementId);
     }
-    else if (!this.achievedAchievements.indexOf(achievementId) >= 0) {
+    else if (! (this.achievedAchievements.indexOf(achievementId) >= 0)) {
         this.achievedAchievements.push(achievementId);
         this.updateStatusBar();
         this.updateStatusText();
         this.logMessage(this.achievements[achievementId]);
     }
-    else
-        console.warn("Achievement already achieved: " + achievementId);
+    // else console.warn("Achievement already achieved: " + achievementId);
 
     if (this.numCompletedAchievements() === 42 ) this.triggerAchievement('achievement42')
 };

@@ -28,7 +28,7 @@ Char.prototype.findSpawn = function() {
 	var spawn = this.svg.select("#player_spawn");
 	var bbox = spawn[0][0].getBBox();
 	return Vec.add(getTranslation(this.svg[0][0], spawn[0][0]), [bbox.x, bbox.y]);
-}
+};
 Char.prototype.initializeAnimations = function() {
 	var self = this;
 
@@ -57,7 +57,7 @@ Char.prototype.initializeAnimations = function() {
 
 		self.animations[label] = frames;
 	});
-}
+};
 Char.directionToName = ["UP", "RIGHT", "DOWN", "LEFT"];
 Char.prototype.animate = function() {
 	this.animateStep += 1;
@@ -105,7 +105,7 @@ Char.prototype.animate = function() {
 
 	// show current frame
 	this.frames[this.currentFrame].style.display = 'block';
-}
+};
 Char.prototype.physics = function() {
 	if (this.moveTarget && this.moveTarget.length == 0) return;
 	if (Vec.equals(this.translation, this.moveTarget[0])) {
@@ -126,17 +126,20 @@ Char.prototype.physics = function() {
 	if (this.pathFinder.canWalkOn(nextPosition[0], nextPosition[1]))
 		Vec.assign(this.translation, nextPosition);
 	else
-		this.moveTarget.shift();	
+		this.moveTarget.shift();
+
+	var event = this.pathFinder.getEventOn(nextPosition[0], nextPosition[1]);
+	if (event) Game.eventHandler.handleEvent(event);
 
 	this.updatePosition();
-}
+};
 Char.prototype.updatePosition = function() {
 	if (!this.image) return;
 	var self = this;
 	this.image.attr("transform", function() {
 		return translate.apply(null, self.translation);
 	});
-}
+};
 Char.prototype.setMoveTarget = function(newX, newY) {
 	var matrix = this.svg[0][0].getScreenCTM();
 	var x = newX-matrix.e;
@@ -146,5 +149,8 @@ Char.prototype.setMoveTarget = function(newX, newY) {
 		this.moveTarget = this.pathFinder.smoothPath(this.pathFinder.findPath(this.translation[0], this.translation[1], x, y));
 	else
 		this.moveTarget = [[x, y]];
-}
+};
 
+Char.prototype.stopMovement = function() {
+	this.moveTarget = null;
+};
