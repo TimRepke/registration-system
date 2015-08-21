@@ -4,7 +4,10 @@ function Game(config) {
 	Game.config = config;
 	Game.instance = this;
 
-	this.achievements = new Achievements();
+	Game.achievements = new Achievements();
+	Game.eventHandler = new EventHandler();
+	Game.char = null;
+	Game.cam  = null;
 }
 Game.eventLayers = ['CLICKABLE', 'WALK', 'NOWALK', 'EVENT'];
 Game.prototype.run = function() {
@@ -17,6 +20,8 @@ Game.prototype.run = function() {
 
 		var svg = d3.select("svg");
 
+		// -------------------------------------
+		// init event related stuff
 		var displayEvents = Game.config.showEventLayers ? 'block' : 'none';
 		svg.selectAll('g').filter(function() {
 			return (
@@ -25,8 +30,11 @@ Game.prototype.run = function() {
 			);
 		}).style('display', displayEvents);
 
-		var char = new Char(svg);
-		var cam = new Camera(svg, char.translation);
+
+		// -------------------------------------
+		// init view stuff
+		Game.char = new Char(svg);
+		Game.cam = new Camera(svg, Game.char.translation);
 
 
 		// test animation
@@ -39,17 +47,17 @@ Game.prototype.run = function() {
 
 		// animate
 		setInterval(function() {
-			if (char.loaded) {
+			if (Game.char.loaded) {
 				// move player
-				char.physics();
-				char.animate();
+				Game.char.physics();
+				Game.char.animate();
 				// cam movement
-				cam.movement();
+				Game.cam.movement();
 			}
 		}, 10);
 
 		svg.on("click", function(d) {
-			char.setMoveTarget(d3.event.pageX, d3.event.pageY);
+			Game.char.setMoveTarget(d3.event.pageX, d3.event.pageY);
 		});
 	});
 
