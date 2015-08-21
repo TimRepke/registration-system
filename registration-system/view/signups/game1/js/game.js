@@ -4,18 +4,29 @@ function Game(config) {
 	Game.config = config;
 	Game.instance = this;
 }
+Game.eventLayers = ['CLICKABLE', 'WALK', 'NOWALK', 'EVENT'];
 Game.prototype.run = function() {
-	d3.xml(FAPI.resolvePath('maps/map_landing.svg'), 'image/svg+xml', function(xml) {
+	d3.xml(FAPI.resolvePath('maps/'+Game.config.startMap), 'image/svg+xml', function(xml) {
 		var gameCanvas = document.getElementById("gameCanvas");
 		var gameRoot = document.getElementById("gameRoot");
 		gameCanvas.style.width = Game.config.size[0]+'px';
 		gameCanvas.style.height = Game.config.size[1]+'px';
 		gameRoot.appendChild(xml.documentElement);
-	
+
 		var svg = d3.select("svg");
+
+		var displayEvents = Game.config.showEventLayers ? 'block' : 'none';
+		svg.selectAll('g').filter(function() {
+			return (
+				this.getAttribute('inkscape:groupmode') == 'layer'
+				&& Game.eventLayers.indexOf(this.getAttribute('inkscape:label')) >= 0
+			);
+		}).style('display', displayEvents);
+
 		var char = new Char(svg);
 		var cam = new Camera(svg, char.translation);
-	
+
+
 		// test animation
 		var ship = svg.select("#shipGroup");
 		ship
@@ -23,19 +34,20 @@ Game.prototype.run = function() {
 		ship.transition()
 			.duration(3000)
 			.attr("transform", function(d,i) { return "translate(0,0)"; });
-	
+
 		// animate
 		setInterval(function() {
-			// move player
-			char.physics();
-			char.animate();
-			// cam movement
-			cam.movement();
+			if (char.loaded) {
+				// move player
+				char.physics();
+				char.animate();
+				// cam movement
+				cam.movement();
+			}
 		}, 10);
-	
+
 		svg.on("click", function(d) {
 			char.setMoveTarget(d3.event.pageX, d3.event.pageY);
 		});
 	});
 }
-
