@@ -8,55 +8,85 @@ function Game(config) {
 	Game.eventHandler = null;
 	Game.char = null;
 	Game.cam  = null;
+	Game.mainLoop = null;
 }
 Game.eventLayers = ['CLICKABLE', 'WALK', 'NOWALK', 'EVENT'];
+
 Game.prototype.run = function() {
-	d3.xml(FAPI.resolvePath('maps/'+Game.config.startMap), 'image/svg+xml', function(xml) {
-		var gameCanvas = document.getElementById("gameCanvas");
-		var gameRoot = document.getElementById("gameRoot");
-		gameCanvas.style.width = Game.config.size[0]+'px';
-		gameCanvas.style.height = Game.config.size[1]+'px';
-		gameRoot.appendChild(xml.documentElement);
+	this.loadMap(Game.config.startMap);
+};
 
-		var svg = d3.select("svg");
+Game.prototype.nextMap = function (map) {
+	clearInterval(Game.mainLoop);
+	Game.mainLoop = null;
+	var gameRoot = document.getElementById("gameRoot");
+	while (gameRoot.firstChild) {
+		gameRoot.removeChild(gameRoot.firstChild);
+	}
+	Game.char = null;
+	Game.cam = null;
+	this.loadMap(map);
+};
 
-		// -------------------------------------
-		// init event related stuff
-		var displayEvents = Game.config.showEventLayers ? 'block' : 'none';
-		svg.selectAll('g').filter(function() {
-			return (
-				this.getAttribute('inkscape:groupmode') == 'layer'
-				&& Game.eventLayers.indexOf(this.getAttribute('inkscape:label')) >= 0
-			);
-		}).style('display', displayEvents);
+Game.prototype.loadMap = function(map) {
+	var gameCanvas = document.getElementById("gameCanvas");
+	var gameRoot = document.getElementById("gameRoot");
 
-		Game.eventHandler = new EventHandler(svg);
+	var svg = null;
 
-		// -------------------------------------
-		// init view stuff
-		Game.char = new Char(svg);
-		Game.cam = new Camera(svg, Game.char.translation);
+	var initstack = [
+		[initMap, map],
+		[initMouse],
+		[startMainLoop]
+	];
+
+	function init(done) {
+		var next = initstack.shift();
+		if(next) next[0].apply(null, (next.slice(1) || []).concat(init));
+	}
+	init();
 
 
-		// test animation
-		var ship = svg.select("#shipGroup");
-		ship
-			.attr("transform", function(d,i) { return "translate(200,000)"; });
-		ship.transition()
-			.duration(3000)
-			.attr("transform", function(d,i) { return "translate(0,0)"; });
+	function initMap(mapId, done) {
+		d3.xml(FAPI.resolvePath('maps/'+mapId+'.svg'), 'image/svg+xml', function(xml) {
 
-		// animate
-		setInterval(function() {
-			if (Game.char.loaded) {
-				// move player
-				Game.char.physics();
-				Game.char.animate();
-				// cam movement
-				Game.cam.movement();
-			}
-		}, 10);
+			gameCanvas.style.width = Game.config.size[0]+'px';
+			gameCanvas.style.height = Game.config.size[1]+'px';
+			gameRoot.appendChild(xml.documentElement);
 
+			svg = d3.select("svg");
+
+			// -------------------------------------
+			// init event related stuff
+			var displayEvents = Game.config.showEventLayers ? 'block' : 'none';
+			svg.selectAll('g').filter(function() {
+				return (
+					this.getAttribute('inkscape:groupmode') == 'layer'
+					&& Game.eventLayers.indexOf(this.getAttribute('inkscape:label')) >= 0
+				);
+			}).style('display', displayEvents);
+
+			Game.eventHandler = new EventHandler(svg);
+
+			// -------------------------------------
+			// init view stuff
+			Game.char = new Char(svg);
+			Game.cam = new Camera(svg, Game.char.translation);
+
+
+			// test animation
+			var ship = svg.select("#shipGroup");
+			ship
+				.attr("transform", function(d,i) { return "translate(200,000)"; });
+			ship.transition()
+				.duration(3000)
+				.attr("transform", function(d,i) { return "translate(0,0)"; });
+			done();
+
+		});
+	}
+
+	function initMouse(done) {
 		var mousePointer = svg.append("circle").attr("r", 10).style("opacity", 0.5).style("display",'none');
 		svg.on("click", function(d) {
 			var xy = getMouseXY();
@@ -76,50 +106,65 @@ Game.prototype.run = function() {
 			mousePointer.style("fill", colour);
 		});
 
-		function getMouseXY () {
-			try {
-				var rawCoords = d3.mouse(gameCanvas);
-				var cleanCoords = {
-					x: (rawCoords[0] < 0) ? 0 : ((rawCoords[0] > Game.config.size[0]) ? Game.config.size[0] : rawCoords[0]),
-					y: (rawCoords[1] < 0) ? 0 : ((rawCoords[1] > Game.config.size[1]) ? Game.config.size[1] : rawCoords[1])
-				};
+		done();
+	}
 
-				// calculation of top/left offset taken from prototypeJS
-				// https://github.com/sstephenson/prototype/blob/8d968bf957f0c41e5fcc665860d63a98a3fd26a0/src/prototype/dom/layout.js#L1156
-				var offsetTop = 0, offsetLeft = 0, docBody = document.body;
-				var element = gameCanvas;
-				do {
-					offsetTop += element.offsetTop  || 0;
-					offsetLeft += element.offsetLeft || 0;
-					// Safari fix
-					if (element.offsetParent == docBody &&
-						element.style.position == 'absolute') break;
-				} while (element = element.offsetParent);
-
-				element = gameCanvas;
-				do {
-					// Opera < 9.5 sets scrollTop/Left on both HTML and BODY elements.
-					// Other browsers set it only on the HTML element. The BODY element
-					// can be skipped since its scrollTop/Left should always be 0.
-					if (element != docBody) {
-						offsetTop -= element.scrollTop  || 0;
-						offsetLeft -= element.scrollLeft || 0;
-					}
-				} while (element = element.parentNode);
-				// ^--------- from prototypeJS
-
-				var matrix = svg[0][0].getScreenCTM();
-				cleanCoords.x = cleanCoords.x - matrix.e + offsetLeft - window.scrollX;
-				cleanCoords.y = cleanCoords.y - matrix.f + offsetTop  - window.scrollY;
-
-				return cleanCoords;
-			} catch (e) {
-				console.error(e);
-				return undefined;
+	function startMainLoop(){
+		Game.mainLoop = setInterval(function() {
+			if (Game.char.loaded) {
+				// move player
+				Game.char.physics();
+				Game.char.animate();
+				// cam movement
+				Game.cam.movement();
 			}
+		}, 10);
 
+	}
+
+	function getMouseXY () {
+		try {
+			var rawCoords = d3.mouse(gameCanvas);
+			var cleanCoords = {
+				x: (rawCoords[0] < 0) ? 0 : ((rawCoords[0] > Game.config.size[0]) ? Game.config.size[0] : rawCoords[0]),
+				y: (rawCoords[1] < 0) ? 0 : ((rawCoords[1] > Game.config.size[1]) ? Game.config.size[1] : rawCoords[1])
+			};
+
+			// calculation of top/left offset taken from prototypeJS
+			// https://github.com/sstephenson/prototype/blob/8d968bf957f0c41e5fcc665860d63a98a3fd26a0/src/prototype/dom/layout.js#L1156
+			var offsetTop = 0, offsetLeft = 0, docBody = document.body;
+			var element = gameCanvas;
+			do {
+				offsetTop += element.offsetTop  || 0;
+				offsetLeft += element.offsetLeft || 0;
+				// Safari fix
+				if (element.offsetParent == docBody &&
+					element.style.position == 'absolute') break;
+			} while (element = element.offsetParent);
+
+			element = gameCanvas;
+			do {
+				// Opera < 9.5 sets scrollTop/Left on both HTML and BODY elements.
+				// Other browsers set it only on the HTML element. The BODY element
+				// can be skipped since its scrollTop/Left should always be 0.
+				if (element != docBody) {
+					offsetTop -= element.scrollTop  || 0;
+					offsetLeft -= element.scrollLeft || 0;
+				}
+			} while (element = element.parentNode);
+			// ^--------- from prototypeJS
+
+			var matrix = svg[0][0].getScreenCTM();
+			cleanCoords.x = cleanCoords.x - matrix.e + offsetLeft - window.scrollX;
+			cleanCoords.y = cleanCoords.y - matrix.f + offsetTop  - window.scrollY;
+
+			return cleanCoords;
+		} catch (e) {
+			console.error(e);
+			return undefined;
 		}
 
-	});
+	}
+
 };
 
