@@ -60,6 +60,9 @@ EventHandler.prototype.handleEvent = function (event, context) {
         case 'achievement':
             Game.achievements.triggerAchievement(event.id, context);
             break;
+        case 'map':
+            Game.instance.nextMap(event.id);
+            break;
     }
 
     if (event.stopsWalk) {

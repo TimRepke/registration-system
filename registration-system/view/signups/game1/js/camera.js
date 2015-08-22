@@ -19,15 +19,13 @@ Camera.prototype.moveTowards = function(v) {
 	var n = Vec.mul(dir, 1/d);
 
 	var x = d / this.idealDistanceToTarget; // map distance to range [0,1]
-	//x *= Math.PI; // stretch to [0, pi] for cos function
 
-	//var camspeed = (-Math.cos(x)+1)/2 // map result from [0,1]
 	var camspeed = Math.pow(x,4); // map result from [0,1]
 	camspeed *= this.idealDistanceToTarget; // map to [0, wantedspeed]
 	camspeed = Math.max(camspeed, x*this.linearMinimum, this.constantMinimum); // map to [minspeed, wantedspeed]
  
 	return Vec.mul(n, camspeed); 
-}
+};
 Camera.prototype.movement = function() {
 	if (!this.target) return;
 
@@ -48,15 +46,14 @@ Camera.prototype.movement = function() {
 	this.updatePosition();
 };
 Camera.prototype.updatePosition = function() {
-/*	var self = this;
-	this.svg.attr("transform", function(d,i) {
-		var translation = Vec.add(Vec.flipSign(self.translation), Vec.mul(Game.config.size, 0.5)); // move subject to center
-		return translate.apply(null, translation);
-	});
-*/
 	var root = document.getElementById("gameRoot");
+	var svg = root.firstChild;
 	var translation = Vec.add(Vec.flipSign(this.translation), Vec.mul(Game.config.size, 0.5)); // move subject to center
+	if(translation[0] > 0) translation[0] = 0;
+	if(translation[1] > 0) translation[1] = 0;
+	if(translation[0] < (Game.config.size[0] - svg.clientWidth))  translation[0] = Game.config.size[0] - svg.clientWidth;
+	if(translation[1] < (Game.config.size[1] - svg.clientHeight)) translation[1] = Game.config.size[1] - svg.clientHeight;
 	root.style.left = translation[0]+'px';
 	root.style.top = translation[1]+'px';
-}
+};
 
