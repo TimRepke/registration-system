@@ -57,13 +57,69 @@ Game.prototype.run = function() {
 			}
 		}, 10);
 
+		var mousePointer = svg.append("circle").attr("r", 10).style("opacity", 0.5).style("display",'none');
 		svg.on("click", function(d) {
-			var matrix = svg[0][0].getScreenCTM();
-			var x = d3.event.pageX-matrix.e;
-			var y = d3.event.pageY-matrix.f;
-			Game.char.setMoveTarget(x, y);
-			Game.eventHandler.triggerEventOn('click', x, y);
+			var xy = getMouseXY();
+			if (xy) {
+				Game.char.setMoveTarget(xy.x, xy.y);
+				Game.eventHandler.triggerEventOn('click', xy.x, xy.y);
+			}
+		}).on('mouseenter', function () {
+			mousePointer.style('display', 'block')
+		}).on('mouseleave', function () {
+			mousePointer.style('display', 'none')
+		}).on('mousemove', function () {
+			var xy = getMouseXY();
+			mousePointer.attr('cx', xy.x);
+			mousePointer.attr('cy', xy.y);
+			var colour = Game.char.pathFinder.canWalkOn(xy.x, xy.y) ? 'green' : 'red';
+			mousePointer.style("fill", colour);
 		});
-	});
 
+		function getMouseXY () {
+			try {
+				var rawCoords = d3.mouse(gameCanvas);
+				var cleanCoords = {
+					x: (rawCoords[0] < 0) ? 0 : ((rawCoords[0] > Game.config.size[0]) ? Game.config.size[0] : rawCoords[0]),
+					y: (rawCoords[1] < 0) ? 0 : ((rawCoords[1] > Game.config.size[1]) ? Game.config.size[1] : rawCoords[1])
+				};
+
+				// calculation of top/left offset taken from prototypeJS
+				// https://github.com/sstephenson/prototype/blob/8d968bf957f0c41e5fcc665860d63a98a3fd26a0/src/prototype/dom/layout.js#L1156
+				var offsetTop = 0, offsetLeft = 0, docBody = document.body;
+				var element = gameCanvas;
+				do {
+					offsetTop += element.offsetTop  || 0;
+					offsetLeft += element.offsetLeft || 0;
+					// Safari fix
+					if (element.offsetParent == docBody &&
+						element.style.position == 'absolute') break;
+				} while (element = element.offsetParent);
+
+				element = gameCanvas;
+				do {
+					// Opera < 9.5 sets scrollTop/Left on both HTML and BODY elements.
+					// Other browsers set it only on the HTML element. The BODY element
+					// can be skipped since its scrollTop/Left should always be 0.
+					if (element != docBody) {
+						offsetTop -= element.scrollTop  || 0;
+						offsetLeft -= element.scrollLeft || 0;
+					}
+				} while (element = element.parentNode);
+				// ^--------- from prototypeJS
+
+				var matrix = svg[0][0].getScreenCTM();
+				cleanCoords.x = cleanCoords.x - matrix.e + offsetLeft - window.scrollX;
+				cleanCoords.y = cleanCoords.y - matrix.f + offsetTop  - window.scrollY;
+
+				return cleanCoords;
+			} catch (e) {
+				console.error(e);
+				return undefined;
+			}
+
+		}
+
+	});
 };
+
