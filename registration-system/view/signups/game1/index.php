@@ -20,7 +20,7 @@ class Game1SignupMethod extends SignupMethod {
 
     public function getJSDependencies() {
         return ['jslib/d3.min.js', 'jslib/priority-queue.min.js', 'jslib/checkLineIntersection.js',
-            'js/achievements.js', 'js/svgUtils.js', 'js/pathFinder.js', 'js/vector.js', 'js/character.js','js/camera.js',
+            'js/events.js','js/achievements.js', 'js/svgUtils.js', 'js/pathFinder.js', 'js/vector.js', 'js/character.js','js/camera.js',
             'js/game.js'];
     }
 
