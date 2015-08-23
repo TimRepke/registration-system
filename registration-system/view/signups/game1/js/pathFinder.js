@@ -48,6 +48,18 @@ PathFinder.prototype.generateRaster = function() {
 			};
 		}
 	}
+
+	if (Game.config.verbosePathFinder) {
+		var line = '';
+		for (var i = 0; i < this.raster.length; i++) {
+			line += i + ': ';
+			for (var j = 0; j < this.raster[i].length; j++) {
+				line += this.raster[i][j].walkable ? '#' : '-';
+			}
+			line += '\n';
+		}
+		console.log(line);
+	}
 };
 PathFinder.prototype.clearPathScore = function() {
 	var bbox = this.svg[0][0].getBBox();

@@ -63,9 +63,10 @@
 
     var maps = ['map_landing', 'castle_entrance', 'castle_fs', 'dorf'];
     var game = new Game({
-        startMap: maps[0],
+        startMap: maps[UrlComponents.getValueOf('map') || 0],
         showEventLayers: UrlComponents.isSet('showEventLayers'),
-        pathFindingGridSize: 5,
+        pathFindingGridSize: UrlComponents.isSet('verbosePF') ? 18 : 5,
+        verbosePathFinder: UrlComponents.isSet('verbosePF'),
         usePathFinding: true,
         size: [800, 600]
     });
