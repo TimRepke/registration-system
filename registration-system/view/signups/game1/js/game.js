@@ -58,13 +58,15 @@ Game.prototype.loadMap = function(map) {
 
 			// -------------------------------------
 			// init event related stuff
-			var displayEvents = Game.config.showEventLayers ? 'block' : 'none';
+			var displayEvents = Game.config.showEventLayers ? 1 : 0;
 			svg.selectAll('g').filter(function() {
 				return (
 					this.getAttribute('inkscape:groupmode') == 'layer'
 					&& Game.eventLayers.indexOf(this.getAttribute('inkscape:label')) >= 0
 				);
-			}).style('display', displayEvents);
+			})
+			.style('display', 'block')
+			.style('opacity', displayEvents);
 
 			Game.eventHandler = new EventHandler(svg);
 

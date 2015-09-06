@@ -71,18 +71,19 @@ class Game1SignupMethod extends SignupMethod {
                 var FAPI = new FAPI();
 
                 var game = new Game({
-                    startMap: \'map_landing.svg\',
+                    startMap: \'map_landing\',
                     showEventLayers: false,
                     pathFindingGridSize: 5,
                     usePathFinding: true,
                     size: [800, 600]
                 });
-                game.run();
 
                 // this following stuff is to prevent the page from scrolling, when the user
                 // actually just wants to scroll inside the logs.
                 // it removes the main scrollbar and adds a padding of its size to replace the space
-                window.onload = function() {
+                $(function() {
+                    game.run();
+
                     var scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
                     var x = document.getElementsByClassName("sidebar-log");
                     for (var i = 0; i < x.length; i++) {
@@ -95,7 +96,7 @@ class Game1SignupMethod extends SignupMethod {
                             document.body.style.paddingRight = scrollbarWidth+"px";
                         }, false);
                     }
-                };
+                });
             </script>';
     }
 
