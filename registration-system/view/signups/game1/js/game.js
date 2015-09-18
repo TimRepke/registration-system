@@ -89,8 +89,9 @@ Game.prototype.loadMap = function(map, spawn) {
 		svg.on("click", function(d) {
 			var xy = getMouseXY();
 			if (xy) {
-				Game.char.setMoveTarget(xy.x, xy.y);
-				Game.eventHandler.triggerEventOn('click', xy.x, xy.y);
+				if (!Game.eventHandler.triggerEventOn('click', xy.x, xy.y)) {
+					Game.char.setMoveTarget(xy.x, xy.y);
+				}
 			}
 		}).on('mouseenter', function () {
 			mousePointer.style('display', 'block')
@@ -101,6 +102,7 @@ Game.prototype.loadMap = function(map, spawn) {
 			mousePointer.attr('cx', xy.x);
 			mousePointer.attr('cy', xy.y);
 			var colour = Game.char.pathFinder.canWalkOn(xy.x, xy.y) ? 'green' : 'red';
+			if (Game.eventHandler.hasEventOn('click', xy.x, xy.y)) colour = 'blue';
 			mousePointer.style("fill", colour);
 		});
 

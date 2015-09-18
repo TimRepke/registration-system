@@ -29,29 +29,36 @@ function EventHandler(svg) {
 }
 
 EventHandler.prototype.hasEventOn = function (trigger, x, y) {
-    return this.getEventOn(trigger, x, y) !== undefined;
+    return this.getEventOn(trigger, x, y, function() {});
 };
 
 EventHandler.prototype.getEventOn = function(trigger, x, y, callback) {
     if (!this.walkOnEvents) this.walkOnEvents = {}; // currently active events
 
+    var hasEvent = false;
     for (var i = 0; i < this.eventNodes[trigger].length; ++i) {
         var node = this.eventNodes[trigger][i];
         if (node.path.isInside(x, y)) {
-            if (!this.walkOnEvents[node.id]) {
+            hasEvent = true;
+            if (trigger == 'walkon' && !this.walkOnEvents[node.id]) {
                 this.walkOnEvents[node.id] = true;
                 callback(node, true);
+            } else {
+                callback(node);
             }
         } else {
-            delete this.walkOnEvents[node.id];
+            if (trigger == 'walkon' && this.walkOnEvents[node.id]) {
+                delete this.walkOnEvents[node.id];
+                callback(node, false);
+            }
         }
     }
-    return undefined;
+    return hasEvent;
 };
 
 EventHandler.prototype.triggerEventOn = function (trigger, x, y) {
     var self = this;
-    this.getEventOn(trigger, x, y, function(event, bEnter) {
+    return this.getEventOn(trigger, x, y, function(event, bEnter) {
         self.handleEvent(event, {trigger: trigger, x: x, y: y, bEnter: bEnter});
     });
 };
@@ -70,8 +77,7 @@ EventHandler.prototype.triggerEventOn = function (trigger, x, y) {
 EventHandler.prototype.handleEvent = function (event, context) {
     switch (event.type) {
         case 'achievement':
-            if (context.bEnter)
-                Game.achievements.triggerAchievement(event.id, context);
+            Game.achievements.triggerAchievement(event.id, context);
             break;
         case 'mapchange':
             Game.instance.nextMap(event.destination, event.target);
