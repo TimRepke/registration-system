@@ -77,12 +77,12 @@ Game.prototype.loadMap = function(map) {
 
 
 			// test animation
-			var ship = svg.select("#shipGroup");
+			/*var ship = svg.select("#shipGroup");
 			ship
 				.attr("transform", function(d,i) { return "translate(200,000)"; });
 			ship.transition()
 				.duration(3000)
-				.attr("transform", function(d,i) { return "translate(0,0)"; });
+				.attr("transform", function(d,i) { return "translate(0,0)"; });*/
 			done();
 
 		});
@@ -113,7 +113,7 @@ Game.prototype.loadMap = function(map) {
 
 	function startMainLoop(){
 		Game.mainLoop = setInterval(function() {
-			if (Game.char.loaded) {
+			if (Game.char && Game.char.loaded) {
 				// move player
 				Game.char.physics();
 				Game.char.animate();

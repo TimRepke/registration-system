@@ -51,8 +51,9 @@ Camera.prototype.updatePosition = function() {
 	var translation = Vec.add(Vec.flipSign(this.translation), Vec.mul(Game.config.size, 0.5)); // move subject to center
 	if(translation[0] > 0) translation[0] = 0;
 	if(translation[1] > 0) translation[1] = 0;
-	if(translation[0] < (Game.config.size[0] - svg.clientWidth))  translation[0] = Game.config.size[0] - svg.clientWidth;
-	if(translation[1] < (Game.config.size[1] - svg.clientHeight)) translation[1] = Game.config.size[1] - svg.clientHeight;
+	// @TODO: rework for firefox
+	//if(translation[0] < (Game.config.size[0] - svg.clientWidth))  translation[0] = Game.config.size[0] - svg.clientWidth;
+	//if(translation[1] < (Game.config.size[1] - svg.clientHeight)) translation[1] = Game.config.size[1] - svg.clientHeight;
 	root.style.left = translation[0]+'px';
 	root.style.top = translation[1]+'px';
 };
