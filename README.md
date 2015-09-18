@@ -39,7 +39,7 @@ coming soon! (because the stuff is too good to just open it for one signup)
 Send out the link to `passwd/index.html` to the new user. They'll send their encrypted password back. Add that 
 (in the appropriate structure) to the `passwd/users.txt` file.
 
-# Project structure
+# Project structure/Dev Hints
 
 There are two files that sort of handle the configuration because we couldn't be bothered to create another
 database table:
@@ -54,6 +54,18 @@ Folder structure:
 - `view/signups` contains all possible signup methods (games, add them to `config.inc.php`)
 - `view/js` should contain all commonly used js things
 - ...
+
+### Debugging
+
+For debugging you can point your browser to the `test.html` and use some of the following parameters:
+
+- `map` - number of the map
+- `showEventLayers` - set `true` if you want to see the event layers
+- `verbosePF` - set `true` to dump the path finding raster to the console
+
+For example:
+
+> http://localhost/fsfahrt/view/signups/game1/test.html?showEventLayers=true&map=2&verbosePF=true
 
 # How to deploy
 
