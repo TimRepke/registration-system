@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tim
- * Date: 8/16/14
- * Time: 5:02 PM
- */
 
 static $lang_regmail = "
 Deine Anmeldung zur Fachschaftsfahrt\\\\
@@ -44,6 +38,25 @@ Den Status der Anmeldung kannst Du jederzeit auf folgender Seite überprüfen:
 Weitere Informationen werden wir an diese E-Mail-Adresse senden, also bitte regelmäßig lesen und bei Fragen einfach fragen :-)
 
 Viele Grüße,
+{{organisator}}!
+";
+
+static $lang_payinfomail = "
+Zusatzinformationen zur Fachschaftsfahrt und Zahlungsaufforderung\\\\
+Hallo,
+
+du solltest bereits eine Anmeldebestätigung erhalten haben. Hier folgen jetzt noch ein paar kurze Infos:
+
+Wie bereits angekündigt sammeln wir zunächst 60,-€ pro Person ein.
+Diesen Betrag bitte bis zum {{paydeadline}} an folgendes Konto überweisen:
+{{payinfo}}
+
+Den Differenzbetrag bekommst du *nach* der Fahrt zusammen mit der Förderung wieder zurück. Die effektiven Kosten belaufen sich am Ende auf <25€.
+
+Alle Informationen findest du weiterhin hier:
+{{wikilink}}
+
+Bis dann,
 {{organisator}}!
 ";
 

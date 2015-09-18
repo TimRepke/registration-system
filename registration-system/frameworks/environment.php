@@ -223,18 +223,28 @@ class Environment {
                 return false; // full
 
             // === notify success ===
-            $this->feedbackHelper("lang_regmail", $data['mehl'], $data['bachelor_id'], $data['fahrt_id']);
+            $this->feedbackHelper(["lang_regmail", "lang_payinfomail"], $data['mehl'], $data['bachelor_id'], $data['fahrt_id']);
         }
 
         return true;
     }
 
-    private function feedbackHelper($mail_lang, $to, $hash, $fid) {
+    private function feedbackHelper($mail_langs, $to, $hash, $fid) {
         global $config_baseurl;
 
-        $from = $this->database->get("fahrten", ["kontakt","leiter"], ["fahrt_id"=>$fid]);
-        $mail = comm_get_lang($mail_lang, array( "{{url}}"         => $config_baseurl."status.php?hash=".$hash,
-            "{{organisator}}" => $from['leiter']));
-        comm_send_mail($this->database, $to, $mail, $from['kontakt']);
+        if (!is_array($mail_langs)) $mail_langs = [$mail_langs];
+
+        $from = $this->database->get("fahrten", ["kontakt","leiter", "paydeadline", "payinfo", "wikilink"], ["fahrt_id"=>$fid]);
+
+        foreach ($mail_langs as $mail_lang) {
+            $mail = comm_get_lang($mail_lang, [
+                "{{url}}" => $config_baseurl . "status.php?hash=" . $hash,
+                "{{organisator}}" => $from['leiter'],
+                "{{paydeadline}}" => $from['paydeadline'],
+                "{{payinfo}}" => $from['payinfo'],
+                "{{wikilink}}" => $from['wikilink']]);
+            $bcc = $mail_lang === "lang_payinfomail" ? $from['kontakt'] : NULL;
+            comm_send_mail($this->database, $to, $mail, $from['kontakt'], $bcc);
+        }
     }
 }

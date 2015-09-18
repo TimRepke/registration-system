@@ -22,11 +22,18 @@ if(isset($_POST['note-content'])){
                                  "leiter"       => $_REQUEST['leiter'],
                                  "kontakt"      => $_REQUEST['kontakt'],
                                  "max_bachelor" => $_REQUEST['max_bachelor'],
-                                 "regopen"      => isset($_REQUEST['regopen']) ? 1 : 0],
+                                 "regopen"      => isset($_REQUEST['regopen']) ? 1 : 0,
+                                 "wikilink"     => $_REQUEST['wikilink'],
+                                 "paydeadline"  => $_REQUEST['paydeadline'],
+                                 "payinfo"      => $_REQUEST['payinfo']],
                         array("fahrt_id"=>$config_current_fahrt_id));
 }
 
-$data = $admin_db->get("fahrten", ["beschreibung", "titel", "von", "bis", "ziel", "map_pin", "leiter", "kontakt", "regopen", "max_bachelor"], array("fahrt_id"=>$config_current_fahrt_id));
+$data = $admin_db->get("fahrten", ["beschreibung", "titel", "von", "bis", "ziel", "map_pin", "leiter", "kontakt", "regopen", "max_bachelor", "wikilink", "paydeadline", "payinfo"], array("fahrt_id"=>$config_current_fahrt_id));
+
+if(!preg_match('/\d{2}\.\d+ \d{2}\.\d+/', $data['map_pin'])){
+    $data['map_pin'] = '52.4263218 13.5223815';
+}
 
 $headers .="<!-- wysihtml5 parser rules -->
 <script src=\"../view/js/wysihtml5-0.3.0_rc2.min.js\"></script>
@@ -59,10 +66,11 @@ section{
     clear: both;
     height: 30px;
 }
-.formlist input{
+.formlist input, .formlist textarea {
     float: right;
     width: 300px;
 }
+
 .formlist label{
     float:left;
 }
@@ -91,6 +99,12 @@ $text .= '
                     <input type="text" name="leiter" id="leiter" value="'.$data["leiter"].'" /></li>
                 <li><label>E-Mail</label>
                     <input type="text" name="kontakt" id="kontakt" value="'.$data["kontakt"].'" /></li>
+                <li><label>Wiki-Link</label>
+                    <input type="text" name="wikilink" id="wikilink" value="'.$data["wikilink"].'" /></li>
+                <li><label>Zahlung bis</label>
+                    <input type="text" name="paydeadline" id="paydeadline" value="'.$data["paydeadline"].'" /></li>
+                <li><label>Zahlungsdetails</label>
+                    <textarea style="border:1px dotted grey;height: 6em; padding: 0 0 0 0.4em" rows="4" name="payinfo" id="payinfo">'.$data["payinfo"].'</textarea></li>
             </ul>
         </div>
         <div style="float:left">
@@ -112,6 +126,7 @@ $text .= '
                     $(function() {
                         $( "#von" ).datepicker( { dateFormat: "yy-mm-dd"} );
                         $( "#bis" ).datepicker( { dateFormat: "yy-mm-dd"} );
+                        $( "#paydeadline" ).datepicker( { dateFormat: "yy-mm-dd"} );
                     });
                 </script>
         </div>
