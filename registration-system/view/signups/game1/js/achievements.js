@@ -8,6 +8,7 @@ function Achievements() {
                 return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 150;
             }
         },
+        'stroh': 'Warum liegt hier Stroh rum?',
         'saw_devs1': 'Wilde Informatiker auf Wiese gesehen',
         'moneyboy': 'Money Boy: Swag ist aufgedreht',
         // TODO: add more!
