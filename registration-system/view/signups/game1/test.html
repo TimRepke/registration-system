@@ -65,7 +65,7 @@
     var game = new Game({
         startMap: maps[UrlComponents.getValueOf('map') || 0],
         showEventLayers: UrlComponents.isSet('showEventLayers'),
-        pathFindingGridSize: UrlComponents.isSet('verbosePF') ? 18 : 5,
+        pathFindingGridSize: UrlComponents.isSet('verbosePF') ? 5 : 5,
         verbosePathFinder: UrlComponents.isSet('verbosePF'),
         usePathFinding: true,
         size: [800, 600]
