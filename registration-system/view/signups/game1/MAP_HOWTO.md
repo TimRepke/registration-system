@@ -34,6 +34,8 @@ Folgende Attribute sollten gesetzt werden:
 - trigger (= walkon, hover, click)
 - type (= achievement, mapchange, ...)
 - stopsWalk (= true, false)
+- target (optional, für map type für mapchange)
+- destination (optional, target map für mapchange)
 - id
 
 Am Beispiel eines Achievements, welches beim drüberlaufen gefeuert wird und die Bernd weiterlaufen lässt:
@@ -48,6 +50,6 @@ Am Beispiel eines Achievements, welches beim drüberlaufen gefeuert wird und die
 
 Dies aktiviert das Achievement "first_step" (wie definiert, siehe `js/achievements.js`)
 
-Ganz wichtig in dieser Ebene: Ein Objekt mit der ID="player_spawn"!
+Ganz wichtig in der Start-Ebene: Ein Objekt mit der ID="player_spawn", ansonsten target nutzen.
 
 Konvention: spawn roter Kreis, walkon pink, mapchange grün, ... ; Ebene leicht transparent

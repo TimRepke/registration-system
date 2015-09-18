@@ -16,7 +16,7 @@ Game.prototype.run = function() {
 	this.loadMap(Game.config.startMap);
 };
 
-Game.prototype.nextMap = function (map) {
+Game.prototype.nextMap = function (map, spawn) {
 	clearInterval(Game.mainLoop);
 	Game.mainLoop = null;
 	var gameRoot = document.getElementById("gameRoot");
@@ -25,17 +25,17 @@ Game.prototype.nextMap = function (map) {
 	}
 	Game.char = null;
 	Game.cam = null;
-	this.loadMap(map);
+	this.loadMap(map, spawn);
 };
 
-Game.prototype.loadMap = function(map) {
+Game.prototype.loadMap = function(map, spawn) {
 	var gameCanvas = document.getElementById("gameCanvas");
 	var gameRoot = document.getElementById("gameRoot");
 
 	var svg = null;
 
 	var initstack = [
-		[initMap, map],
+		[initMap, map, spawn],
 		[initMouse],
 		[startMainLoop]
 	];
@@ -47,7 +47,8 @@ Game.prototype.loadMap = function(map) {
 	init();
 
 
-	function initMap(mapId, done) {
+	function initMap(mapId, spawn, done) {
+		console.log('Init map: ' + mapId + ' spawn: ' + spawn);
 		d3.xml(FAPI.resolvePath('maps/'+mapId+'.svg'), 'image/svg+xml', function(xml) {
 
 			gameCanvas.style.width = Game.config.size[0]+'px';
@@ -58,7 +59,7 @@ Game.prototype.loadMap = function(map) {
 
 			// -------------------------------------
 			// init event related stuff
-			var displayEvents = Game.config.showEventLayers ? 1 : 0;
+			var displayEvents = Game.config.showEventLayers ? 0.5 : 0;
 			svg.selectAll('g').filter(function() {
 				return (
 					this.getAttribute('inkscape:groupmode') == 'layer'
@@ -72,7 +73,7 @@ Game.prototype.loadMap = function(map) {
 
 			// -------------------------------------
 			// init view stuff
-			Game.char = new Char(svg);
+			Game.char = new Char(svg, {spawnid: spawn});
 			Game.cam = new Camera(svg, Game.char.translation);
 
 
@@ -136,13 +137,16 @@ Game.prototype.loadMap = function(map) {
 			// https://github.com/sstephenson/prototype/blob/8d968bf957f0c41e5fcc665860d63a98a3fd26a0/src/prototype/dom/layout.js#L1156
 			var offsetTop = 0, offsetLeft = 0, docBody = document.body;
 			var element = gameCanvas;
-			do {
+			/*do {
 				offsetTop += element.offsetTop  || 0;
 				offsetLeft += element.offsetLeft || 0;
 				// Safari fix
 				if (element.offsetParent == docBody &&
 					element.style.position == 'absolute') break;
-			} while (element = element.offsetParent);
+			} while (element = element.offsetParent);*/
+			var offset = $(element).offset();
+			var offsetTop = offset.top;
+			var offsetLeft = offset.left;
 
 			element = gameCanvas;
 			do {
@@ -157,8 +161,8 @@ Game.prototype.loadMap = function(map) {
 			// ^--------- from prototypeJS
 
 			var matrix = svg[0][0].getScreenCTM();
-			cleanCoords.x = cleanCoords.x - matrix.e + offsetLeft - window.scrollX;
-			cleanCoords.y = cleanCoords.y - matrix.f + offsetTop  - window.scrollY;
+			cleanCoords.x = cleanCoords.x - matrix.e + offsetLeft;
+			cleanCoords.y = cleanCoords.y - matrix.f + offsetTop;
 
 			return cleanCoords;
 		} catch (e) {
