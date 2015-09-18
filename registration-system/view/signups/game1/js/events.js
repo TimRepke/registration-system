@@ -32,18 +32,28 @@ EventHandler.prototype.hasEventOn = function (trigger, x, y) {
     return this.getEventOn(trigger, x, y) !== undefined;
 };
 
-EventHandler.prototype.getEventOn = function(trigger, x, y) {
+EventHandler.prototype.getEventOn = function(trigger, x, y, callback) {
+    if (!this.walkOnEvents) this.walkOnEvents = {}; // currently active events
+
     for (var i = 0; i < this.eventNodes[trigger].length; ++i) {
-        if (this.eventNodes[trigger][i].path.isInside(x, y)) {
-            return this.eventNodes[trigger][i];
+        var node = this.eventNodes[trigger][i];
+        if (node.path.isInside(x, y)) {
+            if (!this.walkOnEvents[node.id]) {
+                this.walkOnEvents[node.id] = true;
+                callback(node, true);
+            }
+        } else {
+            delete this.walkOnEvents[node.id];
         }
     }
     return undefined;
 };
 
 EventHandler.prototype.triggerEventOn = function (trigger, x, y) {
-    var event = this.getEventOn(trigger, x, y);
-    if (event) this.handleEvent(event, {trigger: trigger, x: x, y: y});
+    var self = this;
+    this.getEventOn(trigger, x, y, function(event, bEnter) {
+        self.handleEvent(event, {trigger: trigger, x: x, y: y, bEnter: bEnter});
+    });
 };
 
 /**
@@ -58,12 +68,10 @@ EventHandler.prototype.triggerEventOn = function (trigger, x, y) {
  * @param event
  */
 EventHandler.prototype.handleEvent = function (event, context) {
-    if (context.trigger == 'walkon')
-        console.log('walkon');
-
     switch (event.type) {
         case 'achievement':
-            Game.achievements.triggerAchievement(event.id, context);
+            if (context.bEnter)
+                Game.achievements.triggerAchievement(event.id, context);
             break;
         case 'mapchange':
             Game.instance.nextMap(event.destination, event.target);
