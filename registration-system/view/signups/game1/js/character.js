@@ -3,7 +3,7 @@ function Char(svg, options) {
 	this.svg = svg;
 	this.pathFinder = new PathFinder(svg);
 
-	this.translation = options.spawn ? options.spawn : this.findSpawn();
+	this.translation = options.spawn ? options.spawn : this.findSpawn(options ? options.spawnid : null);
 	this.moveTarget = [];
 	this.maxSpeed = 2;
 	this.loaded = false;
@@ -23,10 +23,10 @@ function Char(svg, options) {
 		self.loaded = true;
 	});
 }
-Char.prototype.findSpawn = function() {
+Char.prototype.findSpawn = function(spawnId) {
 	// [1320, svgFlipY(svg[0][0], 500)]
-	var spawn = this.svg.select("#player_spawn");
-	if (!spawn[0][0]) console.error("Could not find spawn");
+	var spawn = this.svg.select(spawnId ? '#'+spawnId : "#player_spawn");
+	if (!spawn[0][0]) console.error("Could not find spawn: #" + spawnId);
 	var bbox = spawn[0][0].getBBox();
 	return Vec.add(getTranslation(this.svg[0][0], spawn[0][0]), [bbox.x, bbox.y]);
 };
