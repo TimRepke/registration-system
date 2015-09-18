@@ -4,7 +4,7 @@ function EventHandler(svg) {
         click:  [],
         walkon: []
     };
-
+    this.svg = svg;
     var self = this;
     svg.selectAll('g').each(function(d, i) {
         var label = this.getAttribute('inkscape:label');
@@ -22,7 +22,9 @@ function EventHandler(svg) {
                 trigger: trigger,
                 target: this.getAttribute('target'),
                 destination: this.getAttribute('destination'),
-                stopsWalk: this.getAttribute('stopsWalk') === 'true'
+                stopsWalk: this.getAttribute('stopsWalk') === 'true',
+                action: this.getAttribute('action'),
+                walkTo: this.getAttribute('walkTo')
             });
         }
     });
@@ -82,9 +84,33 @@ EventHandler.prototype.handleEvent = function (event, context) {
         case 'mapchange':
             Game.instance.nextMap(event.destination, event.target);
             break;
+        case 'special':
+            EventHandler.handleAction(event);
+            break;
     }
 
     if (event.stopsWalk) {
         Game.char.stopMovement();
+    }
+};
+
+EventHandler.handleAction = function(event) {
+    if (event.action && event.action in EventHandler.actions) {
+        if(event.walkTo) {
+            var spawn = Game.char.svg.select('#'+event.walkTo);
+            if (spawn[0][0]) {
+                var bbox = spawn[0][0].getBBox();
+                var xy = Vec.add(getTranslation(spawn[0][0], Game.char.svg[0][0]), [bbox.x, bbox.y]);
+                Game.char.setMoveTarget(xy[0], xy[1], EventHandler.actions[event.action]);
+            }
+        } else {
+            EventHandler.actions[event.action]();
+        }
+    }
+};
+
+EventHandler.actions = {
+    'fs_open_board': function() {
+        console.log('fuck yeah!')
     }
 };

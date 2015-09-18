@@ -116,7 +116,11 @@ Char.prototype.animate = function() {
 	this.frames[currentFrame].style.display = 'block';
 };
 Char.prototype.physics = function() {
-	if (this.moveTarget && this.moveTarget.length == 0) return;
+	if (this.moveTarget && this.moveTarget.length == 0) {
+		if (this.onArrivalCallback && typeof this.onArrivalCallback === 'function') this.onArrivalCallback();
+		this.onArrivalCallback = null;
+		return;
+	}
 
 	if (Vec.equals(this.translation, this.moveTarget[0])) {
 		this.moveTarget.shift();
@@ -152,7 +156,15 @@ Char.prototype.updatePosition = function() {
 		return translate.apply(null, self.translation);
 	});
 };
-Char.prototype.setMoveTarget = function(x,y) {
+/**
+ *
+ * @param x coord
+ * @param y coord
+ * @param onArrival optional callback function
+ */
+Char.prototype.setMoveTarget = function(x, y, onArrival) {
+
+	this.onArrivalCallback = onArrival;
 
 	if (Game.config.usePathFinding)
 		this.moveTarget = this.pathFinder.smoothPath(this.pathFinder.findPath(this.translation[0], this.translation[1], x, y));
