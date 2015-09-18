@@ -232,9 +232,13 @@ class Environment {
     private function feedbackHelper($mail_lang, $to, $hash, $fid) {
         global $config_baseurl;
 
-        $from = $this->database->get("fahrten", ["kontakt","leiter"], ["fahrt_id"=>$fid]);
+        // send mail to newly registered person
+        $from = $this->database->get("fahrten", ["kontakt","leiter", "paydeadline", "payinfo", "wikilink"], ["fahrt_id"=>$fid]);
         $mail = comm_get_lang($mail_lang, array( "{{url}}"         => $config_baseurl."status.php?hash=".$hash,
             "{{organisator}}" => $from['leiter']));
         comm_send_mail($this->database, $to, $mail, $from['kontakt']);
+
+        // send mail to admin
+
     }
 }
