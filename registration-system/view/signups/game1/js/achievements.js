@@ -9,6 +9,7 @@ function Achievements() {
             }
         },
         'saw_devs1': 'Wilde Informatiker auf Wiese gesehen',
+        'moneyboy': 'Money Boy: Swag ist aufgedreht',
         // TODO: add more!
         'achievement42': 'You just found the answer to everything!'
     };
