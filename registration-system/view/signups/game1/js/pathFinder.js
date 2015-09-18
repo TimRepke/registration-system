@@ -50,14 +50,21 @@ PathFinder.prototype.generateRaster = function() {
 	}
 
 	if (Game.config.verbosePathFinder) {
-		var line = '';
+		var pgm = "P5\n";
+		pgm += this.raster[0].length+' '+this.raster.length+'\n';
+		pgm += "255\n";
 		for (var i = 0; i < this.raster.length; i++) {
-			line += i + ': ';
+			//line += i + ': ';
 			for (var j = 0; j < this.raster[i].length; j++) {
-				line += this.raster[i][j].walkable ? '#' : '-';
+				pgm += this.raster[i][j].walkable ? ' ' : '~';
 			}
-			line += '\n';
+			//line += '';
 		}
+
+		var line = '\n';
+		line += "--- .PGM DATA ---\n";
+		line += pgm;
+		line += '\n--- .PGM DATA END ---\n';
 		console.log(line);
 	}
 };
