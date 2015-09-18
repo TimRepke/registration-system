@@ -20,12 +20,62 @@ function Path(svgPathData, offset) {
 	this.edges = [];
 
 	var currentPosition = [0,0];
+	var lastPosition = null;
 	if (!offset) offset = [0,0];
-	var relativeCommand = true;
 	var currentCommand = 'm';
 
 	var splitData = svgPathData.split(" ");
-	while (splitData.length > 0) {
+
+	for (var i = 0; i < splitData.length; ++i) {
+		var d = splitData[i];
+		var s = d.split(',');
+		var commandPart = s[0][0];
+		var commandPartInt = commandPart.charCodeAt(0);
+		var isNumber = (commandPartInt >= 48 && commandPartInt <= 57) || commandPart == '-' || commandPart == '+' || commandPart == '.';
+
+		if (isNumber) {
+			currentPosition = currentPosition.slice();
+			lastPosition = currentPosition.slice();
+			switch (currentCommand) {
+				case 'm':
+					currentPosition[0] = Number(s[0]) + offset[0];
+					currentPosition[1] = Number(s[1]) + offset[1];
+					currentCommand = 'l';
+					break;
+				case 'M':
+					currentPosition[0] = Number(s[0]) + offset[0];
+					currentPosition[1] = Number(s[1]) + offset[1];
+					currentCommand = 'L';
+					break;
+				case 'l':
+					currentPosition[0] += Number(s[0]);
+					currentPosition[1] += Number(s[1]);
+					this.edges.push([lastPosition.slice(), currentPosition.slice()]);
+					break;
+				case 'L':
+					currentPosition[0] = offset[0] + Number(s[0]);
+					currentPosition[1] = offset[1] + Number(s[1]);
+					this.edges.push([lastPosition.slice(), currentPosition.slice()]);
+					break;
+			}
+		} else {
+			switch (commandPart) {
+				case 'm':
+				case 'M':
+				case 'l':
+				case 'L':
+					currentCommand = commandPart;
+					break;
+				case 'z':
+					this.edges.push([this.edges[this.edges.length-1][1].slice(), this.edges[0][0].slice()]);
+					break;
+				default:
+					currentCommand = 'l'; // fallback
+			}
+		}
+	}
+
+	/*while (splitData.length > 0) {
 		var lastPosition = currentPosition.slice();
 
 		var part = splitData.shift();
@@ -57,11 +107,11 @@ function Path(svgPathData, offset) {
 					currentCommand = 'l'; // fallback
 			}
 			if (currentCommand == 'z') // close loop
-				this.edges.push([this.edges[this.edges.length-1][1], this.edges[0][0]]);
+	 			this.edges.push([this.edges[this.edges.length-1][1], this.edges[0][0]]);
 			if (rest.length > 0)
 				splitData.unshift(rest);
 		}
-	}
+	}*/
 }
 Path.prototype.lineIntersectionCount = function(fromX, fromY, x, y) {
 	var hitCount = 0;
