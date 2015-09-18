@@ -109,25 +109,26 @@ Char.prototype.animate = function() {
 };
 Char.prototype.physics = function() {
 	if (this.moveTarget && this.moveTarget.length == 0) return;
+
 	if (Vec.equals(this.translation, this.moveTarget[0])) {
 		this.moveTarget.shift();
-		return;
-	}
+	} else {
+		var stuckFixer = 0;
+		do {
+			var v = Vec.add(Vec.flipSign(this.translation), this.moveTarget[0]);
+			var d = Vec.length(v);
 
-	var v = Vec.add(Vec.flipSign(this.translation), this.moveTarget[0]);
-	var d = Vec.length(v);
+			if (d > this.maxSpeed) {
+				var n = Vec.mul(v, 1 / d); // normalized
+				v = Vec.mul(n, this.maxSpeed + stuckFixer);
+			}
+			stuckFixer += 0.5;
 
-	if (d > this.maxSpeed) {
-		var n = Vec.mul(v, 1/d); // normalized
-		v = Vec.mul(n, this.maxSpeed);
-	}
+			var nextPosition = (d < g_smallValue) ? this.moveTarget[0] : Vec.add(this.translation, v);
+		} while (!this.pathFinder.canWalkOn(nextPosition[0], nextPosition[1]));
 
-	var nextPosition = (d < g_smallValue) ? this.moveTarget[0] : Vec.add(this.translation, v);
-
-	if (this.pathFinder.canWalkOn(nextPosition[0], nextPosition[1]))
 		Vec.assign(this.translation, nextPosition);
-	else
-		this.moveTarget.shift();
+	}
 
 	Game.eventHandler.triggerEventOn('walkon', this.translation[0], this.translation[1]);
 
