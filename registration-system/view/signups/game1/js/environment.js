@@ -2,22 +2,22 @@ function Environment () {
   // something?
 }
 
-Environment.prototype.progress = {
+Environment.progress = {
     fs_firstApproach: false,
     fs_georgeScreamed: false,
     fs_filledBoard: false,
     killedGoat: false
 };
 
-Environment.prototype.inventory = {
+Environment.inventory = {
     money: false,
     goatDrops: false
 };
 
-Environment.prototype.mapEvents = {
+Environment.mapEvents = {
     'map_landing': {
         init: function(svg) {
-            if (this.progress.fs_filledBoard) {
+            if (Environment.progress.fs_filledBoard) {
                 // TODO: remove baustelle (that doesn't exist yet)
             } else {
                 var ship = svg.select("#shipGroup");
