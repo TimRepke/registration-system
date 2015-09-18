@@ -99,7 +99,7 @@ function comm_generate_key($db_handle, $check, $conditions){
  *
  * returns true/false depending on success
  */
-function comm_send_mail($db_handle, $addr, $cont, $from = NULL, $bcc = false){
+function comm_send_mail($db_handle, $addr, $cont, $from = NULL, $bcc = NULL){
     global $config_current_fahrt_id, $config_mailtag;
     if(is_null($from))
         $from = $db_handle->get("fahrten", "kontakt", array("fahrt_id"=>$config_current_fahrt_id));
@@ -116,6 +116,7 @@ function comm_send_mail($db_handle, $addr, $cont, $from = NULL, $bcc = false){
     $headers = 'From: ' . $from . "\r\n" .
         'Reply-To: ' . $from. "\r\n" .
         'X-Mailer: PHP/' . phpversion();
+    if (!is_null($bcc)) $headers .= "\r\nBcc: " . $bcc;
 
     comm_verbose(3, "sending mail... from: ".$from."<br/>to:".$addr."<br />subject: ".$subj."<br/>content:".$mess);
 
