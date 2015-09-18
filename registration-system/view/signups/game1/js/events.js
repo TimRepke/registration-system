@@ -20,6 +20,8 @@ function EventHandler(svg) {
                 id: this.getAttribute('id'),
                 type: this.getAttribute('type'),
                 trigger: trigger,
+                target: this.getAttribute('target'),
+                destination: this.getAttribute('destination'),
                 stopsWalk: this.getAttribute('stopsWalk') === 'true'
             });
         }
@@ -60,8 +62,8 @@ EventHandler.prototype.handleEvent = function (event, context) {
         case 'achievement':
             Game.achievements.triggerAchievement(event.id, context);
             break;
-        case 'map':
-            Game.instance.nextMap(event.id);
+        case 'mapchange':
+            Game.instance.nextMap(event.destination, event.target);
             break;
     }
 

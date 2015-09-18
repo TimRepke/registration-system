@@ -16,7 +16,7 @@ Game.prototype.run = function() {
 	this.loadMap(Game.config.startMap);
 };
 
-Game.prototype.nextMap = function (map) {
+Game.prototype.nextMap = function (map, spawn) {
 	clearInterval(Game.mainLoop);
 	Game.mainLoop = null;
 	var gameRoot = document.getElementById("gameRoot");
@@ -25,17 +25,17 @@ Game.prototype.nextMap = function (map) {
 	}
 	Game.char = null;
 	Game.cam = null;
-	this.loadMap(map);
+	this.loadMap(map, spawn);
 };
 
-Game.prototype.loadMap = function(map) {
+Game.prototype.loadMap = function(map, spawn) {
 	var gameCanvas = document.getElementById("gameCanvas");
 	var gameRoot = document.getElementById("gameRoot");
 
 	var svg = null;
 
 	var initstack = [
-		[initMap, map],
+		[initMap, map, spawn],
 		[initMouse],
 		[startMainLoop]
 	];
@@ -47,7 +47,8 @@ Game.prototype.loadMap = function(map) {
 	init();
 
 
-	function initMap(mapId, done) {
+	function initMap(mapId, spawn, done) {
+		console.log('Init map: ' + mapId + ' spawn: ' + spawn);
 		d3.xml(FAPI.resolvePath('maps/'+mapId+'.svg'), 'image/svg+xml', function(xml) {
 
 			gameCanvas.style.width = Game.config.size[0]+'px';
@@ -72,7 +73,7 @@ Game.prototype.loadMap = function(map) {
 
 			// -------------------------------------
 			// init view stuff
-			Game.char = new Char(svg);
+			Game.char = new Char(svg, {spawnid: spawn});
 			Game.cam = new Camera(svg, Game.char.translation);
 
 
