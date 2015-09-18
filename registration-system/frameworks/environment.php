@@ -243,7 +243,8 @@ class Environment {
                 "{{paydeadline}}" => $from['paydeadline'],
                 "{{payinfo}}" => $from['payinfo'],
                 "{{wikilink}}" => $from['wikilink']]);
-            comm_send_mail($this->database, $to, $mail, $from['kontakt'], $from['kontakt']);
+            $bcc = $mail_lang === "lang_payinfomail" ? $from['kontakt'] : NULL;
+            comm_send_mail($this->database, $to, $mail, $from['kontakt'], $bcc);
         }
     }
 }
