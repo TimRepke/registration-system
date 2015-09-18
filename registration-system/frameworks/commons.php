@@ -99,7 +99,7 @@ function comm_generate_key($db_handle, $check, $conditions){
  *
  * returns true/false depending on success
  */
-function comm_send_mail($db_handle, $addr, $cont, $from = NULL){
+function comm_send_mail($db_handle, $addr, $cont, $from = NULL, $bcc = false){
     global $config_current_fahrt_id, $config_mailtag;
     if(is_null($from))
         $from = $db_handle->get("fahrten", "kontakt", array("fahrt_id"=>$config_current_fahrt_id));
@@ -111,6 +111,7 @@ function comm_send_mail($db_handle, $addr, $cont, $from = NULL){
         $subj = $tmp[0];
         $mess = $tmp[1];
     }
+    $subj = $config_mailtag.$subj;
 
     $headers = 'From: ' . $from . "\r\n" .
         'Reply-To: ' . $from. "\r\n" .
@@ -118,7 +119,7 @@ function comm_send_mail($db_handle, $addr, $cont, $from = NULL){
 
     comm_verbose(3, "sending mail... from: ".$from."<br/>to:".$addr."<br />subject: ".$subj."<br/>content:".$mess);
 
-    return mail($addr, $config_mailtag.$subj, $mess, $headers);
+    return mail($addr, $subj, $mess, $headers);
 }
 
 function comm_get_lang($lang, $replace){
