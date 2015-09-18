@@ -5,7 +5,6 @@ function Game(config) {
 	Game.instance = this;
 
 	Game.achievements = new Achievements();
-	Game.environment  = new Environment();
 	Game.eventHandler = null;
 	Game.char = null;
 	Game.cam  = null;
@@ -74,7 +73,7 @@ Game.prototype.loadMap = function(map, spawn) {
 
 			// -------------------------------------
 			// init map specific things
-			Game.environment.mapEvents[mapId].init(svg);
+			Environment.mapEvents[mapId].init(svg);
 
 			// init view stuff
 			Game.char = new Char(svg, {spawnid: spawn});
