@@ -38,13 +38,13 @@ function Path(svgPathData, offset) {
 			lastPosition = currentPosition.slice();
 			switch (currentCommand) {
 				case 'm':
-					currentPosition[0] = Number(s[0]) + offset[0];
-					currentPosition[1] = Number(s[1]) + offset[1];
+					currentPosition[0] = Number(s[0]) - offset[0];
+					currentPosition[1] = Number(s[1]) - offset[1];
 					currentCommand = 'l';
 					break;
 				case 'M':
-					currentPosition[0] = Number(s[0]) + offset[0];
-					currentPosition[1] = Number(s[1]) + offset[1];
+					currentPosition[0] = Number(s[0]) - offset[0];
+					currentPosition[1] = Number(s[1]) - offset[1];
 					currentCommand = 'L';
 					break;
 				case 'l':
@@ -53,8 +53,8 @@ function Path(svgPathData, offset) {
 					this.edges.push([lastPosition.slice(), currentPosition.slice()]);
 					break;
 				case 'L':
-					currentPosition[0] = offset[0] + Number(s[0]);
-					currentPosition[1] = offset[1] + Number(s[1]);
+					currentPosition[0] = Number(s[0]) - offset[0];
+					currentPosition[1] = Number(s[1]) - offset[1];
 					this.edges.push([lastPosition.slice(), currentPosition.slice()]);
 					break;
 			}
