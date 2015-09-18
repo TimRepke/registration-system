@@ -5,6 +5,7 @@ function Game(config) {
 	Game.instance = this;
 
 	Game.achievements = new Achievements();
+	Game.environment  = new Environment();
 	Game.eventHandler = null;
 	Game.char = null;
 	Game.cam  = null;
@@ -72,18 +73,13 @@ Game.prototype.loadMap = function(map, spawn) {
 			Game.eventHandler = new EventHandler(svg);
 
 			// -------------------------------------
+			// init map specific things
+			Game.environment.mapEvents[mapId].init(svg);
+
 			// init view stuff
 			Game.char = new Char(svg, {spawnid: spawn});
 			Game.cam = new Camera(svg, Game.char.translation);
 
-
-			// test animation
-			/*var ship = svg.select("#shipGroup");
-			ship
-				.attr("transform", function(d,i) { return "translate(200,000)"; });
-			ship.transition()
-				.duration(3000)
-				.attr("transform", function(d,i) { return "translate(0,0)"; });*/
 			done();
 
 		});
