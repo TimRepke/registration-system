@@ -205,8 +205,8 @@ else{
 
 $text .=  '<textarea style="height:300px; width:800px" id="mails">'.$dsa;
 foreach($mails as $mehl){
-    $text .=  "<".$mehl['forname']." ".$mehl['sirname']."> ".$mehl['mehl']."; ";
-    $ajax .=  "<".$mehl['forname']." ".$mehl['sirname']."> ".$mehl['mehl']."; ";
+    $text .=  "\"".$mehl['forname']." ".$mehl['sirname']."\" ".$mehl['mehl']."; ";
+    $ajax .=  "\"".$mehl['forname']." ".$mehl['sirname']."\" ".$mehl['mehl']."; ";
 }
 $text .=  '</textarea>';
 
