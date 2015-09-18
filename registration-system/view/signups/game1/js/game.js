@@ -59,7 +59,7 @@ Game.prototype.loadMap = function(map, spawn) {
 
 			// -------------------------------------
 			// init event related stuff
-			var displayEvents = Game.config.showEventLayers ? 1 : 0;
+			var displayEvents = Game.config.showEventLayers ? 0.5 : 0;
 			svg.selectAll('g').filter(function() {
 				return (
 					this.getAttribute('inkscape:groupmode') == 'layer'
@@ -137,13 +137,16 @@ Game.prototype.loadMap = function(map, spawn) {
 			// https://github.com/sstephenson/prototype/blob/8d968bf957f0c41e5fcc665860d63a98a3fd26a0/src/prototype/dom/layout.js#L1156
 			var offsetTop = 0, offsetLeft = 0, docBody = document.body;
 			var element = gameCanvas;
-			do {
+			/*do {
 				offsetTop += element.offsetTop  || 0;
 				offsetLeft += element.offsetLeft || 0;
 				// Safari fix
 				if (element.offsetParent == docBody &&
 					element.style.position == 'absolute') break;
-			} while (element = element.offsetParent);
+			} while (element = element.offsetParent);*/
+			var offset = $(element).offset();
+			var offsetTop = offset.top;
+			var offsetLeft = offset.left;
 
 			element = gameCanvas;
 			do {
@@ -158,8 +161,8 @@ Game.prototype.loadMap = function(map, spawn) {
 			// ^--------- from prototypeJS
 
 			var matrix = svg[0][0].getScreenCTM();
-			cleanCoords.x = cleanCoords.x - matrix.e + offsetLeft - window.scrollX;
-			cleanCoords.y = cleanCoords.y - matrix.f + offsetTop  - window.scrollY;
+			cleanCoords.x = cleanCoords.x - matrix.e + offsetLeft;
+			cleanCoords.y = cleanCoords.y - matrix.f + offsetTop;
 
 			return cleanCoords;
 		} catch (e) {
