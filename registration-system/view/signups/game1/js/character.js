@@ -24,8 +24,8 @@ function Char(svg, options) {
 	});
 }
 Char.prototype.findSpawn = function(spawnId) {
-	// [1320, svgFlipY(svg[0][0], 500)]
-	var spawn = this.svg.select(spawnId ? '#'+spawnId : "#player_spawn");
+	if (!spawnId) spawnId = 'player_spawn';
+	var spawn = this.svg.select('#'+spawnId);
 	if (!spawn[0][0]) console.error("Could not find spawn: #" + spawnId);
 	var bbox = spawn[0][0].getBBox();
 	return Vec.add(getTranslation(spawn[0][0], this.svg[0][0]), [bbox.x, bbox.y]);
@@ -79,9 +79,13 @@ Char.prototype.animate = function() {
 			direction = (ySpeed >= 0) ? 0 : 2;
 	}
 
+	var currentFrame = this.currentFrame;
+	if (currentFrame > 0 && Game.config.moonWalk)
+		currentFrame = this.frames.length - currentFrame;
+
 	// hide last visible frame
-	if (this.frames && this.frames[this.currentFrame]) {
-		var lastFrame = this.frames[this.currentFrame];
+	if (this.frames && this.frames[currentFrame]) {
+		var lastFrame = this.frames[currentFrame];
 		lastFrame.style.display = 'none';
 	}
 	// change animation
@@ -104,8 +108,12 @@ Char.prototype.animate = function() {
 		this.currentFrame += 1; // walk
 	this.currentFrame %= this.frames.length;
 
+	var currentFrame = this.currentFrame;
+	if (currentFrame > 0 && Game.config.moonWalk)
+		currentFrame = this.frames.length - currentFrame;
+
 	// show current frame
-	this.frames[this.currentFrame].style.display = 'block';
+	this.frames[currentFrame].style.display = 'block';
 };
 Char.prototype.physics = function() {
 	if (this.moveTarget && this.moveTarget.length == 0) return;
@@ -127,7 +135,10 @@ Char.prototype.physics = function() {
 			var nextPosition = (d < g_smallValue) ? this.moveTarget[0] : Vec.add(this.translation, v);
 		} while (!this.pathFinder.canWalkOn(nextPosition[0], nextPosition[1]));
 
-		Vec.assign(this.translation, nextPosition);
+		if (stuckFixer >= 3.0)
+			this.setMoveTarget(this.translation[0], this.translation[1]);
+		else
+			Vec.assign(this.translation, nextPosition);
 	}
 
 	Game.eventHandler.triggerEventOn('walkon', this.translation[0], this.translation[1]);
