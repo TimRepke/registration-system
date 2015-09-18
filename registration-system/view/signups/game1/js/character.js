@@ -28,7 +28,7 @@ Char.prototype.findSpawn = function(spawnId) {
 	var spawn = this.svg.select(spawnId ? '#'+spawnId : "#player_spawn");
 	if (!spawn[0][0]) console.error("Could not find spawn: #" + spawnId);
 	var bbox = spawn[0][0].getBBox();
-	return Vec.add(getTranslation(this.svg[0][0], spawn[0][0]), [bbox.x, bbox.y]);
+	return Vec.add(getTranslation(spawn[0][0], this.svg[0][0]), [bbox.x, bbox.y]);
 };
 Char.prototype.initializeAnimations = function() {
 	var self = this;
@@ -129,7 +129,7 @@ Char.prototype.physics = function() {
 	else
 		this.moveTarget.shift();
 
-	Game.eventHandler.triggerEventOn('walkon', nextPosition[0], nextPosition[1]);
+	Game.eventHandler.triggerEventOn('walkon', this.translation[0], this.translation[1]);
 
 	this.updatePosition();
 };
@@ -146,6 +146,24 @@ Char.prototype.setMoveTarget = function(x,y) {
 		this.moveTarget = this.pathFinder.smoothPath(this.pathFinder.findPath(this.translation[0], this.translation[1], x, y));
 	else
 		this.moveTarget = [[x, y]];
+
+	if (Game.config.verbosePathFinder) {
+		var pathfinderlines = this.svg.select('#pathfinderlines');
+		if (pathfinderlines.empty()) pathfinderlines = this.svg.append('g').attr('id', 'pathfinderlines');
+		var path = 'M';
+		for (var i = 0; i < this.moveTarget.length; ++i) {
+			var m = this.moveTarget[i];
+			path += ' '+m[0]+','+m[1];
+		}
+		pathfinderlines.append('path')
+			.style('stroke', '#f0f')
+			.style('stroke-width', 1)
+			.style('fill', 'none')
+			.attr('d', path)
+			.transition()
+			.delay(10000)
+			.remove();
+	}
 };
 
 Char.prototype.stopMovement = function() {

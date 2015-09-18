@@ -58,6 +58,9 @@ EventHandler.prototype.triggerEventOn = function (trigger, x, y) {
  * @param event
  */
 EventHandler.prototype.handleEvent = function (event, context) {
+    if (context.trigger == 'walkon')
+        console.log('walkon');
+
     switch (event.type) {
         case 'achievement':
             Game.achievements.triggerAchievement(event.id, context);
