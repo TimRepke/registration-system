@@ -9,6 +9,7 @@ function Game(config) {
 	Game.char = null;
 	Game.cam  = null;
 	Game.mainLoop = null;
+	Game.actionsBlocked = false;
 }
 Game.eventLayers = ['CLICKABLE', 'WALK', 'NOWALK', 'EVENT'];
 
@@ -71,10 +72,14 @@ Game.prototype.loadMap = function(map, spawn) {
 
 			Game.eventHandler = new EventHandler(svg);
 
+			// hide special elements
+			svg.selectAll('[special_elem]').style('display', 'none');
+
 			// -------------------------------------
 			// init map specific things
 			Environment.mapEvents[mapId].init(svg);
 
+			// -------------------------------------
 			// init view stuff
 			Game.char = new Char(svg, {spawnid: spawn});
 			Game.cam = new Camera(svg, Game.char.translation);
@@ -87,6 +92,7 @@ Game.prototype.loadMap = function(map, spawn) {
 	function initMouse(done) {
 		var mousePointer = svg.append("circle").attr("r", 10).style("opacity", 0.5).style("display",'none');
 		svg.on("click", function(d) {
+			if (Game.actionsBlocked) return;
 			var xy = getMouseXY();
 			if (xy) {
 				if (!Game.eventHandler.triggerEventOn('click', xy.x, xy.y)) {

@@ -22,6 +22,9 @@
     right: 0;
     bottom: 0;
     width: 189px;
+}
+
+.bordered-box {
     font-family: ‘Lucida Console’, Monaco, monospace;
     color: white;
     background-color: #323232;
@@ -29,6 +32,18 @@
     outline: 3px solid #2E2E2E;
     margin: 3px 2px 3px 3px;
 }
+
+#gameDialogue {
+    height: 50px;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    padding: 5px;
+    display: none;
+}
+
+
 /*
 #2E2E2E dark
 #4E8260 green
