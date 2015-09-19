@@ -229,9 +229,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284272"
-     inkscape:cx="932.97127"
-     inkscape:cy="70.824861"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="581.31656"
+     inkscape:cy="170.07934"
      inkscape:document-units="px"
      inkscape:current-layer="layer9"
      showgrid="false"
@@ -1153,7 +1153,8 @@
        type="special"
        action="fs_firstApproach"
        stopsWalk="true"
-       sodipodi:nodetypes="ccccccccc" />
+       sodipodi:nodetypes="ccccccccc"
+       condition="!fs_firstApproach" />
     <path
        style="opacity:0.494;fill:#ff00ff;fill-opacity:1;stroke:none;stroke-width:12;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        d="m 414.28571,483.57144 92.85714,0 0,118.57143 -92.85714,0 z"
@@ -1162,7 +1163,8 @@
        inkscape:connector-curvature="0"
        type="special"
        action="fs_screamingGeorge"
-       stopWalk="true" />
+       stopsWalk="true"
+       condition="!fs_georgeScreamed" />
     <path
        style="opacity:0.494;fill:#ff00ff;fill-opacity:1;stroke:none;stroke-width:12;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        d="m 1057.8572,451.42856 61.4285,0 0,159.28572 -61.4285,0 z"
@@ -1170,7 +1172,7 @@
        trigger="walkon"
        inkscape:connector-curvature="0"
        type="mapchange"
-       condition="fs_filledBoard"
+       condition="fs_filledBoard||(!inventory_money&amp;&amp;fs_firstApproach)"
        destination="castle_entrance"
        target="fs_exit_spawn" />
     <path
@@ -1190,6 +1192,17 @@
        cx="678.11542"
        cy="321.62177"
        r="12.016337" />
+    <path
+       style="display:inline;opacity:0.494;fill:#ff00ff;fill-opacity:1;stroke:none;stroke-width:12;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 1054.5357,448.10714 61.4285,0 0,159.28572 -61.4285,0 z"
+       id="exit_condition_hint"
+       trigger="walkon"
+       inkscape:connector-curvature="0"
+       type="special"
+       condition="!fs_filledBoard&amp;&amp;fs_firstApproach&amp;&amp;inventory_money"
+       destination="castle_entrance"
+       target="fs_exit_spawn"
+       action="fs_exit_hint" />
   </g>
   <g
      inkscape:groupmode="layer"

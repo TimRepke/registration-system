@@ -65,10 +65,8 @@ EventHandler.prototype.triggerEventOn = function (trigger, x, y) {
     return this.getEventOn(trigger, x, y, function (event, bEnter) {
         var isActive = true;
         if (event.condition) {
-            var conditions = event.condition.split(',');
-            for (var i = 0; i < conditions.length; i++) {
-                isActive = isActive && Environment.progress[conditions[i]];
-            }
+            var condition = event.condition.replace(/[\w_\d]+/g, 'Environment.progress.$&');
+            isActive = eval(condition);
         }
         if (isActive) self.handleEvent(event, {trigger: trigger, x: x, y: y, bEnter: bEnter});
     });
@@ -121,16 +119,25 @@ EventHandler.handleAction = function (event) {
 EventHandler.actions = {
     'fs_open_board': function () {
         console.log('fuck yeah!');
+        Game.log('Kontaktdaten verloren.');
+        Game.log('Lieber schnell wieder raus hier!');
         // TODO implement board fill
     },
-    'fs_screamingGeorge': function () {
-        // TODO implement dialogue
-        console.warn('George is screaming');
+    'fs_screamingGeorge': function () {dialogueHelper([
+        {
+            bubble: '#george_speech',
+            message: 'EY! MELD\' DICH MAL ZUR FACHSCHAFTSFAHRT AN!!'
+        },{
+            bubble: '#george_speech',
+            message: 'SCHREIB\' DICH AN DER TAFEL DAZU EIN!!!'
+        }
+    ], function () {
+        Game.log('Geh\' zur Tafel.');
+        Environment.progress.fs_firstApproach = true;
+    });
         Environment.progress.fs_georgeScreamed = true;
     },
     'fs_firstApproach': function () {
-        console.log('some talking going on');
-        Game.actionsBlocked = true;
         dialogueHelper([
             {
                 bubble: '#tim_speech',
@@ -140,14 +147,22 @@ EventHandler.actions = {
                 message: 'Yoh, geh\' mal rüber zu George.'
             }
         ], function () {
+            Game.log('Finde George.');
             Environment.progress.fs_firstApproach = true;
-            console.log('some talking went on');
-            Game.actionsBlocked = false;
         });
+    },
+    'fs_exit_hint': function () {
+        dialogueHelper([
+            {
+                bubble: '#tim_speech',
+                message: 'Du bist hier noch nicht fertig. Vorher kommst du nicht raus!'
+            }
+        ]);
     }
 };
 
 function dialogueHelper(dialogue, done) {
+    Game.actionsBlocked = true;
     var dialogueBox = $('#gameDialogue');
     dialogueBox.html('');
     dialogueBox.show();
@@ -156,10 +171,16 @@ function dialogueHelper(dialogue, done) {
     dialogueStepper();
 
     function dialogueStepper() {
-        if (dialogue_i >= dialogue.length) { done(); return; }
-        var part = dialogue[dialogue_i];
-        dialogue_i++;
-        plotMessage(part.bubble, part.message, dialogueStepper);
+        if (dialogue_i >= dialogue.length) {
+            dialogueBox.hide();
+            Game.actionsBlocked = false;
+            if (typeof done === 'function') done();
+        } else {
+            var part = dialogue[dialogue_i];
+            dialogue_i++;
+            // TODO: antwort selektion implementieren
+            plotMessage(part.bubble, part.message, dialogueStepper);
+        }
     }
 
     function plotMessage(bubble, message, plotDone) {

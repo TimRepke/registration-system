@@ -3,15 +3,21 @@ function Environment () {
 }
 
 Environment.progress = {
+    // -----------------------------
+    // MAP RELATED things
+
+    // fs related
     fs_firstApproach: false,
     fs_georgeScreamed: false,
     fs_filledBoard: false,
-    killedGoat: false
-};
 
-Environment.inventory = {
-    money: false,
-    goatDrops: false
+    // landing map related
+    killedGoat: false,
+
+    // -----------------------------
+    // INVENTORY
+    inventory_money: false,
+    inventory_goatDroppings: false
 };
 
 Environment.mapEvents = {
