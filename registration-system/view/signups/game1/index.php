@@ -40,12 +40,8 @@ class Game1SignupMethod extends SignupMethod {
                         <div class="sidebar-section-head">Game log</div>
                         <div class="sidebar-log"><div>
                             <ul id="game-log">
-                                <li>Find the students union room</li>
-                                <li>Found the castle entrance</li>
-                                <li>Go inside the castle!</li>
-                                <li>Find the students union room</li>
-                                <li>Found the castle entrance</li>
-                                <li>Go inside the castle!</li>
+                                <li>Gehe in das Schloss!</li>
+                                <li>Bestes Anmeldesystem aller Zeiten gestartet!</li>
                             </ul>
                         </div></div>
                     </div>
