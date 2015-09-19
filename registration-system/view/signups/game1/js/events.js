@@ -24,7 +24,8 @@ function EventHandler(svg) {
                 destination: this.getAttribute('destination'),
                 stopsWalk: this.getAttribute('stopsWalk') === 'true',
                 action: this.getAttribute('action'),
-                walkTo: this.getAttribute('walkTo')
+                walkTo: this.getAttribute('walkTo'),
+                condition: this.getAttribute('condition')
             });
         }
     });
@@ -61,7 +62,14 @@ EventHandler.prototype.getEventOn = function(trigger, x, y, callback) {
 EventHandler.prototype.triggerEventOn = function (trigger, x, y) {
     var self = this;
     return this.getEventOn(trigger, x, y, function(event, bEnter) {
-        self.handleEvent(event, {trigger: trigger, x: x, y: y, bEnter: bEnter});
+        var isActive = true;
+        if (event.condition) {
+            var conditions = event.condition.split(',');
+            for (var i = 0; i < conditions.length; i++) {
+                isActive = isActive && Environment.progress[conditions[i]];
+            }
+        }
+        if (isActive) self.handleEvent(event, {trigger: trigger, x: x, y: y, bEnter: bEnter});
     });
 };
 
@@ -111,6 +119,17 @@ EventHandler.handleAction = function(event) {
 
 EventHandler.actions = {
     'fs_open_board': function() {
-        console.log('fuck yeah!')
+        console.log('fuck yeah!');
+        // TODO implement board fill
+    },
+    'fs_screamingGeorge': function() {
+        // TODO implement dialogue
+        console.warn('George is screaming');
+        Environment.progress.fs_georgeScreamed = true;
+    },
+    'fs_firstApproach': function() {
+        // TODO implement dialogue
+        console.log('some talking going on');
+        Environment.progress.fs_firstApproach = true;
     }
 };

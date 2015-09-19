@@ -37,6 +37,9 @@ Folgende Attribute sollten gesetzt werden:
 - target (optional, für map type für mapchange)
 - destination (optional, target map für mapchange)
 - id
+- action (action to call as defined in Events.actions)
+- walkTo (before calling action, walk to point with this ID)
+- condition (comma separated list of conditions to be true as defined in Environment.progress)
 
 Am Beispiel eines Achievements, welches beim drüberlaufen gefeuert wird und die Bernd weiterlaufen lässt:
 
