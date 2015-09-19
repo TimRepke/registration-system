@@ -37,9 +37,9 @@ Folgende Attribute sollten gesetzt werden:
 - target (optional, für map type für mapchange)
 - destination (optional, target map für mapchange)
 - id
-- action (action to call as defined in Events.actions)
-- walkTo (before calling action, walk to point with this ID)
-- condition (comma separated list of conditions to be true as defined in Environment.progress)
+- action (optional, action to call as defined in Events.actions)
+- walkTo (optional, before calling action, walk to point with this ID)
+- condition (optional, expression with vars as defined in Environment.progress, parenthesis allowed, i.e.: `(!someVar||otherVar)&&moreVar`)
 
 Am Beispiel eines Achievements, welches beim drüberlaufen gefeuert wird und die Bernd weiterlaufen lässt:
 
@@ -56,3 +56,8 @@ Dies aktiviert das Achievement "first_step" (wie definiert, siehe `js/achievemen
 Ganz wichtig in der Start-Ebene: Ein Objekt mit der ID="player_spawn", ansonsten target nutzen.
 
 Konvention: spawn roter Kreis, walkon pink, mapchange grün, ... ; Ebene leicht transparent
+
+## Special elements
+
+Man kann elementen das Attribut `special_elem` geben. Zum Beispiel mit dem Wert `speech_bubble`. Diese Elemente werden
+direkt versteckt und beispielsweise in einer action sichtbar gemacht.
