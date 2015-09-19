@@ -35,7 +35,7 @@ class Game1SignupMethod extends SignupMethod {
     public function showInlineHTML() {
         echo '
             <div id="game-root-container">
-                <div id="game-sidebar">
+                <div id="game-sidebar" class="bordered-box">
                     <div class="sidebar-section">
                         <div class="sidebar-section-head">Game log</div>
                         <div class="sidebar-log"><div>

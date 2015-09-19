@@ -116,7 +116,7 @@ Char.prototype.animate = function() {
 	this.frames[currentFrame].style.display = 'block';
 };
 Char.prototype.physics = function() {
-	if (this.moveTarget && this.moveTarget.length == 0) {
+	if (!this.moveTarget || this.moveTarget && this.moveTarget.length == 0) {
 		if (this.onArrivalCallback && typeof this.onArrivalCallback === 'function') this.onArrivalCallback();
 		this.onArrivalCallback = null;
 		return;
