@@ -162,6 +162,12 @@ EventHandler.actions = {
 };
 
 function dialogueHelper(dialogue, done) {
+
+    var speed = {
+        talk: UrlComponents.isSet('fastTalk') ? 1 : 40,
+        pause: UrlComponents.isSet('fastTalk') ? 50 : 1000
+    };
+
     Game.actionsBlocked = true;
     var dialogueBox = $('#gameDialogue');
     dialogueBox.html('');
@@ -193,11 +199,11 @@ function dialogueHelper(dialogue, done) {
                 setTimeout(function() {
                     Game.char.svg.select(bubble).style('display', 'none');
                     plotDone();
-                }, 1000)
+                }, speed.pause)
             } else {
                 Game.char.svg.select(bubble).style('display', (i % 2) ? 'none' : 'block');
                 dialogueBox.text(message.substring(0, i));
             }
-        }, 40);
+        }, speed.talk);
     }
 }
