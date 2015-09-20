@@ -11,7 +11,7 @@ Story.actions = {
         state: {
             welcome_message: false, // welcome message spoken
             failed: false, // was approached before, but had no money
-            successful: false // all done with this action (equivalent to Environment.progress.fs_firstApproach)
+            successful: !false // all done with this action (equivalent to Environment.progress.fs_firstApproach)
         },
         possible: function () {
             return (!Story.actions.fs_firstApproach.state.successful && !Story.actions.fs_firstApproach.state.failed) ||
@@ -102,14 +102,46 @@ Story.actions = {
     // name/email signup board
     'fs_open_board': {
         possible: function () {
-            return Environment.progress.fs_georgeScreamed;
+            return Environment.progress.fs_georgeScreamed && !Environment.progress.fs_filledBoard;
         },
         action: function () {
             console.log('fuck yeah!');
             Environment.progress.fs_filledBoard = true;
             Game.log('Kontaktdaten verloren.');
             Game.log('Lieber schnell wieder raus hier!');
-            // TODO implement board fill
+
+            launchBoard();
+
+            function launchBoard() {
+                var blackboardForm = '<div style="' +
+                    'background-image: url('+FAPI.resolvePath('graphics/fs_blackboard.png')+');' +
+                    'background-color: #385123;' +
+                    'background-repeat: no-repeat;' +
+                    'height:300px;' +
+                    'width: 555px;' +
+                    'position: absolute; ' +
+                    'top: 150px;' +
+                    'left: 120px;' +
+                '">' +
+                    '<div style="margin: 70px; font-size: 15pt; font-family: \'Comic Sans MS\', cursive, sans-serif;color:white">' +
+                    '   <div style="float:left">' +
+                    '       <div>Vorname:</div>' +
+                    '       <input style="width: 174px; border: 1px dotted black; background: transparent; font: inherit; font-size: 13pt;color: inherit; padding: 4pt 8pt" type="text" id="fs_board_name_given" />' +
+                    '   </div>' +
+                    '   <div style="float:right">' +
+                    '       <div>Nachname:</div>' +
+                    '       <input style="width: 174px; border: 1px dotted black; background: transparent; font: inherit; font-size: 13pt;color: inherit; padding: 4pt 8pt" type="text" id="fs_board_name_given" />' +
+                    '   </div>' +
+                    '   <div style="clear:both; height: 1em">&nbsp;</div>' +
+                    '       <div>E-Mail-Adresse:</div>' +
+                    '       <input style="width: 390px; border: 1px dotted black; background: transparent; font: inherit; font-size: 13pt;color: inherit; padding: 4pt 8pt" type="text" id="fs_board_name_given" />' +
+                    '</div></div>';
+                $('#gameCanvas').append(blackboardForm);
+            }
+
+            function saveBoard() {
+
+            }
         }
     },
 
