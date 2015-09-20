@@ -230,8 +230,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="715.66684"
-     inkscape:cy="249.9824"
+     inkscape:cx="883.95825"
+     inkscape:cy="122.70318"
      inkscape:document-units="px"
      inkscape:current-layer="layer9"
      showgrid="false"
@@ -1141,7 +1141,7 @@
        style="display:inline;fill:#ff0000;fill-opacity:1;stroke:none"
        id="player_spawn"
        inkscape:label="#path3224"
-       cx="1074.9033"
+       cx="1032.9033"
        cy="519.112"
        r="12.016337" />
     <path
@@ -1181,7 +1181,7 @@
        inkscape:connector-curvature="0"
        type="special"
        action="fs_open_board"
-       walkTo="player_walkToBoard" />
+       walkTos="player_walkToBoard" />
     <circle
        style="display:inline;opacity:0.46799999;fill:#ff0000;fill-opacity:1;stroke:none"
        id="player_walkToBoard"

@@ -7,8 +7,8 @@ Environment.progress = {
     // MAP RELATED things
 
     // fs related
-    fs_firstApproach: false,
-    fs_georgeScreamed: false,
+    fs_firstApproach: !false,
+    fs_georgeScreamed: !false,
     fs_filledBoard: false,
 
     // landing map related
@@ -25,7 +25,8 @@ Environment.mapEvents = {
     'map_landing': {
         init: function(svg) {
             if (Environment.progress.fs_filledBoard) {
-                // TODO: remove baustelle (that doesn't exist yet)
+                svg.select('#construction').remove();
+                svg.select('#construction_nowalk').remove();
             } else {
                 var ship = svg.select("#shipGroup");
                 ship
