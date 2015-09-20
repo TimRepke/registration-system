@@ -110,6 +110,7 @@ Game.prototype.loadMap = function (map, spawn) {
             mousePointer.attr('cy', xy.y);
             var colour = Game.char.pathFinder.canWalkOn(xy.x, xy.y) ? 'green' : 'red';
             if (Game.eventHandler.hasEventOn('click', xy.x, xy.y)) colour = 'blue';
+            if (Game.actionsBlocked) colour = 'red';
             mousePointer.style("fill", colour);
         });
 
