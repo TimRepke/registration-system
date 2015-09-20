@@ -2,6 +2,7 @@ function Game(config) {
     if (!(this instanceof Game)) throw "'Game' needs to be constructed";
     if (Game.instance) throw "'Game' already constructed";
     Game.config = config;
+    Game.config.loopSpeed = 10;
     Game.instance = this;
 
     Game.achievements = new Achievements();
@@ -20,13 +21,16 @@ Game.prototype.run = function () {
 Game.prototype.nextMap = function (map, spawn) {
     clearInterval(Game.mainLoop);
     Game.mainLoop = null;
-    var gameRoot = document.getElementById("gameRoot");
-    while (gameRoot.firstChild) {
-        gameRoot.removeChild(gameRoot.firstChild);
-    }
-    Game.char = null;
-    Game.cam = null;
-    this.loadMap(map, spawn);
+    var self = this;
+    setTimeout(function() {
+        var gameRoot = document.getElementById("gameRoot");
+        while (gameRoot.firstChild) {
+            gameRoot.removeChild(gameRoot.firstChild);
+        }
+        Game.char = null;
+        Game.cam = null;
+        self.loadMap(map, spawn);
+    }, Game.config.loopSpeed+5);
 };
 
 Game.prototype.loadMap = function (map, spawn) {
@@ -126,7 +130,7 @@ Game.prototype.loadMap = function (map, spawn) {
                 // cam movement
                 Game.cam.movement();
             }
-        }, 10);
+        }, Game.config.loopSpeed);
 
     }
 

@@ -90,6 +90,7 @@ Story.actions = {
                 && Environment.progress.fs_firstApproach && Environment.progress.inventory_money;
         },
         action: function () {
+            Story.actions.fs_exit_hint.state.hintGiven = true;
             Story.dialogueHelper([
                 {
                     bubble: '#tim_speech',
@@ -105,6 +106,7 @@ Story.actions = {
         },
         action: function () {
             console.log('fuck yeah!');
+            Environment.progress.fs_filledBoard = true;
             Game.log('Kontaktdaten verloren.');
             Game.log('Lieber schnell wieder raus hier!');
             // TODO implement board fill
