@@ -17,6 +17,7 @@ Environment.progress = {
     // -----------------------------
     // INVENTORY
     inventory_money: false,
+    inventory_ruestung: false,
     inventory_goatDroppings: false
 };
 

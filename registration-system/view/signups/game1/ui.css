@@ -34,15 +34,36 @@
 }
 
 #gameDialogue {
-    height: 50px;
+    font-size: 11pt;
+    height: 4em;
     position: absolute;
     bottom: 20px;
     left: 20px;
     right: 20px;
-    padding: 5px;
+    padding: 0.5em 1em;
     display: none;
 }
 
+#gameDialogue ul {
+    margin: 0;
+    padding: 0 0 0 0.5em;
+    list-style: none;
+}
+#gameDialogue ul li {
+    padding: 0.1em;
+}
+#gameDialogue ul li:hover {
+    background-color: #474c46;
+}
+#gameDialogue ul li:before {
+    content: '⇢';
+    font-size: 15pt;
+    line-height: 11pt;
+    margin-right: 0.3em;
+}
+#gameDialogue ul li:hover:before {
+    content: '↠';
+}
 
 /*
 #2E2E2E dark

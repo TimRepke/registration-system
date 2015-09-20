@@ -84,6 +84,7 @@ EventHandler.prototype.triggerEventOn = function (trigger, x, y) {
  * @param event
  */
 EventHandler.prototype.handleEvent = function (event, context) {
+    var eventWasActive = true;
     switch (event.type) {
         case 'achievement':
             Game.achievements.triggerAchievement(event.id, context);
@@ -92,118 +93,34 @@ EventHandler.prototype.handleEvent = function (event, context) {
             Game.instance.nextMap(event.destination, event.target);
             break;
         case 'special':
-            EventHandler.handleAction(event);
+            eventWasActive = EventHandler.handleAction(event);
             break;
     }
 
-    if (event.stopsWalk) {
+    if (event.stopsWalk && eventWasActive) {
         Game.char.stopMovement();
     }
 };
 
 EventHandler.handleAction = function (event) {
-    if (event.action && event.action in EventHandler.actions) {
+    var isPossible = Story.actions[event.action].possible();
+    // check, whether action exists and is allowed at this point
+    if (event.action && event.action in Story.actions && isPossible) {
+        // in case the action requires to walk to a location first
         if (event.walkTo) {
             var spawn = Game.char.svg.select('#' + event.walkTo);
             if (spawn[0][0]) {
                 var bbox = spawn[0][0].getBBox();
                 var xy = Vec.add(getTranslation(spawn[0][0], Game.char.svg[0][0]), [bbox.x, bbox.y]);
-                Game.char.setMoveTarget(xy[0], xy[1], EventHandler.actions[event.action]);
+
+                // walk to the action point, start action on callback
+                Game.char.setMoveTarget(xy[0], xy[1], Story.actions[event.action].action);
             }
-        } else {
-            EventHandler.actions[event.action]();
+        }
+        // otherwise start action directly
+        else {
+            Story.actions[event.action].action();
         }
     }
+    return isPossible;
 };
-
-EventHandler.actions = {
-    'fs_open_board': function () {
-        console.log('fuck yeah!');
-        Game.log('Kontaktdaten verloren.');
-        Game.log('Lieber schnell wieder raus hier!');
-        // TODO implement board fill
-    },
-    'fs_screamingGeorge': function () {dialogueHelper([
-        {
-            bubble: '#george_speech',
-            message: 'EY! MELD\' DICH MAL ZUR FACHSCHAFTSFAHRT AN!!'
-        },{
-            bubble: '#george_speech',
-            message: 'SCHREIB\' DICH AN DER TAFEL DAZU EIN!!!'
-        }
-    ], function () {
-        Game.log('Geh\' zur Tafel.');
-        Environment.progress.fs_firstApproach = true;
-    });
-        Environment.progress.fs_georgeScreamed = true;
-    },
-    'fs_firstApproach': function () {
-        dialogueHelper([
-            {
-                bubble: '#tim_speech',
-                message: 'Willkommen in der Fachschaft!'
-            }, {
-                bubble: '#manu_speech',
-                message: 'Yoh, geh\' mal rüber zu George.'
-            }
-        ], function () {
-            Game.log('Finde George.');
-            Environment.progress.fs_firstApproach = true;
-        });
-    },
-    'fs_exit_hint': function () {
-        dialogueHelper([
-            {
-                bubble: '#tim_speech',
-                message: 'Du bist hier noch nicht fertig. Vorher kommst du nicht raus!'
-            }
-        ]);
-    }
-};
-
-function dialogueHelper(dialogue, done) {
-
-    var speed = {
-        talk: UrlComponents.isSet('fastTalk') ? 1 : 40,
-        pause: UrlComponents.isSet('fastTalk') ? 50 : 1000
-    };
-
-    Game.actionsBlocked = true;
-    var dialogueBox = $('#gameDialogue');
-    dialogueBox.html('');
-    dialogueBox.show();
-
-    var dialogue_i = 0;
-    dialogueStepper();
-
-    function dialogueStepper() {
-        if (dialogue_i >= dialogue.length) {
-            dialogueBox.hide();
-            Game.actionsBlocked = false;
-            if (typeof done === 'function') done();
-        } else {
-            var part = dialogue[dialogue_i];
-            dialogue_i++;
-            // TODO: antwort selektion implementieren
-            plotMessage(part.bubble, part.message, dialogueStepper);
-        }
-    }
-
-    function plotMessage(bubble, message, plotDone) {
-        var i = 0;
-        var messageStepper = setInterval(function () {
-            i++;
-            if (i > message.length) {
-                clearInterval(messageStepper);
-                Game.char.svg.select(bubble).style('display', 'block');
-                setTimeout(function() {
-                    Game.char.svg.select(bubble).style('display', 'none');
-                    plotDone();
-                }, speed.pause)
-            } else {
-                Game.char.svg.select(bubble).style('display', (i % 2) ? 'none' : 'block');
-                dialogueBox.text(message.substring(0, i));
-            }
-        }, speed.talk);
-    }
-}

@@ -230,8 +230,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="581.31656"
-     inkscape:cy="170.07934"
+     inkscape:cx="715.66684"
+     inkscape:cy="249.9824"
      inkscape:document-units="px"
      inkscape:current-layer="layer9"
      showgrid="false"
@@ -1153,8 +1153,7 @@
        type="special"
        action="fs_firstApproach"
        stopsWalk="true"
-       sodipodi:nodetypes="ccccccccc"
-       condition="!fs_firstApproach" />
+       sodipodi:nodetypes="ccccccccc" />
     <path
        style="opacity:0.494;fill:#ff00ff;fill-opacity:1;stroke:none;stroke-width:12;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        d="m 414.28571,483.57144 92.85714,0 0,118.57143 -92.85714,0 z"
@@ -1163,8 +1162,7 @@
        inkscape:connector-curvature="0"
        type="special"
        action="fs_screamingGeorge"
-       stopsWalk="true"
-       condition="!fs_georgeScreamed" />
+       stopsWalk="true" />
     <path
        style="opacity:0.494;fill:#ff00ff;fill-opacity:1;stroke:none;stroke-width:12;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        d="m 1057.8572,451.42856 61.4285,0 0,159.28572 -61.4285,0 z"
@@ -1183,8 +1181,7 @@
        inkscape:connector-curvature="0"
        type="special"
        action="fs_open_board"
-       walkTo="player_walkToBoard"
-       condition="fs_georgeScreamed" />
+       walkTo="player_walkToBoard" />
     <circle
        style="display:inline;opacity:0.46799999;fill:#ff0000;fill-opacity:1;stroke:none"
        id="player_walkToBoard"
@@ -1199,7 +1196,6 @@
        trigger="walkon"
        inkscape:connector-curvature="0"
        type="special"
-       condition="!fs_filledBoard&amp;&amp;fs_firstApproach&amp;&amp;inventory_money"
        destination="castle_entrance"
        target="fs_exit_spawn"
        action="fs_exit_hint" />
