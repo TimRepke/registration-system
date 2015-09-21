@@ -91,7 +91,24 @@ function Bachelor() {
     };
 
     this.testValidValue = function (attribute, value) {
-        //TODO should return true, if the given value is valid for the given attribute (soft protect)
+        var tests = {
+            'forname': function() {
+                return /^[^0-9<>!?.::,#*@^_$\\"'%;()&+]{2,50}$/.test(value);
+            },
+            'sirname': function() {
+                return /^[^0-9<>!?.::,#*@^_$\\"'%;()&+]{2,50}$/.test(value);
+            },
+            'mehl': function() {
+                return /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value);
+            }
+        };
+
+        try {
+            return tests[attribute]();
+        } catch (e) {
+            console.warn('testing for ' + attribute + ' threw ' + e);
+            return false;
+        }
     };
 }
 
