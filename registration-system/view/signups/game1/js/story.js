@@ -51,7 +51,7 @@ Story.actions = {
                         }
                     }],
                     condition: !state.studityp
-                },{
+                }, {
                     bubble: '#tim_speech',
                     message: state.failed ?
                         'Wie ich sehe, hast du etwas gefunden? Noch Lust auf die Rüstung?' :
@@ -178,9 +178,15 @@ Story.actions = {
             };
 
             // hook listeners for field validations
-            fields.fs_board_name_family.elem.bind('input propertychange', function () {validateFields();});
-            fields.fs_board_name_given.elem.bind('input propertychange', function () {validateFields();});
-            fields.fs_board_email.elem.bind('input propertychange', function () {validateFields();});
+            fields.fs_board_name_family.elem.bind('input propertychange', function () {
+                validateFields();
+            });
+            fields.fs_board_name_given.elem.bind('input propertychange', function () {
+                validateFields();
+            });
+            fields.fs_board_email.elem.bind('input propertychange', function () {
+                validateFields();
+            });
 
             function validateFields() {
                 // test all fields
@@ -219,13 +225,139 @@ Story.actions = {
 
     // =================================================================================================================
     // Actions on the landing map
+    'landing_askingNickname': {
+        possible: function () {
+            return !Environment.progress.landing_askedNickname;
+        },
+        action: function () {
+            Environment.progress.landing_askedNickname = true;
+            Story.dialogueHelper([{
+                bubble: '#stranger_speech',
+                message: 'Hallo Fremder!'
+            }, {
+                bubble: '#stranger_speech',
+                message: 'Bei welch\' Namen willst du gerufen werden?'
+            }, {
+                input: {
+                    message: 'Gib\' hier einen Nicknamen an',
+                    check: function (value) {
+                        return Environment.fapi.data.testValidValue('pseudo', value);
+                    },
+                    action: function (value) {
+                        Environment.fapi.data.setValue('pseudo', value);
+                    }
+                }
+            }, {
+                bubble: '#stranger_speech',
+                message: 'Komischer Name! Nun gut, ich lasse dich wohl weiter ziehen.'
+            }]);
+
+        }
+    },
 
     'landing_goatFight': {
         possible: function () {
-            return true;
+            return !Environment.progress.landing_killedGoat;
         },
         action: function () {
+            var nodes = {
+                blast: Game.char.svg.select('#goat_blast'),
+                goat: Game.char.svg.select('#goat'),
+                milk: Game.char.svg.select('#goat_milk'),
+                meat: Game.char.svg.select('#goat_meat')
+            };
+            Game.actionsBlocked = true;
+            appearanceBlast();
 
+            function startDialogue() {
+                Story.dialogueHelper([{
+                    message: 'Ohje, Ohjé! Eine wilde Ziege!',
+                    action: goatAttacking
+                }, {
+                    message: 'Vielleicht lässt sie sich ja zähmen...',
+                    action: goatAttacking
+                }, {
+                    answer: [{
+                        message: 'Ziege zähmen und melken',
+                        action: function () {
+                            goatShaking(function () {
+                                nodes.milk.style('display', 'block');
+                                goatAttacking();
+                            })
+                        }
+                    }]
+                }, {
+                    message: 'Hm, sie ist immer noch wütend...'
+                }, {
+                    answer: [{
+                        message: 'Ziege streicheln',
+                        action: function () {
+                            goatShaking(function () {
+                                nodes.meat.style('display', 'block');
+                                nodes.goat.style('display', 'none');
+                            })
+                        }
+                    }]
+                }, {
+                    message: 'Huch, jetzt ist sie zu einem Haufen Schinken zerfallen...'
+                }], null, function () {
+                    Environment.progress.landing_killedGoat = true;
+                    Environment.progress.inventory_goatDroppings = true;
+                    setTimeout(function () {
+                        nodes.milk.style('display', 'none');
+                        nodes.meat.style('display', 'none');
+                    }, 2000);
+                });
+            }
+
+            function appearanceBlast() {
+                var cnt = 0;
+                var looper = setInterval(function () {
+                    cnt++;
+                    nodes.blast.style('display', (cnt % 2) ? 'block' : 'none');
+                    if (cnt > 10) {
+                        clearInterval(looper);
+                        nodes.goat.style('display', 'block');
+                        nodes.blast.style('display', 'none');
+
+                        startDialogue();
+                    }
+                }, 60);
+            }
+
+            function goatAttacking() {
+                nodes.goat
+                    .transition().attr('transform', translate(-10, 10))
+                    .transition().attr('transform', translate(10, -10))
+                    .transition().attr('transform', translate(-10, 10))
+                    .transition().attr('transform', translate(10, -10));
+
+                function translate(relx, rely) {
+                    return 'translate(' + relx + ',' + rely + ')';
+                }
+            }
+
+            function goatShaking(callback) {
+                var goatPos = getInfo(Game.char.svg, nodes.goat);
+                nodes.goat
+                    .transition().attr('transform', rotate(15))
+                    .transition().attr('transform', rotate(-15))
+                    .transition().attr('transform', rotate(0))
+                    .call(helper_endAll, callback);
+
+                function rotate(deg) {
+                    return 'rotate(' + deg + ',' + goatPos.xCenter + ',' + goatPos.yCenter + ')';
+                }
+            }
+
+            function helper_endAll(transition, callback) {
+                var n = 0;
+                transition.each(function () {
+                    ++n;
+                }).each('end', function () {
+                    if (!--n && callback) callback.apply(this, arguments);
+                });
+            }
         }
     }
 };
@@ -234,7 +366,7 @@ Story.dialogueHelper = function (dialogue, context, done) {
 
     var speed = {
         talk: UrlComponents.isSet('fastTalk') ? 1 : 45,
-        pause: UrlComponents.isSet('fastTalk') ? 50 : 1000
+        pause: UrlComponents.isSet('fastTalk') ? 50 : 1500
     };
 
     Game.actionsBlocked = true;
@@ -255,12 +387,30 @@ Story.dialogueHelper = function (dialogue, context, done) {
             dialogue_i++;
             if ('condition' in part && !part.condition) {
                 dialogueStepper();
+            } else if (part.input) {
+                manualInput(part.input);
             } else if (part.answer) {
                 answerSelection(part.answer);
             } else {
-                plotMessage(part.bubble, part.message, dialogueStepper);
+                plotMessage(part, dialogueStepper);
             }
         }
+    }
+
+    function manualInput(input) {
+        var inputHTML = '<div>' + input.message + '</div>' +
+            '<input type="text" id="gameDialogueInput" />' +
+            '<button id="gameDialogueInputDone" style="width: 80px; border: 1px dotted #4e8260;">Fertig</button>';
+        dialogueBox.html(inputHTML);
+        $('#gameDialogueInputDone').prop('disabled', true).click(function () {
+            input.action($('#gameDialogueInput').val());
+            dialogueStepper();
+        });
+        $('#gameDialogueInput').bind('input propertychange', function () {
+            if (input.check($(this).val())) {
+                $('#gameDialogueInputDone').prop('disabled', false);
+            }
+        });
     }
 
     function answerSelection(answers) {
@@ -285,9 +435,11 @@ Story.dialogueHelper = function (dialogue, context, done) {
         }
     }
 
-    function plotMessage(bubble, message, plotDone) {
+    function plotMessage(part, plotDone) {
+        var bubbleNode = !part.bubble ? null : Game.char.svg.select(part.bubble);
+        var message = part.message;
+
         var i = 0;
-        var bubbleNode = !bubble ? null : Game.char.svg.select(bubble);
         var messageStepper = setInterval(function () {
             i++;
             if (i > message.length) {
@@ -295,6 +447,7 @@ Story.dialogueHelper = function (dialogue, context, done) {
                 if (bubbleNode) bubbleNode.style('display', 'block');
                 setTimeout(function () {
                     if (bubbleNode) bubbleNode.style('display', 'none');
+                    if (part.action) part.action();
                     plotDone();
                 }, speed.pause)
             } else {

@@ -64,6 +64,24 @@
 #gameDialogue ul li:hover:before {
     content: '↠';
 }
+#gameDialogue input, #gameDialogue button {
+    border: 1px dotted black;
+    background: transparent;
+    color: white;
+    margin: 5pt 2em 0 0;
+    font-size: 12pt;
+    width: 50%;
+    padding: 0.3em 0.5em;
+}
+#gameDialogue input:hover, #gameDialogue input:focus, #gameDialogue button:hover {
+    background: #474c46;
+}
+#gameDialogue button:active {
+    background: #272c26;
+}
+#gameDialogue button:disabled {
+    color: red;
+}
 
 /*
 #2E2E2E dark
