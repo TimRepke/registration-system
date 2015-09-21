@@ -12,7 +12,7 @@ Story.actions = {
             welcome_message: false, // welcome message spoken
             studityp: false, // asked for studityp
             failed: false, // was approached before, but had no money
-            successful: !false // all done with this action (equivalent to Environment.progress.fs_firstApproach)
+            successful: false // all done with this action (equivalent to Environment.progress.fs_firstApproach)
         },
         possible: function () {
             return (!Story.actions.fs_firstApproach.state.successful && !Story.actions.fs_firstApproach.state.failed) ||
