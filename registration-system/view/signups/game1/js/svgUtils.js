@@ -1,6 +1,7 @@
 function translate(x, y) {
 	return "translate("+x+", "+y+")";
 }
+
 function showCoords(x, y) {
 	document.getElementById("coords").innerHTML = '('+x+', '+y+')';
 }
@@ -10,6 +11,19 @@ function svgFlipY(svg, y) {
 function getTranslation(svg, node) {
 	var matrix = svg.getTransformToElement(node);
 	return [matrix.e, matrix.f];
+}
+function getInfo(svg, node) {
+	var bbox = node[0][0].getBBox();
+	var xy = Vec.add(getTranslation(node[0][0], svg[0][0]), [bbox.x, bbox.y]);
+	return {
+		x: xy[0],
+		y: xy[1],
+		xCenter: xy[0]+(bbox.width/2),
+		yCenter: xy[1]+(bbox.height/2),
+		height: bbox.height,
+		width: bbox.width
+	}
+
 }
 
 function euclidianDistance(a_x, a_y, b_x, b_y){

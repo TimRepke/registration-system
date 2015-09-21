@@ -13,7 +13,9 @@ Environment.progress = {
     fs_filledBoard: false,
 
     // landing map related
-    killedGoat: false,
+    landing_askedNickname: false,
+    landing_killedGoat: false,
+
 
     // -----------------------------
     // INVENTORY
