@@ -8,8 +8,8 @@ Environment.progress = {
     // MAP RELATED things
 
     // fs related
-    fs_firstApproach: !false,
-    fs_georgeScreamed: !false,
+    fs_firstApproach: false,
+    fs_georgeScreamed: false,
     fs_filledBoard: false,
 
     // landing map related
