@@ -38,6 +38,7 @@ Folgende Attribute sollten gesetzt werden:
 - destination (optional, target map für mapchange)
 - id
 - action (optional, action to call as defined in Events.actions)
+- directAction (optional, set true to fire action before walkTo point is reached)
 - walkTo (optional, before calling action, walk to point with this ID)
 - condition (optional, expression with vars as defined in Environment.progress, parenthesis allowed, i.e.: `(!someVar||otherVar)&&moreVar`)
 

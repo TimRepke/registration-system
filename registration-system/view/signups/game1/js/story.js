@@ -348,15 +348,66 @@ Story.actions = {
                 function rotate(deg) {
                     return 'rotate(' + deg + ',' + goatPos.xCenter + ',' + goatPos.yCenter + ')';
                 }
-            }
 
-            function helper_endAll(transition, callback) {
-                var n = 0;
-                transition.each(function () {
-                    ++n;
-                }).each('end', function () {
-                    if (!--n && callback) callback.apply(this, arguments);
-                });
+                function helper_endAll(transition, callback) {
+                    var n = 0;
+                    transition.each(function () {
+                        ++n;
+                    }).each('end', function () {
+                        if (!--n && callback) callback.apply(this, arguments);
+                    });
+                }
+            }
+        }
+    },
+
+    'landing_dorfEntranceApproach': {
+        possible: function () {
+            return !Environment.progress.landing_dorfEntranceApproach;
+        },
+        action: function () {
+            Environment.progress.landing_dorfEntranceApproach = true;
+            Game.char.svg.select('#dorfritter')
+                .transition().attr('transform', 'translate(0,15)');
+
+            Story.dialogueHelper([{
+                bubble: '#dorfritter_speech',
+                message: 'Wie ich sehe, willst du in das Dorf.',
+                action: function () {
+                    Game.char.svg.select('#dorfritter')
+                        .transition().duration(400).attr('transform', 'translate(30,5)');
+                }
+            }, {
+                bubble: '#dorfritter_speech',
+                message: 'Wenn du über 18 bist, nutze das rechte Tor.',
+                action: function () {
+                    Game.char.svg.select('#dorfritter')
+                        .transition().duration(800).attr('transform', 'translate(-30,5)');
+                }
+            }, {
+                bubble: '#dorfritter_speech',
+                message: 'Wenn nicht, dann das Linke!',
+                action: function () {
+                    Game.char.svg.select('#dorfritter')
+                        .transition().duration(200).attr('transform', 'translate(0,0)');
+                }
+            }], null, function() {
+                Game.log('Gehe ins Dorf.');
+                Game.log('18+ rechtes Tor, sonst das linke');
+            });
+        }
+    },
+
+    'landing_ageChoice': {
+        possible: function () {
+            return Environment.progress.landing_dorfEntranceApproach && !Environment.progress.landing_ageChosen;
+        },
+        action: function (event) {
+            Environment.progress.landing_ageChosen = true;
+            if (event.id === '18plusEntrance') {
+                Environment.fapi.data.setValue('virgin', 'Ja');
+            } else {
+                Environment.fapi.data.setValue('virgin', 'Nein');
             }
         }
     }
@@ -365,8 +416,8 @@ Story.actions = {
 Story.dialogueHelper = function (dialogue, context, done) {
 
     var speed = {
-        talk: UrlComponents.isSet('fastTalk') ? 1 : 45,
-        pause: UrlComponents.isSet('fastTalk') ? 50 : 1500
+        talk: UrlComponents.isSet('fastTalk') ? 1 : 50,
+        pause: UrlComponents.isSet('fastTalk') ? 50 : 2000
     };
 
     Game.actionsBlocked = true;
