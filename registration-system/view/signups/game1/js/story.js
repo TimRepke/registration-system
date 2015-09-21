@@ -15,8 +15,9 @@ Story.actions = {
             successful: false // all done with this action (equivalent to Environment.progress.fs_firstApproach)
         },
         possible: function () {
-            return (!Story.actions.fs_firstApproach.state.successful && !Story.actions.fs_firstApproach.state.failed) ||
-                (!Environment.progress.fs_firstApproach && Environment.progress.inventory_money);
+            var state = Story.actions.fs_firstApproach.state;
+            return (!state.successful && !state.failed) ||
+                (!state.successful && state.failed && Environment.progress.inventory_money);
         },
         action: function () {
             var state = Story.actions.fs_firstApproach.state;
@@ -48,7 +49,8 @@ Story.actions = {
                             state.studityp = true;
                             Environment.fapi.data.setValue('studityp', 'ERSTI');
                         }
-                    }]
+                    }],
+                    condition: !state.studityp
                 },{
                     bubble: '#tim_speech',
                     message: state.failed ?
@@ -263,7 +265,7 @@ Story.dialogueHelper = function (dialogue, context, done) {
 
     function answerSelection(answers) {
         var possibleAnswers = answers.map(function (answer, i) {
-            if ('condition' in answer && answer.condition)
+            if (!('condition' in answer) || answer.condition)
                 return '<li gameDialogueAnswer="' + i + '">' + answer.message + '</li>';
             else return null;
         }).filter(function (answer) {

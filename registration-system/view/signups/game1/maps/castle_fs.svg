@@ -1181,7 +1181,7 @@
        inkscape:connector-curvature="0"
        type="special"
        action="fs_open_board"
-       walkTos="player_walkToBoard" />
+       walkTo="player_walkToBoard" />
     <circle
        style="display:inline;opacity:0.46799999;fill:#ff0000;fill-opacity:1;stroke:none"
        id="player_walkToBoard"
