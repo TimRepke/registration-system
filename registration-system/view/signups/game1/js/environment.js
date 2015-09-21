@@ -1,6 +1,7 @@
 function Environment () {
   // something?
 }
+Environment.fapi = new FAPI();
 
 Environment.progress = {
     // -----------------------------

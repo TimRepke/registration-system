@@ -10,6 +10,7 @@ Story.actions = {
     'fs_firstApproach': {
         state: {
             welcome_message: false, // welcome message spoken
+            studityp: false, // asked for studityp
             failed: false, // was approached before, but had no money
             successful: !false // all done with this action (equivalent to Environment.progress.fs_firstApproach)
         },
@@ -25,6 +26,30 @@ Story.actions = {
                     message: 'Willkommen in der Fachschaft!',
                     condition: !state.welcome_message
                 }, {
+                    bubble: '#manu_speech',
+                    message: 'Kenne ich dich?',
+                    condition: !state.studityp
+                }, {
+                    answer: [{
+                        message: 'Klar, studiere doch schon lange hier',
+                        action: function () {
+                            state.studityp = true;
+                            Environment.fapi.data.setValue('studityp', 'HOERS');
+                        }
+                    }, {
+                        message: 'Ja, bin sogar Tutor dieses Jahr',
+                        action: function () {
+                            state.studityp = true;
+                            Environment.fapi.data.setValue('studityp', 'TUTTI');
+                        }
+                    }, {
+                        message: 'Nein, bin neu hier',
+                        action: function () {
+                            state.studityp = true;
+                            Environment.fapi.data.setValue('studityp', 'ERSTI');
+                        }
+                    }]
+                },{
                     bubble: '#tim_speech',
                     message: state.failed ?
                         'Wie ich sehe, hast du etwas gefunden? Noch Lust auf die Rüstung?' :
@@ -86,7 +111,7 @@ Story.actions = {
             hintGiven: false
         },
         possible: function () {
-            return !Story.actions.fs_exit_hint.state.hintGiven &&!Environment.progress.fs_filledBoard
+            return !Story.actions.fs_exit_hint.state.hintGiven && !Environment.progress.fs_filledBoard
                 && Environment.progress.fs_firstApproach && Environment.progress.inventory_money;
         },
         action: function () {
@@ -105,42 +130,86 @@ Story.actions = {
             return Environment.progress.fs_georgeScreamed && !Environment.progress.fs_filledBoard;
         },
         action: function () {
-            console.log('fuck yeah!');
-            Environment.progress.fs_filledBoard = true;
-            Game.log('Kontaktdaten verloren.');
-            Game.log('Lieber schnell wieder raus hier!');
+            Game.actionsBlocked = true;
+            var blackboardForm = '' +
+                '<div id="fs_board" style="background-image: url(' + FAPI.resolvePath('graphics/fs_blackboard.png') + ');background-color: #385123;background-repeat: no-repeat;height:300px;width: 555px;position: absolute; top: 150px;left: 120px;">' +
+                '   <div style="margin: 70px; font-size: 15pt; font-family: \'Comic Sans MS\', cursive, sans-serif;color:white">' +
+                '       <div style="float:left">' +
+                '           <div id="fs_board_name_given_label">Vorname:</div>' +
+                '           <input type="text" id="fs_board_name_given" style="width: 174px; border: 1px dotted black; background: transparent; font: inherit; font-size: 13pt;color: inherit; padding: 4pt 8pt" />' +
+                '       </div>' +
+                '       <div style="float:right">' +
+                '           <div id="fs_board_name_family_label">Nachname:</div>' +
+                '           <input type="text" id="fs_board_name_family" style="width: 174px; border: 1px dotted black; background: transparent; font: inherit; font-size: 13pt;color: inherit; padding: 4pt 8pt" />' +
+                '       </div>' +
+                '       <div style="clear:both; height: 1em">&nbsp;</div>' +
+                '           <div id="fs_board_email_label">E-Mail-Adresse:</div>' +
+                '           <input type="text" id="fs_board_email" style="width: 390px; border: 1px dotted black; background: transparent; font: inherit; font-size: 13pt;color: inherit; padding: 4pt 8pt" />' +
+                '   </div>' +
+                '   <button id="fs_board_done" style="cursor: pointer; position: absolute;right: 95px;bottom: 16px;border: 0;background-color: rgba(250, 242, 201, 0);height: 45px;width: 106px;color: white;">Fertig</button>' +
+                '</div>';
+            $('#gameCanvas').append(blackboardForm);
 
-            launchBoard();
+            // hide the done button till done
+            $('#fs_board_done')
+                .hide()
+                .on('click', function () {
+                    saveBoard();
+                });
 
-            function launchBoard() {
-                var blackboardForm = '<div style="' +
-                    'background-image: url('+FAPI.resolvePath('graphics/fs_blackboard.png')+');' +
-                    'background-color: #385123;' +
-                    'background-repeat: no-repeat;' +
-                    'height:300px;' +
-                    'width: 555px;' +
-                    'position: absolute; ' +
-                    'top: 150px;' +
-                    'left: 120px;' +
-                '">' +
-                    '<div style="margin: 70px; font-size: 15pt; font-family: \'Comic Sans MS\', cursive, sans-serif;color:white">' +
-                    '   <div style="float:left">' +
-                    '       <div>Vorname:</div>' +
-                    '       <input style="width: 174px; border: 1px dotted black; background: transparent; font: inherit; font-size: 13pt;color: inherit; padding: 4pt 8pt" type="text" id="fs_board_name_given" />' +
-                    '   </div>' +
-                    '   <div style="float:right">' +
-                    '       <div>Nachname:</div>' +
-                    '       <input style="width: 174px; border: 1px dotted black; background: transparent; font: inherit; font-size: 13pt;color: inherit; padding: 4pt 8pt" type="text" id="fs_board_name_given" />' +
-                    '   </div>' +
-                    '   <div style="clear:both; height: 1em">&nbsp;</div>' +
-                    '       <div>E-Mail-Adresse:</div>' +
-                    '       <input style="width: 390px; border: 1px dotted black; background: transparent; font: inherit; font-size: 13pt;color: inherit; padding: 4pt 8pt" type="text" id="fs_board_name_given" />' +
-                    '</div></div>';
-                $('#gameCanvas').append(blackboardForm);
+            var fields = {
+                fs_board_name_given: {
+                    elem: $('#fs_board_name_given'),
+                    label: 'fs_board_name_given_label',
+                    name: 'forname'
+                },
+                fs_board_name_family: {
+                    elem: $('#fs_board_name_family'),
+                    label: 'fs_board_name_family_label',
+                    name: 'sirname'
+                },
+                fs_board_email: {
+                    elem: $('#fs_board_email'),
+                    label: 'fs_board_email_label',
+                    name: 'mehl'
+                }
+            };
+
+            // hook listeners for field validations
+            fields.fs_board_name_family.elem.bind('input propertychange', function () {validateFields();});
+            fields.fs_board_name_given.elem.bind('input propertychange', function () {validateFields();});
+            fields.fs_board_email.elem.bind('input propertychange', function () {validateFields();});
+
+            function validateFields() {
+                // test all fields
+                var allValid = true;
+                for (var id in fields) {
+                    if (Environment.fapi.data.testValidValue(fields[id].name, fields[id].elem.val())) {
+                        $('#' + fields[id].label).css('color', 'white');
+                    } else {
+                        $('#' + fields[id].label).css('color', 'red');
+                        allValid = false;
+                    }
+                }
+
+                // enable done button if all fields pass test
+                if (allValid) $('#fs_board_done').show();
             }
 
             function saveBoard() {
+                // push data to FAPI
+                Environment.fapi.data.setValue('forname', fields.fs_board_name_given.elem.val());
+                Environment.fapi.data.setValue('sirname', fields.fs_board_name_family.elem.val());
+                Environment.fapi.data.setValue('mehl', fields.fs_board_email.elem.val());
 
+                // log progress
+                Game.actionsBlocked = false;
+                Environment.progress.fs_filledBoard = true;
+                Game.log('Kontaktdaten verloren.');
+                Game.log('Lieber schnell wieder raus hier!');
+
+                // remove the overlay
+                $('#fs_board').remove();
             }
         }
     },
