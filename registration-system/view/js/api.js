@@ -42,6 +42,7 @@ function Bachelor() {
         'mehl':    null,
         'essen':   null,
         'public':  null,
+        'virgin':  null,
         'studityp':null,
         'comment': null
     };

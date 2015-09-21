@@ -15,6 +15,8 @@ Environment.progress = {
     // landing map related
     landing_askedNickname: false,
     landing_killedGoat: false,
+    landing_dorfEntranceApproach: false,
+    landing_ageChosen: false,
 
 
     // -----------------------------

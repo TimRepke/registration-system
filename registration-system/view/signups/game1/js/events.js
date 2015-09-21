@@ -24,6 +24,7 @@ function EventHandler(svg) {
                 destination: this.getAttribute('destination'),
                 stopsWalk: this.getAttribute('stopsWalk') === 'true',
                 action: this.getAttribute('action'),
+                directAction: this.getAttribute('directAction'),
                 walkTo: this.getAttribute('walkTo'),
                 condition: this.getAttribute('condition')
             });
@@ -113,13 +114,20 @@ EventHandler.handleAction = function (event) {
                 var bbox = spawn[0][0].getBBox();
                 var xy = Vec.add(getTranslation(spawn[0][0], Game.char.svg[0][0]), [bbox.x, bbox.y]);
 
+                // trigger action, then walk to target
+                if (event.directAction && event.directAction === 'true') {
+                    Story.actions[event.action].action(event);
+                    Game.char.setMoveTarget(xy[0], xy[1]);
+                }
                 // walk to the action point, start action on callback
-                Game.char.setMoveTarget(xy[0], xy[1], Story.actions[event.action].action);
+                else {
+                    Game.char.setMoveTarget(xy[0], xy[1], Story.actions[event.action].action);
+                }
             }
         }
         // otherwise start action directly
         else {
-            Story.actions[event.action].action();
+            Story.actions[event.action].action(event);
         }
     }
     return isPossible;
