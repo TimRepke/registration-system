@@ -57,11 +57,14 @@ Folder structure:
 
 ### Debugging
 
+#### Game1 specific
+
 For debugging you can point your browser to the `test.html` and use some of the following parameters:
 
 - `map` - number of the map
 - `showEventLayers` - set `true` if you want to see the event layers
 - `verbosePF` - set `true` to dump the path finding raster to the console
+- `fastTalk` - set `true` to make dialogues ultra fast
 
 For example:
 
