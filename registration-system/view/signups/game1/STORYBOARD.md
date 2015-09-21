@@ -1,16 +1,17 @@
 # Needed props
 
-- Anreise Tag
-- Anreise Art
-- Abreise Tag
-- Abreise Art
-- Alter (18+ ja/nein)
-- Essen
-- Name (Vor und Nachname einzeln)
-- E-Mail
-- Kommentar
-- Ersti/Tutor/Hörsti
-- Anmeldung verstecken (ja/nein)
+- Anreise Tag @ Ticketmensch im Dorf
+- Anreise Art @ Ticketmensch im Dorf
+- Abreise Tag @ Aufwachufer
+- Abreise Art @ Aufwachufer
+- Alter (18+ ja/nein) @ Dorfeingang
+- Essen @ Bäckerei im Dorf
+- Name (Vor und Nachname einzeln) @ Fachschaft Tafel
+- Nickname @ Jemand auf der Karte fragt danach
+- E-Mail @ Fachschaft Tafel
+- Kommentar @ ???
+- Ersti/Tutor/Hörsti @ firstApproach Fachschaft
+- Anmeldung verstecken (ja/nein) @ Jemand im Dorf fragt danach
 
 # Eastereggs
 
