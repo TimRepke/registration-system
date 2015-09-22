@@ -67,12 +67,14 @@ Beim Betreten des AYCE spielt eine kurze Sequenz (siehe Part 6)
 
 ## Part 6
 
-Man hat gesehen, wie man beim Betreten etwas verloren hat. Ein Huhn greift es und rennt weg. [cut]
+~~Man hat gesehen, wie man beim Betreten etwas verloren hat. Ein Huhn greift es und rennt weg. [cut]~~
 
-Kommt man wieder raus, grübelt der Spieler, dass er das Huhn finden muss, was gerade wegrennt. Das rennt einmal durchs Dorf.
-Es verliert Papiere. Sammelt man die Papiere auf, hat man auf einmal einen Kalender.
+~~Kommt man wieder raus, grübelt der Spieler, dass er das Huhn finden muss, was gerade wegrennt. Das rennt einmal durchs Dorf.~~
+~~Es verliert Papiere. Sammelt man die Papiere auf, hat man auf einmal einen Kalender.~~
 
-Im Kalender kreuzt man an, wann man Zeit für die Fahrt hat. (An/Abreisetag)
+~~Im Kalender kreuzt man an, wann man Zeit für die Fahrt hat. (An/Abreisetag)~~
+
+Erstmal einfacher: Ticketfrau fragt nach dem Anreisedatum.
 
 ## Part 7
 

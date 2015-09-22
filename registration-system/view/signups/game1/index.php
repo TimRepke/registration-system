@@ -20,7 +20,7 @@ class Game1SignupMethod extends SignupMethod {
 
     public function getJSDependencies() {
         return ['../../js/jquery-1.11.1.min.js', 'jslib/d3.min.js', 'jslib/priority-queue.min.js', 'jslib/checkLineIntersection.js',
-            'js/events.js','js/achievements.js', 'js/svgUtils.js', 'js/pathFinder.js', 'js/vector.js', 'js/character.js','js/camera.js',
+            'js/events.js', 'js/achievements.js', 'js/svgUtils.js', 'js/pathFinder.js', 'js/vector.js', 'js/character.js', 'js/camera.js',
             'js/environment.js', 'js/game.js'];
     }
 
@@ -33,6 +33,16 @@ class Game1SignupMethod extends SignupMethod {
     }
 
     public function showInlineHTML() {
+        $environment = Environment::getEnv();
+
+        $dates = comm_get_possible_dates($environment->database, $environment->getSelectedTripId());
+        foreach ($dates as &$date)
+            $date = '"' . $date . '"';
+        echo '
+			<script type="text/javascript">
+				var env_possible_dates = [' . implode(', ', $dates) . '];
+            </script>';
+
         echo '
             <div id="game-root-container">
                 <div id="game-sidebar" class="bordered-box">

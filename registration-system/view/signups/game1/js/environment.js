@@ -3,6 +3,12 @@ function Environment () {
 }
 Environment.fapi = new FAPI();
 
+// can be used to turn individual sounds on/off
+Environment.sound = {
+    achievements: false,
+    log: true
+};
+
 Environment.progress = {
     // -----------------------------
     // MAP RELATED things
@@ -18,6 +24,9 @@ Environment.progress = {
     landing_dorfEntranceApproach: false,
     landing_ageChosen: false,
 
+    // dorf related
+    dorf_pickedFood: !false,
+    dorf_boughtTicket: false,
 
     // -----------------------------
     // INVENTORY
@@ -58,7 +67,13 @@ Environment.mapEvents = {
     },
     'dorf': {
         init: function(svg) {
-
+            if (!Environment.progress.dorf_pickedFood)
+                Game.log("Geh ins Wirtshaus");
+            if (!Environment.progress.dorf_boughtTicket && Environment.progress.dorf_pickedFood) {
+                Game.log("Rede mit der Prinzessin");
+            } else {
+                svg.select('#ticketfrau').style('display', 'none');
+            }
         }
     }
 };
