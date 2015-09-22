@@ -117,7 +117,8 @@ Char.prototype.animate = function() {
 };
 Char.prototype.physics = function() {
 	if (!this.moveTarget || this.moveTarget && this.moveTarget.length == 0) {
-		if (this.onArrivalCallback && typeof this.onArrivalCallback === 'function') this.onArrivalCallback();
+		if (this.onArrivalCallback && typeof this.onArrivalCallback.func === 'function')
+			this.onArrivalCallback.func(this.onArrivalCallback.param);
 		this.onArrivalCallback = null;
 		return;
 	}
@@ -162,9 +163,12 @@ Char.prototype.updatePosition = function() {
  * @param y coord
  * @param onArrival optional callback function
  */
-Char.prototype.setMoveTarget = function(x, y, onArrival) {
+Char.prototype.setMoveTarget = function(x, y, onArrival, onArrivalParam) {
 
-	this.onArrivalCallback = onArrival;
+	this.onArrivalCallback = {
+		func: onArrival,
+		param: onArrivalParam
+	};
 
 	if (Game.config.usePathFinding)
 		this.moveTarget = this.pathFinder.smoothPath(this.pathFinder.findPath(this.translation[0], this.translation[1], x, y));

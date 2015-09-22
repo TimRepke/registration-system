@@ -470,14 +470,21 @@ Story.actions = {
             }, {
                 bubble: '#prinzessin_speech',
                 message: 'Dann musst du dich aber allein um die Anreise kümmern.',
-                condition: function() {return state.datepick === 1; }
+                condition: function () {
+                    return state.datepick === 1;
+                }
             }, {
                 bubble: '#prinzessin_speech',
                 message: 'Das wird ein Spaß! Du kannst mit allen zusammen fahren oder dich allein um die Anreise kümmern.',
-                condition: function() {return state.datepick === 0; }
+                condition: function () {
+                    return state.datepick === 0;
+                }
             }, {
                 answer: [{
                     message: 'Mit allen zusammen in der Bahn',
+                    condition: function () {
+                        return state.datepick === 0;
+                    },
                     action: function () {
                         Environment.fapi.data.setValue('antyp', 'BUSBAHN');
                         blinkChoice('train');
@@ -485,6 +492,9 @@ Story.actions = {
                     }
                 }, {
                     message: 'Ich möchte mit anderen Rad fahren. Ist ja nicht weit.',
+                    condition: function () {
+                        return state.datepick === 0;
+                    },
                     action: function () {
                         Environment.fapi.data.setValue('antyp', 'RAD');
                         blinkChoice('bike');
@@ -525,6 +535,85 @@ Story.actions = {
                     }
                 }, 60);
             }
+        }
+    },
+
+    'dorf_wirt': {
+        possible: function () {
+            return !Environment.progress.dorf_talkedToWirt;
+        },
+        action: function (event) {
+            Environment.progress.dorf_talkedToWirt = true;
+            var food = {
+                fleisch: Game.char.svg.select('#fleisch'),
+                kaese: Game.char.svg.select('#kaese'),
+                griess: Game.char.svg.select('#griess')
+            };
+            Story.dialogueHelper([{
+                bubble: '#wirt_speech',
+                message: 'Na du!? Du bist wohl her gekommen um etwas zum Essen zu holen...'
+            }, {
+                bubble: '#wirt_speech',
+                message: 'Leider habe ich nichts da.'
+            }, {
+                answer: [{
+                    message: 'Kein Problem, ich habe Milch und Schinken einer Ziege.',
+                    action: function() {}
+                }, {
+                    message: 'Egal, mach irgendwas!',
+                    action: function() {}
+                }]
+            }, {
+                bubble: '#wirt_speech',
+                message: 'Prima! Ich habe dir ein Essen auf den Tisch gestellt.',
+                action: function() {
+                    food.fleisch.style('display', 'block');
+                }
+            }, {
+                bubble: '#wirt_speech',
+                message: 'Wenn du kein Fleisch ist, mache ich dir Käse und Brot.',
+                action: function() {
+                    food.kaese.style('display', 'block');
+                }
+            }, {
+                bubble: '#wirt_speech',
+                message: 'Aus der Sojamilch der Ziege habe ich Grießbrei gemacht.',
+                action: function() {
+                    food.griess.style('display', 'block');
+                }
+            }], null, function() {
+                Game.log('Wähle deinen Essenswunsch');
+            });
+        }
+    },
+
+    'dorf_pickFood': {
+        possible: function () {
+            return Environment.progress.dorf_talkedToWirt && !Environment.progress.dorf_pickedFood;
+        },
+        action: function (event) {
+            Environment.progress.dorf_pickedFood = true;
+            var food = {
+                fleisch: Game.char.svg.select('#fleisch'),
+                kaese: Game.char.svg.select('#kaese'),
+                griess: Game.char.svg.select('#griess')
+            };
+            if (event.id === 'click_fleisch') {
+                Environment.fapi.data.setValue('essen', 'ALLES');
+                food.fleisch.style('display', 'none');
+            } else if (event.id === 'click_kaese') {
+                Environment.fapi.data.setValue('essen', 'VEGE');
+                food.kaese.style('display', 'none');
+            } else if (event.id === 'click_griess') {
+                Environment.fapi.data.setValue('essen', 'VEGA');
+                food.griess.style('display', 'none');
+            }
+            setTimeout(function () {
+                food.fleisch.style('display', 'none');
+                food.kaese.style('display', 'none');
+                food.griess.style('display', 'none');
+            }, 1000);
+            Game.log('Gehe zurück ins Dorf')
         }
     }
 };
@@ -582,7 +671,7 @@ Story.dialogueHelper = function (dialogue, context, done) {
 
     function answerSelection(answers) {
         var possibleAnswers = answers.map(function (answer, i) {
-            if (!('condition' in answer) || answer.condition)
+            if (!('condition' in answer) || (typeof answer.condition === 'function' ? answer.condition() : answer.condition))
                 return '<li gameDialogueAnswer="' + i + '">' + answer.message + '</li>';
             else return null;
         }).filter(function (answer) {
@@ -594,7 +683,7 @@ Story.dialogueHelper = function (dialogue, context, done) {
             dialogueBox.html(list);
             $('[gameDialogueAnswer]').on('click', function () {
                 var answer = $(this).attr('gameDialogueAnswer');
-                if (typeof answers[answer].action() === 'function') answers[answer].action();
+                if (typeof answers[answer].action === 'function') answers[answer].action();
                 dialogueStepper();
             })
         } else {

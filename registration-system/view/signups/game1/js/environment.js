@@ -25,7 +25,8 @@ Environment.progress = {
     landing_ageChosen: false,
 
     // dorf related
-    dorf_pickedFood: !false,
+    dorf_talkedToWirt: false,
+    dorf_pickedFood: false,
     dorf_boughtTicket: false,
 
     // -----------------------------
@@ -74,6 +75,11 @@ Environment.mapEvents = {
             } else {
                 svg.select('#ticketfrau').style('display', 'none');
             }
+        }
+    },
+    'shop': {
+        init: function(svg) {
+
         }
     }
 };
