@@ -113,7 +113,6 @@ EventHandler.handleAction = function (event) {
             if (spawn[0][0]) {
                 var bbox = spawn[0][0].getBBox();
                 var xy = Vec.add(getTranslation(spawn[0][0], Game.char.svg[0][0]), [bbox.x, bbox.y]);
-
                 // trigger action, then walk to target
                 if (event.directAction && event.directAction === 'true') {
                     Story.actions[event.action].action(event);
@@ -121,7 +120,7 @@ EventHandler.handleAction = function (event) {
                 }
                 // walk to the action point, start action on callback
                 else {
-                    Game.char.setMoveTarget(xy[0], xy[1], Story.actions[event.action].action);
+                    Game.char.setMoveTarget(xy[0], xy[1], Story.actions[event.action].action, event);
                 }
             }
         }

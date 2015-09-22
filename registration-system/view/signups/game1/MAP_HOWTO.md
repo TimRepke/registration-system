@@ -34,8 +34,8 @@ Folgende Attribute sollten gesetzt werden:
 - trigger (= walkon, hover, click)
 - type (= achievement, mapchange, ...)
 - stopsWalk (= true, false)
-- target (optional, für map type für mapchange)
 - destination (optional, target map für mapchange)
+- target (optional, spawn point für mapchange)
 - id
 - action (optional, action to call as defined in Events.actions)
 - directAction (optional, set true to fire action before walkTo point is reached)
