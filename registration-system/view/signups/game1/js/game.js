@@ -184,11 +184,17 @@ Game.prototype.loadMap = function (map, spawn) {
 };
 
 Game.log = function (message) {
+    if (Environment.sound.log) new Audio(FAPI.resolvePath('sounds/plop.mp3')).play();
     var list = document.getElementById('game-log');
 
     var newElem = document.createElement('li');
     var newElemText = document.createTextNode(message);
     newElem.appendChild(newElemText);
+
+    newElem.style.backgroundColor = '#474c46';
+    setTimeout(function(){
+        newElem.style.background = 'transparent';
+    }, 1000);
 
     list.insertBefore(newElem, list.childNodes[0]);
 };

@@ -11,7 +11,9 @@ function Achievements() {
         'stroh': 'Warum liegt hier Stroh rum?',
         'saw_devs1': 'Wilde Informatiker auf Wiese gesehen',
         'moneyboy': 'Money Boy: Swag ist aufgedreht',
-        // TODO: add more!
+        'woman': 'Mit einer Prinzessin gesprochen',
+        'plumber': 'Berufung: Gas, Wasser, Scheiße',
+        'princess': 'Prinzessin verärgert',
         'achievement42': 'You just found the answer to everything!'
     };
     this.achievedAchievements = [];
@@ -19,6 +21,7 @@ function Achievements() {
     this.domElems = null;
 
     this.triggerAchievement('started_game');
+    Environment.sound.achievements = true;
 }
 Achievements.prototype.numTotalAchievements = function() {
     return Object.keys(this.achievements).length;
@@ -52,11 +55,17 @@ Achievements.prototype.updateStatusText = function () {
 };
 
 Achievements.prototype.logMessage = function (message) {
+    if (Environment.sound.achievements) new Audio(FAPI.resolvePath('sounds/ding.mp3')).play();
     var list = this.getDomElem('log');
 
     var newElem = document.createElement('li');
     var newElemText = document.createTextNode(message);
     newElem.appendChild(newElemText);
+
+    newElem.style.backgroundColor = '#474c46';
+    setTimeout(function(){
+        newElem.style.background = 'transparent';
+    }, 1000);
 
     list.insertBefore(newElem, list.childNodes[0]);
 };

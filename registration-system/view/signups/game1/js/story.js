@@ -391,7 +391,7 @@ Story.actions = {
                     Game.char.svg.select('#dorfritter')
                         .transition().duration(200).attr('transform', 'translate(0,0)');
                 }
-            }], null, function() {
+            }], null, function () {
                 Game.log('Gehe ins Dorf.');
                 Game.log('18+ rechtes Tor, sonst das linke');
             });
@@ -408,6 +408,122 @@ Story.actions = {
                 Environment.fapi.data.setValue('virgin', 'Ja');
             } else {
                 Environment.fapi.data.setValue('virgin', 'Nein');
+            }
+        }
+    },
+
+
+    // =================================================================================================================
+    // Actions im Dorf
+
+    'dorf_ticket': {
+        possible: function () {
+            return Environment.progress.dorf_pickedFood && !Environment.progress.dorf_boughtTicket;
+        },
+        state: {
+            datepick: -1,
+            bike: false,
+            train: false,
+            indi: false
+        },
+        action: function () {
+            Game.actionsBlocked = true;
+            var relevant_dates = env_possible_dates.slice(0, 2);
+            var state = Story.actions.dorf_ticket.state;
+            Game.achievements.triggerAchievement('woman');
+            Environment.progress.dorf_boughtTicket = true;
+
+            Story.dialogueHelper([{
+                bubble: '#prinzessin_speech',
+                message: 'Hallo, wie geht es dir?'
+            }, {
+                answer: [
+                    {message: 'Gut'},
+                    {message: 'Sehr gut'},
+                    {
+                        message: 'Ich bin Klepner, heiße Mario, und werde dich retten.',
+                        action: function () {
+                            Game.achievements.triggerAchievement('plumber');
+                        }
+                    }
+                ]
+            }, {
+                bubble: '#prinzessin_speech',
+                message: 'Mir eigentlich total egal! Du bist hier für ein Ticket schätze ich.'
+            }, {
+                bubble: '#prinzessin_speech',
+                message: 'An welchem Tag willst du denn zur Fahrt aufziehen?'
+            }, {
+                answer: [{
+                    message: 'Mit allen zusammen, also am ' + relevant_dates[0],
+                    action: function () {
+                        Environment.fapi.data.setValue('anday', relevant_dates[0]);
+                        state.datepick = 0;
+                    }
+                }, {
+                    message: 'Später, also am ' + relevant_dates[1],
+                    action: function () {
+                        Environment.fapi.data.setValue('anday', relevant_dates[1]);
+                        state.datepick = 1;
+                    }
+                }]
+            }, {
+                bubble: '#prinzessin_speech',
+                message: 'Dann musst du dich aber allein um die Anreise kümmern.',
+                condition: function() {return state.datepick === 1; }
+            }, {
+                bubble: '#prinzessin_speech',
+                message: 'Das wird ein Spaß! Du kannst mit allen zusammen fahren oder dich allein um die Anreise kümmern.',
+                condition: function() {return state.datepick === 0; }
+            }, {
+                answer: [{
+                    message: 'Mit allen zusammen in der Bahn',
+                    action: function () {
+                        Environment.fapi.data.setValue('antyp', 'BUSBAHN');
+                        blinkChoice('train');
+                        state.train = true;
+                    }
+                }, {
+                    message: 'Ich möchte mit anderen Rad fahren. Ist ja nicht weit.',
+                    action: function () {
+                        Environment.fapi.data.setValue('antyp', 'RAD');
+                        blinkChoice('bike');
+                        state.bike = true;
+                    }
+                }, {
+                    message: 'Ich nehme das Boot und kümmere mich allein um die Anreise.',
+                    action: function () {
+                        Environment.fapi.data.setValue('antyp', 'INDIVIDUELL');
+                        blinkChoice('boat');
+                        state.indi = true;
+                    }
+                }]
+            }, {
+                bubble: '#prinzessin_speech',
+                message: 'Meine Güte bist du langweilig!'
+            }, {
+                bubble: '#prinzessin_speech',
+                message: 'Ich gehe jetzt zurück ins Haus und warte weiter auf den Klempner.'
+            }], null, function () {
+                Game.achievements.triggerAchievement('princess');
+                Game.char.svg.select('#ticketfrau')
+                    .transition().attr('transform', 'translate(10, 15)')
+                    .transition().attr('transform', 'translate(50, 20)')
+                    .transition().attr('transform', 'translate(50, -20)')
+                    .transition().attr('display', 'none');
+            });
+
+            function blinkChoice(id) {
+                var node = Game.char.svg.select('#' + id);
+                var cnt = 0;
+                var looper = setInterval(function () {
+                    cnt++;
+                    node.style('display', (cnt % 2) ? 'block' : 'none');
+                    if (cnt > 8) {
+                        clearInterval(looper);
+                        node.style('display', 'block');
+                    }
+                }, 60);
             }
         }
     }
@@ -436,7 +552,7 @@ Story.dialogueHelper = function (dialogue, context, done) {
         } else {
             var part = dialogue[dialogue_i];
             dialogue_i++;
-            if ('condition' in part && !part.condition) {
+            if ('condition' in part && ((typeof part.condition === 'function') ? !part.condition() : !part.condition)) {
                 dialogueStepper();
             } else if (part.input) {
                 manualInput(part.input);
