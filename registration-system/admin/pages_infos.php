@@ -25,15 +25,17 @@ if(isset($_POST['note-content'])){
                                  "regopen"      => isset($_REQUEST['regopen']) ? 1 : 0,
                                  "wikilink"     => $_REQUEST['wikilink'],
                                  "paydeadline"  => $_REQUEST['paydeadline'],
-                                 "payinfo"      => $_REQUEST['payinfo']],
+                                 "payinfo"      => $_REQUEST['payinfo'],
+                                 "opentime"     => $_REQUEST['opentime']],
                         array("fahrt_id"=>$config_current_fahrt_id));
 }
 
-$data = $admin_db->get("fahrten", ["beschreibung", "titel", "von", "bis", "ziel", "map_pin", "leiter", "kontakt", "regopen", "max_bachelor", "wikilink", "paydeadline", "payinfo"], array("fahrt_id"=>$config_current_fahrt_id));
+$data = $admin_db->get("fahrten", ["beschreibung", "titel", "von", "bis", "ziel", "map_pin", "leiter", "kontakt", "regopen", "max_bachelor", "wikilink", "paydeadline", "payinfo", "opentime"], array("fahrt_id"=>$config_current_fahrt_id));
 
 if(!preg_match('/\d{2}\.\d+ \d{2}\.\d+/', $data['map_pin'])){
     $data['map_pin'] = '52.4263218 13.5223815';
 }
+if($data['opentime'] == 0) $data['opentime'] = time();
 
 $headers .="<!-- wysihtml5 parser rules -->
 <script src=\"../view/js/wysihtml5-0.3.0_rc2.min.js\"></script>
@@ -41,9 +43,11 @@ $headers .="<!-- wysihtml5 parser rules -->
 <script src=\"../view/js/wysihtml5-advanced.js\"></script>
 <script src=\"../view/js/jquery-1.11.1.min.js\"></script>
 <script src=\"../view/js/jquery-ui.min.js\"></script>
+<script src=\"../view/js/jquery.datetimepicker.js\"></script>
 <script type=\"text/javascript\" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
 <script src=\"../view/js/locationpicker.jquery.js\"></script>
 <link type='text/css' rel='stylesheet' href='../view/jquery-ui/jquery-ui.min.css' />
+<link type='text/css' rel='stylesheet' href='../view/css/jquery.datetimepicker.css' />
 
 <!--link type='text/css' rel='stylesheet' href='../view/css/wysihtml5/editor.css' /-->
 <link type='text/css' rel='stylesheet' href='../view/css/wysihtml5/stylesheet.css' />
@@ -91,6 +95,8 @@ $text .= '
                     <input type="text" name="von" id="von" value="'.$data["von"].'" /></li>
                 <li><label>Bis</label>
                     <input type="text" name="bis" id="bis" value="'.$data["bis"].'" /></li>
+                <li><label>Anmeldung ab</label>
+                    <input type="text" name="opentime" id="opentime" value="'.$data["opentime"].'" /></li>
                 <li><label>Anm. offen</label>
                     <input type="checkbox" name="regopen" id="regopen" value="penis" '.(($data["regopen"]==1) ? "checked" : "").' /></li>
                 <li><label>Max TN</label>
@@ -126,6 +132,7 @@ $text .= '
                     $(function() {
                         $( "#von" ).datepicker( { dateFormat: "yy-mm-dd"} );
                         $( "#bis" ).datepicker( { dateFormat: "yy-mm-dd"} );
+                        $( "#opentime" ).datetimepicker( { format: "unixtime" } );
                         $( "#paydeadline" ).datepicker( { dateFormat: "yy-mm-dd"} );
                     });
                 </script>
