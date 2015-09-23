@@ -81,5 +81,10 @@ Environment.mapEvents = {
         init: function(svg) {
 
         }
+    },
+    'ufer': {
+        init: function(svg) {
+
+        }
     }
 };
