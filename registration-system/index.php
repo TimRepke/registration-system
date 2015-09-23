@@ -398,6 +398,7 @@ function index_show_countdown($opentime) {
     echo "
     <script>
         var a = '0123456789abcdef';
+        var opentime = " . $opentime . ";
         function randstr () {
 	        var str = '';
 	        for(var i = 0; i < 6; ++i)
@@ -410,6 +411,7 @@ function index_show_countdown($opentime) {
 
 		    hurrrdurrr('#menubox');
 		    hurrrdurrr('body');
+		    hurrrdurr();
 
 		    function hurrrdurrr(elem) {
                 $(elem).stop().animate({backgroundColor:'#'+randstr()}, 333,
@@ -421,6 +423,22 @@ function index_show_countdown($opentime) {
                     });
 		    }
 
+		    function hurrrdurr() {
+		        var now = (Date.now() + ((new Date()).getTimezoneOffset()*60))/1000;
+		        var diff = opentime - now;
+		        var view = '';
+		        if (diff <= 0) {
+		            view = '00:00:00.00';
+		        } else {
+		            view = hurrdurrr(parseInt(diff/60/60/24, 10)) + ':' + hurrdurrr(parseInt(diff / 60 / 60 % 24, 10))
+		                + ':' + hurrdurrr(parseInt(diff / 60 % 60, 10)) + '.' + hurrdurrr(parseInt(diff%60, 10));
+		        }
+                $('#countdown').text(view);
+		        function hurrdurrr(num) {
+                    return ((num < 10) ? '0' : '') + num;
+		        }
+		    }
+
 		    b = !b;
         }
         $(function () {
@@ -430,10 +448,11 @@ function index_show_countdown($opentime) {
     </script>";
 
     echo '<div id="text" style="font-weight:bold;text-align:center;font-size:40pt;font-family:Verdana, Geneva, sans-serif">
-            ANMELDUNG IN KÜRZE
+            ANMELDUNG IN KÜRZE<br />
+            <span id="countdown"></span>
           </div>';
 
-    echo '<div style="width:100%">
+    echo '<div style="width:100%; margin-top: 20px;">
             <div style="margin:0 auto; width:420px">
                 <iframe width="420" height="450" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/109529816&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"></iframe>
             </div>
