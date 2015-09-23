@@ -64,7 +64,7 @@
     var FAPI = new FAPI();
     FAPI.methodBasepath = '';
 
-    var maps = ['map_landing', 'castle_entrance', 'castle_fs', 'dorf', 'shop'];
+    var maps = ['map_landing', 'castle_entrance', 'castle_fs', 'dorf', 'shop', 'ufer'];
     var game = new Game({
         startMap: maps[UrlComponents.getValueOf('map') || 0],
         showEventLayers: UrlComponents.getValueOf('showEventLayers') === 'true',
