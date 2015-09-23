@@ -395,6 +395,7 @@ function index_show_signupTable_destroyTypes($anabtyp) {
 
 
 function index_show_countdown($opentime) {
+    echo '<script type="text/javascript" src="view/js/qrcode.min.js"></script>';
     echo "
     <script>
         var a = '0123456789abcdef';
@@ -442,6 +443,9 @@ function index_show_countdown($opentime) {
 		    b = !b;
         }
         $(function () {
+            var url = window.location.href;
+            console.log(url);
+            if(url.indexOf('#showQR')>0) new QRCode(document.getElementById('QRcode'), url.replace('#showQR',''));
 	        hurrdurr();
 	        setInterval(hurrdurr, 1000);
         });
@@ -453,9 +457,11 @@ function index_show_countdown($opentime) {
           </div>';
 
     echo '<div style="width:100%; margin-top: 20px;">
-            <div style="margin:0 auto; width:420px">
-                <iframe width="420" height="450" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/109529816&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"></iframe>
+            <div style="margin:0 auto; width:300px">
+                <iframe width="300" height="300" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/109529816&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"></iframe>
             </div>
           </div>';
+
+    echo '<div id="QRcode" style="position: fixed; bottom: 10px; right: 10px;"></div>';
 
 }
