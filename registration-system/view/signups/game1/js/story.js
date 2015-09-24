@@ -676,7 +676,7 @@ Story.actions = {
             } else {
                 Environment.fapi.data.setValue('virgin', 'Nein');
             }*/
-            console.log('picked')
+            console.log('picked ' + event.id);
         }
     }
 };

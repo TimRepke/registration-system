@@ -112,8 +112,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2"
-     inkscape:cx="247.67376"
-     inkscape:cy="168.40917"
+     inkscape:cx="311.26515"
+     inkscape:cy="166.70813"
      inkscape:document-units="px"
      inkscape:current-layer="layer42"
      showgrid="false"
@@ -668,10 +668,10 @@
      style="opacity:0.52700022">
     <path
        style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffffff;fill-rule:evenodd;stroke:none;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
-       d="M 650,592 436.02837,470.42031 457.08189,439.4538 446.8652,438.95498 426.76331,466.80233 420.875,463.5 374,469 359,428 330.95345,408.60112 385.61567,364.28519 368.32996,364.19439 318.27869,401.57925 308,396 258,397 219.67588,405.51472 180.71751,389.14555 164,366 l -67.191909,0.77656 -1.100828,-22.07042 -6.170317,-0.17176 0.885538,22.8897 L 9,369 6,597 Z"
+       d="M 650,592 443.27621,475.54683 464.50651,437.15571 441.91545,433.82846 427.29364,463.09002 420.875,463.5 374,469 l -15,-41 -16.86016,-12.02081 0.60435,-3.31221 49.16492,-1.40245 3.95961,-46.62579 -27.53876,-0.44435 -0.37994,36.3637 -49.67133,1.02116 L 308,396 258,397 219.67588,405.51472 180.71751,389.14555 164,366 l -62.86088,0.20204 -1.01244,-21.62848 -10.589734,-0.0392 0.885538,22.8897 L 9,369 6,597 Z"
        id="path23995"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccccccccccccccccccccc" />
+       sodipodi:nodetypes="ccccccccccccccccccccccccccc" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -700,16 +700,6 @@
        trigger="click"
        type="special"
        walkTo="walkto_bike" />
-    <path
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ff00ff;fill-rule:evenodd;stroke:none;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
-       d="m 231.5,261 199,-1 28,16 0,106.5 L 282,382 211.5,353 218,334.5 216,287 Z"
-       id="pick_train"
-       inkscape:connector-curvature="0"
-       trigger="click"
-       walkTo="walkto_train"
-       action="ufer_pickTransport"
-       type="special"
-       condition="ufer_princessApproach" />
     <path
        style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ff00ff;fill-rule:evenodd;stroke:none;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
        d="m 413,415 3,37.5 55,27 12,-38 -29.5,-34.5 z"
@@ -746,5 +736,14 @@
        cx="93.338097"
        cy="351.09842"
        r="1.375" />
+    <path
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ff00ff;fill-rule:evenodd;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       d="m 230,263.5 203,-5 29,18 -0.5,107.5 -176.5,0 -73.5,-26.5 8,-26.5 -11.5,-24.5 z"
+       id="pick_train"
+       inkscape:connector-curvature="0"
+       trigger="click"
+       type="special"
+       action="ufer_pickTransport"
+       walkTo="walkto_train" />
   </g>
 </svg>
