@@ -19,7 +19,7 @@ class Game1SignupMethod extends SignupMethod {
     }
 
     public function getJSDependencies() {
-        return ['../../js/jquery-1.11.1.min.js', 'jslib/d3.min.js', 'jslib/priority-queue.min.js', 'jslib/checkLineIntersection.js',
+        return ['../../js/jquery-1.11.1.min.js', '../../js/jquery-ui.min.js', 'jslib/d3.min.js', 'jslib/priority-queue.min.js', 'jslib/checkLineIntersection.js',
             'js/events.js', 'js/achievements.js', 'js/svgUtils.js', 'js/pathFinder.js', 'js/vector.js', 'js/character.js', 'js/camera.js',
             'js/environment.js', 'js/game.js'];
     }
@@ -67,7 +67,11 @@ class Game1SignupMethod extends SignupMethod {
                 <div id="game-game">
                     <div id="gameCanvas" style="overflow:hidden;position:relative">
                         <div id="gameRoot" style="position:relative"></div>
+                        <div id="gameDialogue" class="bordered-box"></div>
                     </div>
+                </div>
+
+                <div id="game-overlay">
                 </div>
             </div>
 
