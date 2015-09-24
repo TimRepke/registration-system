@@ -28,6 +28,7 @@ Environment.progress = {
     // dorf related
     dorf_talkedToWirt: false,
     dorf_pickedFood: false,
+    dorf_pickedFootAndLeftPub: false,
     dorf_boughtTicket: false,
 
     // ufer related
@@ -79,11 +80,13 @@ Environment.mapEvents = {
     },
     'dorf': {
         init: function(svg) {
-            if (!Environment.progress.dorf_pickedFood)
+            if (!Environment.progress.dorf_pickedFood) {
                 Game.log("Geh ins Wirtshaus");
-            if (!Environment.progress.dorf_boughtTicket && Environment.progress.dorf_pickedFood) {
-                Game.log("Rede mit der Prinzessin");
-            } else {
+            } else if (!Environment.progress.dorf_pickedFootAndLeftPub && !Environment.progress.dorf_boughtTicket) {
+                Environment.progress.dorf_pickedFootAndLeftPub = true;
+                Game.log("Geh zum Reisebüro und rede mit der Prinzessin");
+            }
+            if (!Environment.progress.dorf_pickedFood || Environment.progress.dorf_boughtTicket) {
                 svg.select('#ticketfrau').style('display', 'none');
             }
         }

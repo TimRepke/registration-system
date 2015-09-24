@@ -33,8 +33,7 @@ function EventHandler(svg) {
 }
 
 EventHandler.prototype.hasEventOn = function (trigger, x, y) {
-    return this.getEventOn(trigger, x, y, function () {
-    });
+    return this.getEventOn(trigger, x, y, function () {});
 };
 
 EventHandler.prototype.getEventOn = function (trigger, x, y, callback) {
@@ -44,6 +43,8 @@ EventHandler.prototype.getEventOn = function (trigger, x, y, callback) {
     for (var i = 0; i < this.eventNodes[trigger].length; ++i) {
         var node = this.eventNodes[trigger][i];
         if (node.path.isInside(x, y)) {
+            if (node.action && !Story.actions[node.action].possible()) return;
+
             hasEvent = true;
             if (trigger == 'walkon' && !this.walkOnEvents[node.id]) {
                 this.walkOnEvents[node.id] = true;

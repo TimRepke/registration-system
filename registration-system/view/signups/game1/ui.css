@@ -24,6 +24,16 @@
     width: 189px;
 }
 
+#game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 800px;
+    height: 600px;
+    display: none;
+    background-color: #000;
+}
+
 .bordered-box {
     font-family: ‘Lucida Console’, Monaco, monospace;
     color: white;

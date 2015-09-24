@@ -595,6 +595,25 @@ Story.actions = {
                 kaese: Game.char.svg.select('#kaese'),
                 griess: Game.char.svg.select('#griess')
             };
+            var nodes = {
+                fleischBlast: Game.char.svg.select('#fleisch_blast'),
+                kaeseBlast: Game.char.svg.select('#kaese_blast'),
+                griessBlast: Game.char.svg.select('#griess_blast')
+            };
+
+            function appearanceBlast(blastElement, food) {
+                var cnt = 0;
+                var looper = setInterval(function () {
+                    cnt++;
+                    blastElement.style('display', (cnt % 2) ? 'block' : 'none');
+                    if (cnt > 10) {
+                        clearInterval(looper);
+                        food.style('display', 'block');
+                        blastElement.style('display', 'none');
+                    }
+                }, 60);
+            }
+
             Story.dialogueHelper([{
                 bubble: '#wirt_speech',
                 message: 'Na du!? Du bist wohl her gekommen um etwas zum Essen zu holen...'
@@ -615,19 +634,19 @@ Story.actions = {
                 bubble: '#wirt_speech',
                 message: 'Prima! Ich habe dir ein Essen auf den Tisch gestellt.',
                 action: function () {
-                    food.fleisch.style('display', 'block');
+                    appearanceBlast(nodes.fleischBlast, food.fleisch);
                 }
             }, {
                 bubble: '#wirt_speech',
                 message: 'Wenn du kein Fleisch ist, mache ich dir Käse und Brot.',
                 action: function () {
-                    food.kaese.style('display', 'block');
+                    appearanceBlast(nodes.kaeseBlast, food.kaese);
                 }
             }, {
                 bubble: '#wirt_speech',
                 message: 'Aus der Sojamilch der Ziege habe ich Grießbrei gemacht.',
                 action: function () {
-                    food.griess.style('display', 'block');
+                    appearanceBlast(nodes.griessBlast, food.griess);
                 }
             }], null, function () {
                 Game.log('Wähle deinen Essenswunsch');
@@ -640,28 +659,71 @@ Story.actions = {
             return Environment.progress.dorf_talkedToWirt && !Environment.progress.dorf_pickedFood;
         },
         action: function (event) {
-            Environment.progress.dorf_pickedFood = true;
             var food = {
                 fleisch: Game.char.svg.select('#fleisch'),
                 kaese: Game.char.svg.select('#kaese'),
                 griess: Game.char.svg.select('#griess')
             };
             if (event.id === 'click_fleisch') {
-                Environment.fapi.data.setValue('essen', 'ALLES');
-                food.fleisch.style('display', 'none');
+                Story.dialogueHelper([{
+                    answer: [{
+                        message: 'Ich esse alles!',
+                        action: function () {
+                            Game.log("Du isst also alles.");
+                            Environment.progress.dorf_pickedFood = true;
+                            Environment.fapi.data.setValue('essen', 'ALLES');
+                            food.fleisch.style('display', 'none');
+                        }
+                    }, {
+                        message: 'Fleisch mag ich nicht!',
+                        action: function () {
+                        }
+                    }]
+                }], null, onPickDialogEnd);
             } else if (event.id === 'click_kaese') {
-                Environment.fapi.data.setValue('essen', 'VEGE');
-                food.kaese.style('display', 'none');
+                Story.dialogueHelper([{
+                    answer: [{
+                        message: 'Ich esse vegetarisch!',
+                        action: function () {
+                            Game.log("Du isst also vegetarisch.");
+                            Environment.progress.dorf_pickedFood = true;
+                            Environment.fapi.data.setValue('essen', 'VEGE');
+                            food.kaese.style('display', 'none');
+                        }
+                    }, {
+                        message: 'Neeee! Ich bin nicht auf Diät!',
+                        action: function () {
+                        }
+                    }]
+                }], null, onPickDialogEnd);
             } else if (event.id === 'click_griess') {
-                Environment.fapi.data.setValue('essen', 'VEGA');
-                food.griess.style('display', 'none');
+                Story.dialogueHelper([{
+                    answer: [{
+                        message: 'Grieß schmeckt gut! Ich bringe mein eigenes Essen mit zur Fahrt!',
+                        action: function () {
+                            Game.log("Du bringst dein eigenes Essen mit.");
+                            Environment.progress.dorf_pickedFood = true;
+                            Environment.fapi.data.setValue('essen', 'VEGA');
+                            food.griess.style('display', 'none');
+                        }
+                    }, {
+                        message: 'Neee! Da werd ich doch nicht von satt!',
+                        action: function () {
+                        }
+                    }]
+                }], null, onPickDialogEnd);
             }
-            setTimeout(function () {
-                food.fleisch.style('display', 'none');
-                food.kaese.style('display', 'none');
-                food.griess.style('display', 'none');
-            }, 1000);
-            Game.log('Gehe zurück ins Dorf')
+
+            function onPickDialogEnd() {
+                if (Environment.progress.dorf_pickedFood) {
+                    setTimeout(function () {
+                        food.fleisch.style('display', 'none');
+                        food.kaese.style('display', 'none');
+                        food.griess.style('display', 'none');
+                    }, 1000);
+                    Game.log('Gehe zurück ins Dorf');
+                }
+            }
         }
     },
 
