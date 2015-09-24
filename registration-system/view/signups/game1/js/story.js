@@ -763,11 +763,8 @@ Story.actions = {
                         action: function () {
                             Environment.fapi.data.setValue('abday', relevant_dates[1]);
                             state.datepick = 1;
-                            Game.char.svg.select('#train')
-                                .transition().delay(20).duration(3000).attr('transform', 'translate(-800, -35)');
-                            var bike = Game.char.svg.select('#bike');
-                            var transl = getTranslation(Game.char.svg[0][0], bike[0][0]);
-                            bike.transition().attr('transform', 'translate(' + (transl[0] - 800) + ',' + (-transl[1]) + ')');
+                            Game.char.svg.select('#train').style('display', 'none');
+                            Game.char.svg.select('#bike').style('display', 'none');
                         }
                     }]
                 }, {
@@ -794,8 +791,11 @@ Story.actions = {
                 (Story.actions.ufer_princess.state.datepick === 2)) {
 
                 Environment.progress.ufer_pickedTransport = true;
+                Game.actionsBlocked = true;
                 Game.char.image.style('opacity', '0');
                 new Audio(FAPI.resolvePath('sounds/plop.ogg')).play();
+
+                setTimeout(Story.credits, 2000);
             } else { console.log('not possible');}
 
             if (event.id === 'pick_train' && Story.actions.ufer_princess.state.datepick === 2) {
@@ -814,6 +814,13 @@ Story.actions = {
             }
         }
     }
+};
+
+Story.credits = function () {
+    Game.achievements.triggerAchievement('gameDone');
+    $('#game-overlay').fadeIn(3000, function() {
+        $(this).text('FINISH!!!');
+    });
 };
 
 Story.dialogueHelper = function (dialogue, context, done) {
