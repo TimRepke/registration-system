@@ -7,8 +7,8 @@
  */
 
 global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_reisearten_o, $config_studitypen_o, $config_admin_verbose_level, $config_verbose_level, $config_essen;
-//$config_admin_verbose_level = 4;
-//$config_verbose_level = 4;
+$config_admin_verbose_level = 4;
+$config_verbose_level = 4;
 $text .= "<h1>Übersichtsseite</h1>";
 
 
@@ -16,8 +16,13 @@ $mitfahrer['gesam'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id]]);
 $mitfahrer['gesaa'] = $admin_db->count("bachelor", ["fahrt_id"    => $config_current_fahrt_id]);
-$mitfahrer['erste'] = $admin_db->query("SELECT date_format(anday, '%j') as anday, COUNT(anday) as anday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY anday ORDER BY anday ASC LIMIT 1")->fetchAll()[0]['anday_cnt'];
-$mitfahrer['zweit'] = $admin_db->query("SELECT date_format(abday, '%j') as abday, COUNT(abday) as abday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY abday ORDER BY abday DESC LIMIT 1")->fetchAll()[0]['abday_cnt'];
+try {
+    $mitfahrer['erste'] = $admin_db->query("SELECT date_format(anday, '%j') as anday, COUNT(anday) as anday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY anday ORDER BY anday ASC LIMIT 1")->fetchAll()[0]['anday_cnt'];
+    $mitfahrer['zweit'] = $admin_db->query("SELECT date_format(abday, '%j') as abday, COUNT(abday) as abday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY abday ORDER BY abday DESC LIMIT 1")->fetchAll()[0]['abday_cnt'];
+} catch(Exception $ex) {
+    $mitfahrer['erste'] = 0;
+    $mitfahrer['zweit'] = 0;
+}
 $mitfahrer['veget'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id,
