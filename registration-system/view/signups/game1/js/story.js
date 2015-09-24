@@ -7,6 +7,38 @@ Story.actions = {
     // =================================================================================================================
     // Actions in the Fachschaft room
 
+    'castlee_door': {
+        state: {
+            doorInitialPos: {}
+        },
+        possible: function() { return true; },
+        action: function(event, context) {
+            if (context.bEnter === null) return;
+
+            var state = Story.actions.castlee_door.state;
+            var doorLeftId = '#' + event.id + '_l';
+            var doorLeft = Game.char.svg.select(doorLeftId);
+            var doorRightId = '#' + event.id + '_r';
+            var doorRight = Game.char.svg.select(doorRightId);
+
+            if (state.doorInitialPos[doorLeftId] === void 0)
+                state.doorInitialPos[doorLeftId] = Number(doorLeft[0][0].getAttribute('x'));
+            if (state.doorInitialPos[doorRightId] === void 0)
+                state.doorInitialPos[doorRightId] = Number(doorRight[0][0].getAttribute('x'));
+
+            var l = state.doorInitialPos[doorLeftId];
+            var r = state.doorInitialPos[doorRightId];
+
+            var moveTo = context.bEnter ? 50 : 0;
+
+            doorLeft.transition()
+                .duration(300)
+                .attr('x', l - moveTo);
+            doorRight.transition()
+                .duration(300)
+                .attr('x', r + moveTo);
+        }
+    },
     'fs_firstApproach': {
         state: {
             welcome_message: false, // welcome message spoken
