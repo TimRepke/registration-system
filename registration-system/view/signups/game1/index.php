@@ -67,7 +67,11 @@ class Game1SignupMethod extends SignupMethod {
                 <div id="game-game">
                     <div id="gameCanvas" style="overflow:hidden;position:relative">
                         <div id="gameRoot" style="position:relative"></div>
+                        <div id="gameDialogue" class="bordered-box"></div>
                     </div>
+                </div>
+
+                <div id="game-overlay">
                 </div>
             </div>
 
