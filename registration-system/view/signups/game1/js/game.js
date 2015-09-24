@@ -184,7 +184,7 @@ Game.prototype.loadMap = function (map, spawn) {
 };
 
 Game.log = function (message) {
-    if (Environment.sound.log) new Audio(FAPI.resolvePath('sounds/plop.mp3')).play();
+    if (Environment.sound.log) new Audio(FAPI.resolvePath('sounds/plop.ogg')).play();
     var list = document.getElementById('game-log');
 
     var newElem = document.createElement('li');
