@@ -118,7 +118,7 @@ Char.prototype.animate = function() {
 Char.prototype.physics = function() {
 	if (!this.moveTarget || this.moveTarget && this.moveTarget.length == 0) {
 		if (this.onArrivalCallback && typeof this.onArrivalCallback.func === 'function')
-			this.onArrivalCallback.func(this.onArrivalCallback.param);
+			this.onArrivalCallback.func.apply(null, this.onArrivalCallback.params);
 		this.onArrivalCallback = null;
 		return;
 	}
@@ -163,11 +163,11 @@ Char.prototype.updatePosition = function() {
  * @param y coord
  * @param onArrival optional callback function
  */
-Char.prototype.setMoveTarget = function(x, y, onArrival, onArrivalParam) {
+Char.prototype.setMoveTarget = function(x, y, onArrival, onArrivalParams) {
 
 	this.onArrivalCallback = {
 		func: onArrival,
-		param: onArrivalParam
+		params: onArrivalParams
 	};
 
 	if (Game.config.usePathFinding)
