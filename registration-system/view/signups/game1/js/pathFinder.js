@@ -99,7 +99,10 @@ PathFinder.prototype.findPath = function(fromX, fromY, toX, toY) {
 	toScan.queue({x:aX, y:aY, score:1});
 
 	function scan(laX, laY, lzX, lzY, lScore) {
-		var r = self.raster[lzY][lzX];
+		var l = self.raster[lzY];
+		if (!l) return;
+		var r = l[lzX];
+		if (!r) return;
 		if (r.walkable && (r.score == -1 || lScore < r.score)) {
 			r.from = [laX+0, laY+0];
 			r.score = lScore+0;
