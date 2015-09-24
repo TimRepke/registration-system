@@ -651,6 +651,42 @@
          x="922.98877"
          y="350.24313" />
     </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3293">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3295"
+         d="m 655.19121,351.20979 143,0.5 -2,136 -141,2 z"
+         style="fill:#ffffff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3297">
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 655.19121,351.20979 143,0.5 -2,136 -141,2 z"
+         id="path3299"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3305">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3307"
+         d="m 388.69121,349.70979 141,0 -1.5,140 -141.5,0 z"
+         style="fill:#ffffff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3309">
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 388.69121,349.70979 141,0 -1.5,140 -141.5,0 z"
+         id="path3311"
+         inkscape:connector-curvature="0" />
+    </clipPath>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -659,11 +695,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="907.28062"
-     inkscape:cy="70.932142"
+     inkscape:zoom="2"
+     inkscape:cx="585.18988"
+     inkscape:cy="172.36365"
      inkscape:document-units="px"
-     inkscape:current-layer="layer6"
+     inkscape:current-layer="g6045"
      showgrid="false"
      inkscape:snap-to-guides="true"
      inkscape:snap-grids="true"
@@ -1530,7 +1566,8 @@
        preserveAspectRatio="none"
        height="129.73657"
        width="64.672974"
-       inkscape:label="#image6063" />
+       inkscape:label="#image6063"
+       clip-path="url(#clipPath3305)" />
     <image
        y="354.90134"
        x="397.7565"
@@ -1539,7 +1576,8 @@
        preserveAspectRatio="none"
        height="129.76782"
        width="60.30669"
-       inkscape:label="#image6065" />
+       inkscape:label="#image6065"
+       clip-path="url(#clipPath3309)" />
     <image
        style="display:inline"
        y="344.85364"
@@ -1656,7 +1694,8 @@
        id="lift2_door_l"
        x="663.10083"
        y="354.51071"
-       inkscape:label="#image6029" />
+       inkscape:label="#image6029"
+       clip-path="url(#clipPath3297)" />
     <image
        width="64.672974"
        height="129.73657"
@@ -1665,7 +1704,8 @@
        id="lift2_door_r"
        x="723.11456"
        y="354.93259"
-       inkscape:label="#image6027" />
+       inkscape:label="#image6027"
+       clip-path="url(#clipPath3293)" />
     <image
        width="172.20461"
        height="141.81555"
