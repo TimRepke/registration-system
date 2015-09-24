@@ -44,8 +44,14 @@ function index_get_js_includes() {
     $scripts = array_merge($base_js, $additional_js);
 
     $ret = '';
+	$currPathLength = strlen(realpath("."))+1;
+	$uniq = array();
+
     foreach ($scripts as $script) {
-        $ret .= "<script type=\"text/javascript\" src=\"" . $basefolder . $script . "\"></script>\n";
+		$script = substr(realpath($basefolder.$script), $currPathLength);
+		if (isset($uniq[$script])) continue;
+		$uniq[$script] = true;
+        $ret .= "<script type=\"text/javascript\" src=\"" . $script . "\"></script>\n";
     }
     return $ret;
 }
@@ -410,16 +416,16 @@ function index_show_countdown($opentime) {
         function hurrdurr () {
 		    $('#text, body').stop().animate({color:b?'#ffffff':'#000000'}, 1000);
 
-		    hurrrdurrr('#menubox');
-		    hurrrdurrr('body');
+		    hurrrdurrr($('#menubox'));
+		    hurrrdurrr($('body'));
 		    hurrrdurr();
 
 		    function hurrrdurrr(elem) {
-                $(elem).stop().animate({backgroundColor:'#'+randstr()}, 333,
+                elem.stop().animate({backgroundColor:'#'+randstr()}, 333,
                     function () {
-                        $(elem).stop().animate({backgroundColor:'#'+randstr()}, 333,
+                        elem.stop().animate({backgroundColor:'#'+randstr()}, 333,
                             function () {
-                                $(elem).stop().animate({backgroundColor:'#'+randstr()}, 333);
+                                elem.stop().animate({backgroundColor:'#'+randstr()}, 333);
                             });
                     });
 		    }
