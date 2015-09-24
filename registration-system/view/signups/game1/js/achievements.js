@@ -15,6 +15,7 @@ function Achievements() {
         'woman': 'Mit einer Prinzessin gesprochen',
         'plumber': 'Berufung: Gas, Wasser, Scheiße',
         'princess': 'Prinzessin verärgert',
+        'gameDone': 'Zeit verschwendet',
         'achievement42': 'You just found the answer to everything!'
     };
     this.achievedAchievements = [];
