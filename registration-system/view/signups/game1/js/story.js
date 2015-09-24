@@ -7,6 +7,20 @@ Story.actions = {
     // =================================================================================================================
     // Actions in the Fachschaft room
 
+    'castlee_becomemoneyboy': {
+        possible: function() {
+            return Environment.progress.inventory_money !== true;
+        },
+        action: function(event, context) {
+            if (context.bEnter === true) {
+                Game.achievements.triggerAchievement('moneyboy');
+                if (Environment.progress.fs_firstApproach)
+                    Game.log("Du hast das Geld. Hol dir die Rüstung in der Fachschaft ab.");
+                Environment.progress.inventory_money = true;
+                d3.select('#moneybags').attr('opacity', 0);
+            }
+        }
+    },
     'castlee_door': {
         state: {
             doorInitialPos: {}

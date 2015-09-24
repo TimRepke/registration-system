@@ -23,6 +23,7 @@ Environment.progress = {
     landing_killedGoat: false,
     landing_dorfEntranceApproach: false,
     landing_ageChosen: false,
+    landing_enteredCastle: false,
 
     // dorf related
     dorf_talkedToWirt: false,
@@ -63,7 +64,12 @@ Environment.mapEvents = {
     },
     'castle_entrance': {
         init: function(svg) {
-
+            if (!Environment.progress.landing_enteredCastle) {
+                Game.log("Geh in die Fachschaft");
+                Environment.progress.landing_enteredCastle = true;
+            }
+            if (Environment.progress.inventory_money)
+                d3.select('#moneybags').attr('opacity', 0);
         }
     },
     'castle_fs': {
