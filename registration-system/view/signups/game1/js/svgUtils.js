@@ -33,9 +33,9 @@ function euclidianDistance(a_x, a_y, b_x, b_y){
 function Path(svgPathData, offset) {
 	this.edges = [];
 
-	var currentPosition = [0,0];
-	var lastPosition = null;
 	if (!offset) offset = [0,0];
+	var currentPosition = [offset[0], offset[1]];
+	var lastPosition = null;
 	var currentCommand = 'm';
 
 	var splitData = svgPathData.split(" ");
@@ -52,8 +52,8 @@ function Path(svgPathData, offset) {
 			lastPosition = currentPosition.slice();
 			switch (currentCommand) {
 				case 'm':
-					currentPosition[0] = Number(s[0]) - offset[0];
-					currentPosition[1] = Number(s[1]) - offset[1];
+					currentPosition[0] += Number(s[0]);
+					currentPosition[1] += Number(s[1]);
 					currentCommand = 'l';
 					break;
 				case 'M':
