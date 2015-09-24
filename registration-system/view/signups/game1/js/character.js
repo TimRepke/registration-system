@@ -141,6 +141,11 @@ Char.prototype.physics = function() {
 			}
 			stuckFixer += 0.5;
 
+			if (stuckFixer >= 4.0) {
+				this.setMoveTarget(this.translation[0], this.translation[1]);
+				return;
+			}
+
 			var nextPosition = (d < g_smallValue) ? this.moveTarget[0] : Vec.add(this.translation, v);
 		} while (!this.pathFinder.canWalkOn(nextPosition[0], nextPosition[1]));
 

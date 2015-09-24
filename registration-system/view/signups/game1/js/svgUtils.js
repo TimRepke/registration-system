@@ -34,7 +34,7 @@ function Path(svgPathData, offset) {
 	this.edges = [];
 
 	if (!offset) offset = [0,0];
-	var currentPosition = [offset[0], offset[1]];
+	var currentPosition = [-offset[0], -offset[1]];
 	var lastPosition = null;
 	var currentCommand = 'm';
 

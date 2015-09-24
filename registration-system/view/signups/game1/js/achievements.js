@@ -11,6 +11,7 @@ function Achievements() {
         'stroh': 'Warum liegt hier Stroh rum?',
         'saw_devs1': 'Wilde Informatiker auf Wiese gesehen',
         'moneyboy': 'Money Boy: Swag ist aufgedreht',
+        'speedrun': 'Haalt stop! Denkt doch mal an die Kinder!!1!',
         'woman': 'Mit einer Prinzessin gesprochen',
         'plumber': 'Berufung: Gas, Wasser, Scheiße',
         'princess': 'Prinzessin verärgert',
