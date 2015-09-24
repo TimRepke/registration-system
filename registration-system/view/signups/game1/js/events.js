@@ -49,7 +49,7 @@ EventHandler.prototype.getEventOn = function (trigger, x, y, callback) {
                 this.walkOnEvents[node.id] = true;
                 callback(node, true);
             } else {
-                callback(node);
+                callback(node, null);
             }
         } else {
             if (trigger == 'walkon' && this.walkOnEvents[node.id]) {
@@ -94,7 +94,7 @@ EventHandler.prototype.handleEvent = function (event, context) {
             Game.instance.nextMap(event.destination, event.target);
             break;
         case 'special':
-            eventWasActive = EventHandler.handleAction(event);
+            eventWasActive = EventHandler.handleAction(event, context);
             break;
     }
 
@@ -103,7 +103,7 @@ EventHandler.prototype.handleEvent = function (event, context) {
     }
 };
 
-EventHandler.handleAction = function (event) {
+EventHandler.handleAction = function (event, context) {
     var isPossible = Story.actions[event.action].possible();
     // check, whether action exists and is allowed at this point
     if (event.action && event.action in Story.actions && isPossible) {
@@ -115,18 +115,18 @@ EventHandler.handleAction = function (event) {
                 var xy = Vec.add(getTranslation(spawn[0][0], Game.char.svg[0][0]), [bbox.x, bbox.y]);
                 // trigger action, then walk to target
                 if (event.directAction && event.directAction === 'true') {
-                    Story.actions[event.action].action(event);
+                    Story.actions[event.action].action(event, context);
                     Game.char.setMoveTarget(xy[0], xy[1]);
                 }
                 // walk to the action point, start action on callback
                 else {
-                    Game.char.setMoveTarget(xy[0], xy[1], Story.actions[event.action].action, event);
+                    Game.char.setMoveTarget(xy[0], xy[1], Story.actions[event.action].action, [event, context]);
                 }
             }
         }
         // otherwise start action directly
         else {
-            Story.actions[event.action].action(event);
+            Story.actions[event.action].action(event, context);
         }
     }
     return isPossible;
