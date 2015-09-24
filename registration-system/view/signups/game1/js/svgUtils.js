@@ -81,6 +81,7 @@ function Path(svgPathData, offset) {
 					currentCommand = commandPart;
 					break;
 				case 'z':
+				case 'Z':
 					this.edges.push([this.edges[this.edges.length-1][1].slice(), this.edges[0][0].slice()]);
 					break;
 				default:
