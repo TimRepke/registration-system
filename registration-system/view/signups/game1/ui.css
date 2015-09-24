@@ -54,6 +54,7 @@
 }
 #gameDialogue ul li:hover {
     background-color: #474c46;
+    cursor: pointer;
 }
 #gameDialogue ul li:before {
     content: '⇢';
