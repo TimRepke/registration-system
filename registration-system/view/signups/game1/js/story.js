@@ -558,30 +558,32 @@ Story.actions = {
             }, {
                 answer: [{
                     message: 'Kein Problem, ich habe Milch und Schinken einer Ziege.',
-                    action: function() {}
+                    action: function () {
+                    }
                 }, {
                     message: 'Egal, mach irgendwas!',
-                    action: function() {}
+                    action: function () {
+                    }
                 }]
             }, {
                 bubble: '#wirt_speech',
                 message: 'Prima! Ich habe dir ein Essen auf den Tisch gestellt.',
-                action: function() {
+                action: function () {
                     food.fleisch.style('display', 'block');
                 }
             }, {
                 bubble: '#wirt_speech',
                 message: 'Wenn du kein Fleisch ist, mache ich dir Käse und Brot.',
-                action: function() {
+                action: function () {
                     food.kaese.style('display', 'block');
                 }
             }, {
                 bubble: '#wirt_speech',
                 message: 'Aus der Sojamilch der Ziege habe ich Grießbrei gemacht.',
-                action: function() {
+                action: function () {
                     food.griess.style('display', 'block');
                 }
-            }], null, function() {
+            }], null, function () {
                 Game.log('Wähle deinen Essenswunsch');
             });
         }
@@ -614,6 +616,35 @@ Story.actions = {
                 food.griess.style('display', 'none');
             }, 1000);
             Game.log('Gehe zurück ins Dorf')
+        }
+    },
+
+
+    // =================================================================================================================
+    // Actions am Ufer
+
+    'ufer_princess': {
+        possible: function () {
+            return !Environment.progress.ufer_princessApproach;
+        },
+        action: function (event) {
+            Environment.progress.ufer_princessApproach = true;
+            console.log('princess');
+        }
+    },
+
+    'ufer_pickTransport': {
+        possible: function () {
+            return Environment.progress.ufer_princessApproach && !Environment.progress.ufer_pickedTransport;
+        },
+        action: function (event) {
+            /*Environment.progress.ufer_pickedTransport = true;
+            if (event.id === '18plusEntrance') {
+                Environment.fapi.data.setValue('virgin', 'Ja');
+            } else {
+                Environment.fapi.data.setValue('virgin', 'Nein');
+            }*/
+            console.log('picked')
         }
     }
 };
