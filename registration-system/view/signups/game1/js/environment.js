@@ -29,6 +29,11 @@ Environment.progress = {
     dorf_pickedFood: false,
     dorf_boughtTicket: false,
 
+    // ufer related
+    ufer_princessApproach: !false,
+    ufer_pickedTransport: false,
+
+
     // -----------------------------
     // INVENTORY
     inventory_money: false,
