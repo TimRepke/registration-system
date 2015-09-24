@@ -30,7 +30,7 @@ Environment.progress = {
     dorf_boughtTicket: false,
 
     // ufer related
-    ufer_princessApproach: !false,
+    ufer_princessApproach: false,
     ufer_pickedTransport: false,
 
 
@@ -89,7 +89,7 @@ Environment.mapEvents = {
     },
     'ufer': {
         init: function(svg) {
-
+            Story.dialogueHelper([{message: 'Wow,... war das?!'}, {message: "Da ist ja die Prinzessin, vielleicht weiß sie mehr..."}])
         }
     }
 };

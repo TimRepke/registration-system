@@ -11,8 +11,10 @@ Story.actions = {
         state: {
             doorInitialPos: {}
         },
-        possible: function() { return true; },
-        action: function(event, context) {
+        possible: function () {
+            return true;
+        },
+        action: function (event, context) {
             if (context.bEnter === null) return;
 
             var state = Story.actions.castlee_door.state;
@@ -656,12 +658,54 @@ Story.actions = {
     // Actions am Ufer
 
     'ufer_princess': {
+        state: {
+            datepick: -1
+        },
         possible: function () {
             return !Environment.progress.ufer_princessApproach;
         },
         action: function (event) {
             Environment.progress.ufer_princessApproach = true;
-            console.log('princess');
+            var state = Story.actions.ufer_princess.state;
+            var relevant_dates = env_possible_dates;
+            Story.dialogueHelper([
+                {
+                    bubble: '#prinzessin_speech',
+                    message: 'Du schon wieder?'
+                }, {
+                    bubble: '#prinzessin_speech',
+                    message: 'Sicher willst du zurück nach Hause. Wann denn?'
+                }, {
+                    answer: [{
+                        message: 'Zusammen mit den anderen am ' + relevant_dates[2],
+                        action: function () {
+                            Environment.fapi.data.setValue('abday', relevant_dates[2]);
+                            state.datepick = 2;
+                        }
+                    }, {
+                        message: 'Muss schon früher los. (' + relevant_dates[1] + ')',
+                        action: function () {
+                            Environment.fapi.data.setValue('abday', relevant_dates[1]);
+                            state.datepick = 1;
+                            Game.char.svg.select('#train')
+                                .transition().delay(20).duration(3000).attr('transform', 'translate(-800, -35)');
+                            var bike = Game.char.svg.select('#bike');
+                            var transl = getTranslation(Game.char.svg[0][0], bike[0][0]);
+                            bike.transition().attr('transform', 'translate(' + (transl[0] - 800) + ',' + (-transl[1]) + ')');
+                        }
+                    }]
+                }, {
+                    bubble: '#prinzessin_speech',
+                    message: 'Dann musst du aber mit dem Boot allein fahren.',
+                    condition: function() { return state.datepick === 1;},
+                    action: function() { Game.log('Klicke auf das Boot')}
+                }, {
+                    bubble: '#prinzessin_speech',
+                    message: 'Okay, ist notiert. Gehe einfach zum Transportmittel deiner Wahl.',
+                    condition: function() { return state.datepick === 2;},
+                    action: function() { Game.log('Rücktransportmittel deiner Wahl klicken.')}
+                }
+            ])
         }
     },
 
@@ -670,13 +714,28 @@ Story.actions = {
             return Environment.progress.ufer_princessApproach && !Environment.progress.ufer_pickedTransport;
         },
         action: function (event) {
-            /*Environment.progress.ufer_pickedTransport = true;
-            if (event.id === '18plusEntrance') {
-                Environment.fapi.data.setValue('virgin', 'Ja');
-            } else {
-                Environment.fapi.data.setValue('virgin', 'Nein');
-            }*/
-            console.log('picked')
+            if ((event.id === 'pick_boat' && Story.actions.ufer_princess.state.datepick === 1) ||
+                (Story.actions.ufer_princess.state.datepick === 2)) {
+
+                Environment.progress.ufer_pickedTransport = true;
+                Game.char.image.style('opacity', '0');
+                new Audio(FAPI.resolvePath('sounds/plop.ogg')).play();
+            } else { console.log('not possible');}
+
+            if (event.id === 'pick_train' && Story.actions.ufer_princess.state.datepick === 2) {
+                Environment.fapi.data.setValue('abtyp', 'BUSBAHN');
+                Game.char.svg.select('#train')
+                    .transition().delay(20).duration(3000).attr('transform', 'translate(-800, -35)');
+            } else if (event.id === 'pick_bike' && Story.actions.ufer_princess.state.datepick === 2) {
+                Environment.fapi.data.setValue('abtyp', 'RAD');
+                var bike = Game.char.svg.select('#bike');
+                var transl = getTranslation(Game.char.svg[0][0], bike[0][0]);
+                bike.transition().attr('transform', 'translate(' + (transl[0] - 800) + ',' + (-transl[1]) + ')');
+            } else if(event.id === 'pick_boat') {
+                Environment.fapi.data.setValue('abtyp', 'INDIVIDUELL');
+                Game.char.svg.select('#boat')
+                    .transition().delay(20).duration(3000).attr('transform', 'translate(5000, 800)');
+            }
         }
     }
 };

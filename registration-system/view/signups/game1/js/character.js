@@ -117,8 +117,12 @@ Char.prototype.animate = function() {
 };
 Char.prototype.physics = function() {
 	if (!this.moveTarget || this.moveTarget && this.moveTarget.length == 0) {
-		if (this.onArrivalCallback && typeof this.onArrivalCallback.func === 'function')
-			this.onArrivalCallback.func.apply(null, this.onArrivalCallback.params);
+		try {
+			if (this.onArrivalCallback && typeof this.onArrivalCallback.func === 'function')
+				this.onArrivalCallback.func.apply(null, this.onArrivalCallback.params);
+		} catch (e) {
+			console.error(e.stack);
+		}
 		this.onArrivalCallback = null;
 		return;
 	}
