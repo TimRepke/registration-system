@@ -830,8 +830,8 @@ Story.credits = function () {
     Game.actionsBlocked = true;
     Game.achievements.triggerAchievement('gameDone');
     $('#game-overlay').html('' +
-        '<div id="stand_by" style="margin: 40px auto; text-align: center;font-size: 30pt;font-family: \'Courier New\', Courier, monospace;font-weight: bold;">' +
-        'Bitte warten!</div><div class="starWars"><div>' +
+        '<div id="stand_by" style="margin: 40px auto; text-align: center;font-family: \'Courier New\', Courier, monospace;">' +
+        '<span style="font-size: 30pt;font-weight: bold;">Bitte warten!</span><br /><span>Submit auf nächster Seite</span></div><div class="starWars"><div>' +
         '   <p>Anmeldung wird übertragen.</p>' +
         '   <p></p>' +
         '   <p>Kudos to:<br />Manuel Herrmann<br />Tim Repke</p>' +
