@@ -150,7 +150,7 @@ function index_show_signup() {
                 header("Location: ?fid=" . $fid . "&full");
             die();
         } else {
-            index_show_errors($sub['errors']);
+            if(!isset($_REQUEST['hideErrors'])) index_show_errors($sub['errors']);
             $environment->setDanglingFormData($sub['data']);
             $signup_method->getFallbackMethod()->showInlineHTML();
         }
@@ -185,7 +185,7 @@ function index_show_signup() {
 
             echo '<ul id="method-list">';
             foreach ($methods as $method) {
-                echo '<li><a href="' . $link . $method['id'] . '">' . $method["name"] . '</a> <br />' . $method['description'] . '</li>';
+                echo '<li><a href="' . $link . $method['id'] . '#signup-container">' . $method["name"] . '</a> <br />' . $method['description'] . '</li>';
             }
             echo '</ul>';
         }

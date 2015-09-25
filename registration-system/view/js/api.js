@@ -153,8 +153,8 @@ FAPI.prototype.submitSignup = function() {
         }
 
         if(!leaveOut) {
-            value = value.replace(/[\r\n]/g, "<br/>").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-            addToForm(key, value);
+            value = (value||'').replace(/[\r\n]/g, "<br/>").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+            addToForm(key, value||'');
         }
     }
 
@@ -162,6 +162,7 @@ FAPI.prototype.submitSignup = function() {
     addToForm('storySubmit', 'storySubmit');
     if(UrlComponents.isSet('waitlist'))
         addToForm('waitlist', 'waitlist');
+    addToForm('hideErrors', 'true');
 
     form.submit();
 

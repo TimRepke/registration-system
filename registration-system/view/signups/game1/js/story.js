@@ -8,10 +8,10 @@ Story.actions = {
     // Actions in the Fachschaft room
 
     'castlee_becomemoneyboy': {
-        possible: function() {
+        possible: function () {
             return Environment.progress.inventory_money !== true;
         },
-        action: function(event, context) {
+        action: function (event, context) {
             if (context.bEnter === true) {
                 Game.achievements.triggerAchievement('moneyboy');
                 if (Environment.progress.fs_firstApproach)
@@ -770,13 +770,21 @@ Story.actions = {
                 }, {
                     bubble: '#prinzessin_speech',
                     message: 'Dann musst du aber mit dem Boot allein fahren.',
-                    condition: function() { return state.datepick === 1;},
-                    action: function() { Game.log('Klicke auf das Boot')}
+                    condition: function () {
+                        return state.datepick === 1;
+                    },
+                    action: function () {
+                        Game.log('Klicke auf das Boot')
+                    }
                 }, {
                     bubble: '#prinzessin_speech',
                     message: 'Okay, ist notiert. Gehe einfach zum Transportmittel deiner Wahl.',
-                    condition: function() { return state.datepick === 2;},
-                    action: function() { Game.log('Rücktransportmittel deiner Wahl klicken.')}
+                    condition: function () {
+                        return state.datepick === 2;
+                    },
+                    action: function () {
+                        Game.log('Rücktransportmittel deiner Wahl klicken.')
+                    }
                 }
             ])
         }
@@ -795,8 +803,10 @@ Story.actions = {
                 Game.char.image.style('opacity', '0');
                 new Audio(FAPI.resolvePath('sounds/plop.ogg')).play();
 
-                setTimeout(Story.credits, 2000);
-            } else { console.log('not possible');}
+                Story.credits();
+            } else {
+                console.log('not possible');
+            }
 
             if (event.id === 'pick_train' && Story.actions.ufer_princess.state.datepick === 2) {
                 Environment.fapi.data.setValue('abtyp', 'BUSBAHN');
@@ -807,7 +817,7 @@ Story.actions = {
                 var bike = Game.char.svg.select('#bike');
                 var transl = getTranslation(Game.char.svg[0][0], bike[0][0]);
                 bike.transition().attr('transform', 'translate(' + (transl[0] - 800) + ',' + (-transl[1]) + ')');
-            } else if(event.id === 'pick_boat') {
+            } else if (event.id === 'pick_boat') {
                 Environment.fapi.data.setValue('abtyp', 'INDIVIDUELL');
                 Game.char.svg.select('#boat')
                     .transition().delay(20).duration(3000).attr('transform', 'translate(5000, 800)');
@@ -817,10 +827,34 @@ Story.actions = {
 };
 
 Story.credits = function () {
+    Game.actionsBlocked = true;
     Game.achievements.triggerAchievement('gameDone');
-    $('#game-overlay').fadeIn(3000, function() {
-        $(this).text('FINISH!!!');
+    $('#game-overlay').html('' +
+        '<div id="stand_by" style="margin: 40px auto; text-align: center;font-size: 30pt;font-family: \'Courier New\', Courier, monospace;font-weight: bold;">' +
+        'Bitte warten!</div><div class="starWars"><div>' +
+        '   <p>Anmeldung wird übertragen.</p>' +
+        '   <p></p>' +
+        '   <p>Kudos to:<br />Manuel Herrmann<br />Tim Repke</p>' +
+        '   <p>Made in 2015.</p>' +
+        '   <p>Lasst die Fahrten beginnen!' +
+        '   <p>Viel Spaß!</p>' +
+        '</div></div>' +
+        '<button style="position: absolute; bottom: 0; right: 0;" id="skipButton">skip</button>').fadeIn(3000, function () {
+        setTimeout(function () {
+            allDone();
+        }, 8000);
     });
+    var cnt = 0;
+    var standbyLoop = setInterval(function () {
+        cnt++;
+        $('#stand_by').css('display', (cnt % 2) ? 'none' : 'block');
+    }, 300);
+    $('#skipButton').on('click', allDone);
+
+    function allDone() {
+        clearInterval(standbyLoop);
+        Environment.fapi.submitSignup();
+    }
 };
 
 Story.dialogueHelper = function (dialogue, context, done) {

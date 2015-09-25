@@ -13,7 +13,7 @@ class FormSignupMethod extends SignupMethod {
 
     public static function getMetaInfo() {
         return [
-            "version"      => '1.1',
+            "version"      => '1.2',
             "date"         => '20.09.2014',
             "contributors" => ['Tim Repke <tim@repke.eu>']
         ];

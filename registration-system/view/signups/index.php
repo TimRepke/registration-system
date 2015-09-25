@@ -142,7 +142,6 @@ class SignupMethods {
      */
     public function validateSubmission() {
         $environment = Environment::getEnv();
-
         $errors = [];
         $data   = [];
 
@@ -227,10 +226,8 @@ class SignupMethods {
 
             // do specific check if a set of variables is allowed
             if(is_array($check)){
-                if(!in_array($tmp,$check))
-                    array_push($errarr, $errmess);
-                else
-                    $datarr[$index] = $tmp;
+                if(!in_array($tmp,$check)) array_push($errarr, $errmess);
+                $datarr[$index] = $tmp;
             }
 
             // check captcha

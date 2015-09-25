@@ -32,6 +32,7 @@
     height: 600px;
     display: none;
     background-color: #000;
+    color: white;
 }
 
 .bordered-box {
@@ -185,4 +186,44 @@
     font-size: 5pt;
     text-align: center;
     color: black;
+}
+
+
+.starWars {
+    position: absolute;
+    width: 600px;
+    height: 50em;
+    bottom: 0;
+    left: 50%;
+    margin-left: -300px;
+    font-size: 350%;
+    font-weight: bold;
+    text-align: center;
+    overflow: hidden;
+    transform-origin: 50% 100%;
+    transform: perspective(300px) rotateX(25deg);
+    color: #ff0;
+    font-family: sans-serif;
+}
+.starWars:after {
+    position: absolute;
+    content: ' ';
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 60%;
+    background-image: linear-gradient(top, rgba(0,0,0,1) 0%, transparent 100%);
+    pointer-events: none;
+}
+.starWars div {
+    position: absolute;
+    top: 100%;
+    animation: starWars-scroll 80s linear 0s infinite;
+}
+.starWars div p {
+    margin-bottom: 1em;
+}
+@keyframes starWars-scroll {
+    0% { top: 100%; }
+    100% { top: -170%; }
 }
