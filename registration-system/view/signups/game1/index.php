@@ -3,7 +3,7 @@
 class Game1SignupMethod extends SignupMethod {
 
     public static function getName() {
-        return "Das Dorf [working title]";
+        return '↠ Mindblow Mode ↞';
     }
 
     public static function getAltText() {
