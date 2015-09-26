@@ -10,7 +10,14 @@ function Achievements() {
             }
         },
         'saw_devs1': 'Wilde Informatiker auf Wiese gesehen',
-        'spotted_gorilla': 'Ein bekannter Gorilla im Wald',
+        'spotted_gorilla': {
+            messgae: 'Alten Bekannten im Wald gesehen',
+            action: function() {
+                Story.dialogueHelper([{
+                    message: 'Gorilla sagt: HU HU HU!'
+                }])
+            }
+        },
         'hydrant': {
             message: 'Wasser aufgedreht',
             condition: function (context) {
@@ -21,6 +28,41 @@ function Achievements() {
 
         // CASTLE ENTRANCE
         'moneyboy': 'Money Boy: Swag ist aufgedreht',
+        'batteries': 'Batterien in den Computer eingelegt',
+        'bierball': 'BIIIEEEERBAAAAALLLLL!!',
+
+        // FACHSCHAFT
+        'wrong_board': {
+            message: 'Falsche Tafel!',
+            condition: function () {
+                return Environment.progress.fs_georgeScreamed;
+            }
+        },
+        'hugo_water': 'Toten Hugo gegossen',
+        'laptop2': 'Laptop zugeklappt',
+        'laptop1': {
+            message: 'Laptop ausgemacht',
+            condition: function() {
+                return self.achievedAchievements.indexOf('laptop2') >= 0
+            }
+        },
+        'marathon': 'Runtimeerror! dev TIM low on energy',
+        'ffa': {
+            message: 'FFA Essen gegessen. Mit Tisch.',
+            action: function () {
+                Game.char.svg.select('#ffa_food').style('display', 'none');
+            }
+        },
+        'stolper': 'Über Teppichkante gestolpert',
+        'fs_chair': {
+            message: 'Stuhl aus Fachschaft geklaut',
+            action: function () {
+                Game.char.svg.select('#stuhl').style('display', 'none');
+            },
+            condition: function (context) {
+                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 80;
+            }
+        },
 
         // DORF
         'speedrun': 'Haalt stop! Denkt doch mal an die Kinder!!1!',
@@ -28,6 +70,7 @@ function Achievements() {
         'plumber': 'Berufung: Gas, Wasser, Scheiße',
         'princess': 'Prinzessin verärgert',
         'stroh': 'Warum liegt hier Stroh rum?',
+        'blumen': 'Blumen zertrampelt',
         'maske': {
             message: 'Warum hast du eine Maske auf?',
             condition: function () {
@@ -158,8 +201,10 @@ Achievements.prototype.triggerAchievement = function (achievementId, context) {
         if (typeof this.achievements[achievementId] === 'object' && 'action' in this.achievements[achievementId]) {
             this.achievements[achievementId].action();
         }
+        return true;
     }
     // else console.warn("Achievement already achieved: " + achievementId);
 
-    if (this.numCompletedAchievements() === 42) this.triggerAchievement('achievement42')
+    if (this.numCompletedAchievements() === 42) this.triggerAchievement('achievement42');
+    return false;
 };

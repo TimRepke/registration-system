@@ -89,7 +89,7 @@ EventHandler.prototype.handleEvent = function (event, context) {
     var eventWasActive = true;
     switch (event.type) {
         case 'achievement':
-            Game.achievements.triggerAchievement(event.id, context);
+            eventWasActive = Game.achievements.triggerAchievement(event.id, context);
             break;
         case 'mapchange':
             Game.instance.nextMap(event.destination, event.target);
