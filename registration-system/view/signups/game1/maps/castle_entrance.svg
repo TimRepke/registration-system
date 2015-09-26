@@ -15,7 +15,7 @@
    viewBox="0 0 2294.5957 662.5138"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
+   inkscape:version="0.91 r"
    sodipodi:docname="castle_entrance.svg">
   <defs
      id="defs4">
@@ -695,11 +695,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="979.15655"
-     inkscape:cy="279.15292"
+     inkscape:zoom="0.50000001"
+     inkscape:cx="1581.3588"
+     inkscape:cy="-34.758985"
      inkscape:document-units="px"
-     inkscape:current-layer="layer8"
+     inkscape:current-layer="layer6"
      showgrid="false"
      inkscape:snap-to-guides="true"
      inkscape:snap-grids="true"
@@ -709,11 +709,11 @@
      inkscape:snap-smooth-nodes="true"
      inkscape:snap-midpoints="true"
      units="px"
-     inkscape:window-width="956"
-     inkscape:window-height="1041"
-     inkscape:window-x="0"
-     inkscape:window-y="18"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1680"
+     inkscape:window-height="1026"
+     inkscape:window-x="1920"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
      inkscape:snap-nodes="false"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -1876,18 +1876,6 @@
        inkscape:connector-curvature="0"
        inkscape:label="#WALK1"
        sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" />
-    <circle
-       r="12.016337"
-       cy="533.33478"
-       cx="725.75372"
-       inkscape:label="#path3224"
-       id="fs_exit_spawn"
-       style="opacity:0.55199998;fill:#ff0000;fill-opacity:1;stroke:none;display:inline"
-       d="m 737.77006,533.33478 c 0,6.63644 -5.3799,12.01634 -12.01634,12.01634 -6.63644,0 -12.01633,-5.3799 -12.01633,-12.01634 0,-6.63644 5.37989,-12.01634 12.01633,-12.01634 6.63644,0 12.01634,5.3799 12.01634,12.01634 z"
-       sodipodi:cx="725.75372"
-       sodipodi:cy="533.33478"
-       sodipodi:rx="12.016337"
-       sodipodi:ry="12.016337" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -1940,21 +1928,15 @@
      inkscape:groupmode="layer"
      id="layer6"
      inkscape:label="EVENT"
-     style="opacity:0.55199998;display:inline"
-     transform="translate(13.308776,7.3040035)"
-     sodipodi:insensitive="true">
+     style="display:inline;opacity:0.55199998"
+     transform="translate(13.308776,7.3040035)">
     <circle
-       style="fill:#ff0000;fill-opacity:1;stroke:none;display:inline"
+       style="display:inline;fill:#ff0000;fill-opacity:1;stroke:none"
        id="entry_spawn"
        inkscape:label="#path3224"
        cx="1988.012"
        cy="569.79932"
-       r="12.016337"
-       d="m 2000.0283,569.79932 c 0,6.63644 -5.3799,12.01633 -12.0163,12.01633 -6.6365,0 -12.0164,-5.37989 -12.0164,-12.01633 0,-6.63644 5.3799,-12.01634 12.0164,-12.01634 6.6364,0 12.0163,5.3799 12.0163,12.01634 z"
-       sodipodi:cx="1988.012"
-       sodipodi:cy="569.79932"
-       sodipodi:rx="12.016337"
-       sodipodi:ry="12.016337" />
+       r="12.016337" />
     <path
        style="fill:#ff00ff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 1964.7072,610.58564 83.4165,-0.55243 1.1049,52.48058 -85.6263,-0.55242 z"
@@ -1968,18 +1950,12 @@
        stopsWalk="true"
        trigger="walkon" />
     <circle
-       r="12.016337"
-       cy="538.80353"
-       cx="1985.1287"
+       cy="543.13458"
+       cx="1952.7063"
        inkscape:label="#path3224"
        id="player_spawn"
-       style="opacity:0.55199998;fill:#ff0000;fill-opacity:1;stroke:none;display:inline"
-       d="m 1997.145,538.80353 c 0,6.63644 -5.3799,12.01634 -12.0163,12.01634 -6.6365,0 -12.0164,-5.3799 -12.0164,-12.01634 0,-6.63644 5.3799,-12.01634 12.0164,-12.01634 6.6364,0 12.0163,5.3799 12.0163,12.01634 z"
-       sodipodi:cx="1985.1287"
-       sodipodi:cy="538.80353"
-       sodipodi:rx="12.016337"
-       sodipodi:ry="12.016337"
-       transform="translate(-1347.9223,29.831068)" />
+       style="display:inline;opacity:0.55199998;fill:#ff0000;fill-opacity:1;stroke:none"
+       r="12.016337" />
     <path
        style="fill:#ff00ff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 330.35145,485.7371 40.89933,95.54644 177.86183,-0.52897 54.13786,-85.07378 -53.21941,-145.34757 -154.31673,3.89501 z"
@@ -2027,5 +2003,32 @@
        trigger="walkon"
        type="special"
        action="castlee_becomemoneyboy" />
+    <path
+       style="display:inline;opacity:0.56790125;fill:#00ff00;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 618.09895,500.29401 -58.35281,-0.48985 0.0283,-52.60585 59.00369,-1.82068 z"
+       id="batteries"
+       inkscape:connector-curvature="0"
+       type="achievement"
+       trigger="click"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       style="display:inline;opacity:0.56790125;fill:#00ff00;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 2211.7986,611.96315 -14.8658,1.63147 1.4423,-33.51397 12.8649,-0.40646 z"
+       id="bierball"
+       inkscape:connector-curvature="0"
+       type="achievement"
+       trigger="click"
+       sodipodi:nodetypes="ccccc" />
+    <circle
+       r="12.016337"
+       cy="533.33478"
+       cx="725.75372"
+       inkscape:label="#path3224"
+       id="fs_exit_spawn"
+       style="opacity:0.55199998;display:inline;fill:#ff0000;fill-opacity:1;stroke:none"
+       sodipodi:cx="725.75372"
+       sodipodi:cy="533.33478"
+       sodipodi:rx="12.016337"
+       sodipodi:ry="12.016337" />
   </g>
 </svg>
