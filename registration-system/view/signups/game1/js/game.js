@@ -36,6 +36,9 @@ Game.prototype.nextMap = function (map, spawn) {
 Game.prototype.loadMap = function (map, spawn) {
     var gameCanvas = document.getElementById("gameCanvas");
     var gameRoot = document.getElementById("gameRoot");
+    var gameOverlay = $('#game-overlay');
+
+    gameOverlay.html('<img src="graphics/loader.svg" style="position: absolute; left: 300px; top: 200px;" />').show();
 
     var svg = null;
 
@@ -122,6 +125,7 @@ Game.prototype.loadMap = function (map, spawn) {
     }
 
     function startMainLoop() {
+        gameOverlay.fadeOut(500);
         Game.mainLoop = setInterval(function () {
             if (Game.char && Game.char.loaded) {
                 // move player
@@ -131,7 +135,6 @@ Game.prototype.loadMap = function (map, spawn) {
                 Game.cam.movement();
             }
         }, Game.config.loopSpeed);
-
     }
 
     function getMouseXY() {
