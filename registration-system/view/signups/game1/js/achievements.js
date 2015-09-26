@@ -1,20 +1,79 @@
 function Achievements() {
+    var self = this;
     this.achievements = {
-        'started_game': 'Bestes Anmeldesystem gestartet',
+        // LANDING
         'first_step': 'Erster Schritt getan',
         'some_water': {
             message: 'An frischem Brunnenwasser gerochen',
-            condition: function(context) {
+            condition: function (context) {
                 return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 150;
             }
         },
-        'stroh': 'Warum liegt hier Stroh rum?',
         'saw_devs1': 'Wilde Informatiker auf Wiese gesehen',
+        'spotted_gorilla': 'Ein bekannter Gorilla im Wald',
+        'hydrant': {
+            message: 'Wasser aufgedreht',
+            condition: function (context) {
+                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 150;
+            }
+        },
+        'randomwalk': 'Sinnlose Wegwahl',
+
+        // CASTLE ENTRANCE
         'moneyboy': 'Money Boy: Swag ist aufgedreht',
+
+        // DORF
         'speedrun': 'Haalt stop! Denkt doch mal an die Kinder!!1!',
         'woman': 'Mit einer Prinzessin gesprochen',
         'plumber': 'Berufung: Gas, Wasser, Scheiße',
         'princess': 'Prinzessin verärgert',
+        'stroh': 'Warum liegt hier Stroh rum?',
+        'maske': {
+            message: 'Warum hast du eine Maske auf?',
+            condition: function () {
+                return self.achievedAchievements.indexOf('stroh') >= 0
+            }
+        },
+        'gentzen': 'Bei diese Baustelle machen die sich den gentzen Aufwand umsonst.',
+        'kacke': 'Eine gefährliche Stuhl-Gang',
+
+        // SHOP
+        'antler': {
+            message: 'Geweih verschönert',
+            action: function () {
+                Game.char.svg.select('#antler_ball').style('display', 'block');
+            }
+        },
+        'flowers': {
+            message: 'Blumen umgestoßen',
+            action: function () {
+                Game.char.svg.select('#flowerpot').style('transform-origin', '50% 50%').style('transform', 'rotate(70deg)');
+            },
+            condition: function (context) {
+                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 100;
+            }
+        },
+        'wine': {
+            message: 'Weinfass getrunken',
+            action: function () {
+                Game.char.svg.select('#wine_glass').style('display', 'none');
+            },
+            condition: function (context) {
+                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 80;
+            }
+        },
+        'chair': {
+            message: 'Stuhl geklaut',
+            action: function () {
+                Game.char.svg.select('#stuhl').style('display', 'none');
+            },
+            condition: function (context) {
+                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 80;
+            }
+        },
+
+        // META
+        'started_game': 'Bestes Anmeldesystem gestartet',
         'gameDone': 'Zeit verschwendet',
         'achievement42': 'You just found the answer to everything!'
     };
@@ -25,29 +84,29 @@ function Achievements() {
     this.triggerAchievement('started_game');
     Environment.sound.achievements = true;
 }
-Achievements.prototype.numTotalAchievements = function() {
+Achievements.prototype.numTotalAchievements = function () {
     return Object.keys(this.achievements).length;
 };
 
-Achievements.prototype.numCompletedAchievements = function() {
+Achievements.prototype.numCompletedAchievements = function () {
     return Object.keys(this.achievedAchievements).length;
 };
 
 Achievements.prototype.initDomElems = function () {
     this.domElems = {
-        'log':        document.getElementById('achievement-log'),
-        'statusBar':  document.getElementById('achievement-progress').getElementsByClassName('status-bar-bar')[0],
+        'log': document.getElementById('achievement-log'),
+        'statusBar': document.getElementById('achievement-progress').getElementsByClassName('status-bar-bar')[0],
         'statusText': document.getElementById('achievement-progress').getElementsByClassName('status-bar-text')[0]
     };
 };
 
 Achievements.prototype.getDomElem = function (elem) {
-    if(!this.domElems) this.initDomElems();
+    if (!this.domElems) this.initDomElems();
     return this.domElems[elem];
 };
 
 Achievements.prototype.updateStatusBar = function () {
-    var percent = Math.ceil((this.numCompletedAchievements() / this.numTotalAchievements())*100);
+    var percent = Math.ceil((this.numCompletedAchievements() / this.numTotalAchievements()) * 100);
     this.getDomElem('statusBar').style.width = percent + '%';
 };
 
@@ -65,7 +124,7 @@ Achievements.prototype.logMessage = function (message) {
     newElem.appendChild(newElemText);
 
     newElem.style.backgroundColor = '#474c46';
-    setTimeout(function(){
+    setTimeout(function () {
         newElem.style.background = 'transparent';
     }, 1000);
 
@@ -81,14 +140,14 @@ Achievements.prototype.getMessage = function (achievementId) {
 
 Achievements.prototype.isTriggerable = function (achievementId, context) {
     var achievement = this.achievements[achievementId];
-    if (typeof achievement === 'object' && 'condition' in achievement){
+    if (typeof achievement === 'object' && 'condition' in achievement) {
         return achievement.condition(context);
     }
     return true;
 };
 
 Achievements.prototype.triggerAchievement = function (achievementId, context) {
-    if (!this.achievements[achievementId]){
+    if (!this.achievements[achievementId]) {
         console.error("No such achievement: " + achievementId);
     }
     else if (this.achievedAchievements.indexOf(achievementId) < 0 && this.isTriggerable(achievementId, context)) {
@@ -96,8 +155,11 @@ Achievements.prototype.triggerAchievement = function (achievementId, context) {
         this.updateStatusBar();
         this.updateStatusText();
         this.logMessage(this.getMessage(achievementId));
+        if (typeof this.achievements[achievementId] === 'object' && 'action' in this.achievements[achievementId]) {
+            this.achievements[achievementId].action();
+        }
     }
     // else console.warn("Achievement already achieved: " + achievementId);
 
-    if (this.numCompletedAchievements() === 42 ) this.triggerAchievement('achievement42')
+    if (this.numCompletedAchievements() === 42) this.triggerAchievement('achievement42')
 };
