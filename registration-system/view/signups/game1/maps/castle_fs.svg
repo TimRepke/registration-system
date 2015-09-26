@@ -229,9 +229,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6568544"
-     inkscape:cx="821.51376"
-     inkscape:cy="191.37413"
+     inkscape:zoom="2.0000001"
+     inkscape:cx="512.32298"
+     inkscape:cy="148.6438"
      inkscape:document-units="px"
      inkscape:current-layer="layer9"
      showgrid="false"
@@ -1257,8 +1257,16 @@
        sodipodi:nodetypes="ccccc" />
     <path
        style="display:inline;opacity:0.56790125;fill:#00ff00;stroke:#000000;stroke-width:0.95691222px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 816.85164,405.39451 -21.96591,-0.84329 0.20754,-35.32199 25.52014,-0.13743 z"
+       d="m 817.20519,406.10161 -21.96591,-0.84329 0.20754,-35.32199 25.52014,-0.13743 z"
        id="fs_chair"
+       inkscape:connector-curvature="0"
+       type="achievement"
+       trigger="click"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       style="display:inline;opacity:0.56790125;fill:#00ff00;stroke:#000000;stroke-width:0.95691222px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 480.65163,401.34212 -56.30222,-4.57552 8.88432,-77.65563 54.61381,5.12513 z"
+       id="laser"
        inkscape:connector-curvature="0"
        type="achievement"
        trigger="click"

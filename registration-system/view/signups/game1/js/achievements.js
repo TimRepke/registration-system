@@ -11,7 +11,7 @@ function Achievements() {
         },
         'saw_devs1': 'Wilde Informatiker auf Wiese gesehen',
         'spotted_gorilla': {
-            messgae: 'Alten Bekannten im Wald gesehen',
+            message: 'Alten Bekannten im Wald gesehen',
             action: function() {
                 Story.dialogueHelper([{
                     message: 'Gorilla sagt: HU HU HU!'
@@ -24,12 +24,65 @@ function Achievements() {
                 return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 150;
             }
         },
+        'muell': {
+            message: 'Altbatterien in den Hausmüll geschmissen',
+            condition: function (context) {
+                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 150;
+            }
+        },
         'randomwalk': 'Sinnlose Wegwahl',
+        'rettich_pick': {
+            message: 'Rettich gepflückt',
+            action: function () {
+                Game.char.svg.select('#rettich').style('display', 'none');
+            },
+            condition: function (context) {
+                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 120;
+            }
+        },
+        'kohl': {
+            message: 'Helmuts Kohl geklaut',
+            action: function () {
+                Game.char.svg.select('#kohlkopf').style('display', 'none');
+            },
+            condition: function (context) {
+                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 120;
+            }
+        },
+        'mais': {
+            message: 'Eine Maise gefangen',
+            action: function () {
+                Game.char.svg.select('#maiskolben').style('display', 'none');
+            },
+            condition: function (context) {
+                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 120;
+            }
+        },
+        'rasenmeh': {
+            message: 'Rasen gemäääähhht',
+            action: function () {
+                Game.char.svg.select('#rasen').style('display', 'none');
+            }
+        },
 
         // CASTLE ENTRANCE
         'moneyboy': 'Money Boy: Swag ist aufgedreht',
         'batteries': 'Batterien in den Computer eingelegt',
         'bierball': 'BIIIEEEERBAAAAALLLLL!!',
+        'bild': {
+            message: 'Das Bild hing schief.',
+            action: function () {
+                Game.char.svg.select('#hirsch').style('transform-origin', '50% 50%').style('transform', 'rotate(20deg)');
+            }
+        },
+        'hu': 'Die Uni hat heute geschlossen.',
+        'holz': 'Holz für Lagerfeuer im Ofen gesägt',
+        'karriereleiter': {
+            message: 'Karriereleiter für später mitgenommen',
+            action: function () {
+                Game.char.svg.select('#leiter').style('display', 'none');
+            }
+        },
 
         // FACHSCHAFT
         'wrong_board': {
@@ -63,6 +116,7 @@ function Achievements() {
                 return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 80;
             }
         },
+        'laser': 'Laser auf den Punkt gebracht',
 
         // DORF
         'speedrun': 'Haalt stop! Denkt doch mal an die Kinder!!1!',
