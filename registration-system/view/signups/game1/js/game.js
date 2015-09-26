@@ -59,7 +59,6 @@ Game.prototype.loadMap = function (map, spawn) {
     function initMap(mapId, spawn, done) {
         console.log('Init map: ' + mapId + ' spawn: ' + spawn);
         d3.xml(FAPI.resolvePath('maps/' + mapId + '.svg'), 'image/svg+xml', function (xml) {
-console.log('dslkjdl')
             gameCanvas.style.width = Game.config.size[0] + 'px';
             gameCanvas.style.height = Game.config.size[1] + 'px';
             gameRoot.appendChild(xml.documentElement);
