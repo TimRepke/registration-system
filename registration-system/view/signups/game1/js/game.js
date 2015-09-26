@@ -22,7 +22,7 @@ Game.prototype.nextMap = function (map, spawn) {
     clearInterval(Game.mainLoop);
     Game.mainLoop = null;
     var self = this;
-    setTimeout(function() {
+    setTimeout(function () {
         var gameRoot = document.getElementById("gameRoot");
         while (gameRoot.firstChild) {
             gameRoot.removeChild(gameRoot.firstChild);
@@ -30,7 +30,7 @@ Game.prototype.nextMap = function (map, spawn) {
         Game.char = null;
         Game.cam = null;
         self.loadMap(map, spawn);
-    }, Game.config.loopSpeed+5);
+    }, Game.config.loopSpeed + 5);
 };
 
 Game.prototype.loadMap = function (map, spawn) {
@@ -38,7 +38,7 @@ Game.prototype.loadMap = function (map, spawn) {
     var gameRoot = document.getElementById("gameRoot");
     var gameOverlay = $('#game-overlay');
 
-    gameOverlay.html('<img src="graphics/loader.svg" style="position: absolute; left: 300px; top: 200px;" />').show();
+    gameOverlay.html('<img src="graphics/loader.svg" style="position: absolute; left: 300px; top: 200px;" />').fadeIn(500);
 
     var svg = null;
 
@@ -53,13 +53,13 @@ Game.prototype.loadMap = function (map, spawn) {
         if (next) next[0].apply(null, (next.slice(1) || []).concat(init));
     }
 
-    init();
+    setTimeout(init, 1000);
 
 
     function initMap(mapId, spawn, done) {
         console.log('Init map: ' + mapId + ' spawn: ' + spawn);
         d3.xml(FAPI.resolvePath('maps/' + mapId + '.svg'), 'image/svg+xml', function (xml) {
-
+console.log('dslkjdl')
             gameCanvas.style.width = Game.config.size[0] + 'px';
             gameCanvas.style.height = Game.config.size[1] + 'px';
             gameRoot.appendChild(xml.documentElement);
@@ -69,12 +69,13 @@ Game.prototype.loadMap = function (map, spawn) {
             // -------------------------------------
             // init event related stuff
             var displayEvents = Game.config.showEventLayers ? 0.5 : 0;
-            svg.selectAll('g').filter(function () {
-                return (
-                    this.getAttribute('inkscape:groupmode') == 'layer'
-                    && Game.eventLayers.indexOf(this.getAttribute('inkscape:label')) >= 0
-                );
-            })
+            svg.selectAll('g')
+                .filter(function () {
+                    return (
+                        this.getAttribute('inkscape:groupmode') == 'layer'
+                        && Game.eventLayers.indexOf(this.getAttribute('inkscape:label')) >= 0
+                    );
+                })
                 .style('display', 'block')
                 .style('opacity', displayEvents);
 
@@ -195,7 +196,7 @@ Game.log = function (message) {
     newElem.appendChild(newElemText);
 
     newElem.style.backgroundColor = '#474c46';
-    setTimeout(function(){
+    setTimeout(function () {
         newElem.style.background = 'transparent';
     }, 1000);
 
