@@ -116,7 +116,43 @@ Char.prototype.animate = function() {
 	this.frames[currentFrame].style.display = 'block';
 };
 Char.prototype.physics = function() {
-	if (!this.moveTarget || this.moveTarget && this.moveTarget.length == 0) {
+	var x = this.translation[0];
+	var y = this.translation[1];
+	var self = this;
+	if (!this.pathFinder.canWalkOn(x-x%5, y-y%5)) {
+		console.log('stuck');
+		var queue = [[x-x%5, y-y%5, null, null]];
+
+		function recoverWalkable() {
+			var data = queue.shift();
+			var x = data[0];
+			var y = data[1];
+			var xDir = data[2];
+			var yDir = data[3];
+
+			if (self.pathFinder.canWalkOn(x, y)) {
+				Vec.assign(self.translation, [x, y]);
+				if (this.moveTarget && this.moveTarget.length > 0)
+				{
+					var lastTarget = self.moveTarget[self.moveTarget.length - 1];
+					self.setMoveTarget(lastTarget[0], lastTarget[1], self.onArrivalCallback.func, self.onArrivalCallback.params);
+				}
+				return true;
+			}
+			if (yDir !== false)
+				queue.push([x, y+5, false, true]);
+			if (yDir !== true)
+				queue.push([x, y-5, false, false]);
+			if (xDir !== false)
+				queue.push([x+5, y, true, false]);
+			if (xDir !== true)
+				queue.push([x-5, y, false, false]);
+		}
+		while (recoverWalkable() !== true) {}
+		console.log('stuck fixed');
+	}
+
+	if (!this.moveTarget || (this.moveTarget && this.moveTarget.length == 0)) {
 		try {
 			if (this.onArrivalCallback && typeof this.onArrivalCallback.func === 'function')
 				this.onArrivalCallback.func.apply(null, this.onArrivalCallback.params);
