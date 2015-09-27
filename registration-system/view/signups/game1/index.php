@@ -77,7 +77,7 @@ class Game1SignupMethod extends SignupMethod {
                 g_smallValue = 0.000001; // fun with floats
 
                 var game = new Game({
-                    startMap: \'map_landing\',
+                    startMap: \'ufer\',
                     showEventLayers: false,
                     pathFindingGridSize: 5,
                     usePathFinding: true,
