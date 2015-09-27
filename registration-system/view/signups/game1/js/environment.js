@@ -16,7 +16,7 @@ Environment.progress = {
     // fs related
     fs_firstApproach: false,
     fs_georgeScreamed: false,
-    fs_filledBoard: false,
+    fs_filledBoard: !false,
 
     // landing map related
     landing_askedNickname: false,
