@@ -66,7 +66,7 @@ Game.prototype.loadMap = function (map, spawn) {
 
     function initMap(mapId, spawn, done) {
         console.log('Init map: ' + mapId + ' spawn: ' + spawn);
-        d3.xml(FAPI.resolvePath('maps/' + mapId + '.svg'), 'image/svg+xml', function (xml) {
+        d3.xml(Environment.fapi.resolvePath('maps/' + mapId + '.svg'), 'image/svg+xml', function (xml) {
             gameCanvas.style.width = Game.config.size[0] + 'px';
             gameCanvas.style.height = Game.config.size[1] + 'px';
             gameRoot.appendChild(xml.documentElement);
@@ -170,7 +170,7 @@ Game.prototype.loadMap = function (map, spawn) {
 };
 
 Game.log = function (message) {
-    if (Environment.sound.log) new Audio(FAPI.resolvePath('sounds/plop.ogg')).play();
+    if (Environment.sound.log) new Audio(Environment.fapi.resolvePath('sounds/plop.ogg')).play();
     var list = document.getElementById('game-log');
 
     var newElem = document.createElement('li');
