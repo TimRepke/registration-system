@@ -146,37 +146,6 @@ Game.prototype.loadMap = function (map, spawn) {
                 y: (rawCoords[1] < 0) ? 0 : ((rawCoords[1] > Game.config.size[1]) ? Game.config.size[1] : rawCoords[1])
             };
 
-            // calculation of top/left offset taken from prototypeJS
-            // https://github.com/sstephenson/prototype/blob/8d968bf957f0c41e5fcc665860d63a98a3fd26a0/src/prototype/dom/layout.js#L1156
-            var offsetTop = 0, offsetLeft = 0, docBody = document.body;
-            var element = gameCanvas;
-            /*do {
-             offsetTop += element.offsetTop  || 0;
-             offsetLeft += element.offsetLeft || 0;
-             // Safari fix
-             if (element.offsetParent == docBody &&
-             element.style.position == 'absolute') break;
-             } while (element = element.offsetParent);*/
-            var offset = $(element).offset();
-            var offsetTop = offset.top;
-            var offsetLeft = offset.left;
-
-            element = gameCanvas;
-            do {
-                // Opera < 9.5 sets scrollTop/Left on both HTML and BODY elements.
-                // Other browsers set it only on the HTML element. The BODY element
-                // can be skipped since its scrollTop/Left should always be 0.
-                if (element != docBody) {
-                    offsetTop -= element.scrollTop || 0;
-                    offsetLeft -= element.scrollLeft || 0;
-                }
-            } while (element = element.parentNode);
-            // ^--------- from prototypeJS
-
-            var matrix = svg[0][0].getScreenCTM();
-            cleanCoords.x = cleanCoords.x - matrix.e + offsetLeft;
-            cleanCoords.y = cleanCoords.y - matrix.f + offsetTop;
-
             return cleanCoords;
         } catch (e) {
             console.error(e);
