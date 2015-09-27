@@ -795,6 +795,10 @@ Story.actions = {
                         case 0:
                             Story.dialogueHelper([{
                                 message: 'George: Trinkt nicht zu viel ja?!'
+                            },{
+                                message: 'Jonas: BIIIIIIIIIER BAAAAAALLLLLLLLLLL!'
+                            },{
+                                message: 'George: ...'
                             }], null, nextAction);
                             break;
                         case 1:

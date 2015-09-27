@@ -146,6 +146,12 @@ Game.prototype.loadMap = function (map, spawn) {
                 y: (rawCoords[1] < 0) ? 0 : ((rawCoords[1] > Game.config.size[1]) ? Game.config.size[1] : rawCoords[1])
             };
 
+            var offsetA = $(document.getElementById("gameRoot")).offset();
+            var offsetB = $(document.getElementById("gameCanvas")).offset();
+
+            cleanCoords.x += offsetB.left - offsetA.left;
+            cleanCoords.y += offsetB.top - offsetA.top;
+
             return cleanCoords;
         } catch (e) {
             console.error(e);
