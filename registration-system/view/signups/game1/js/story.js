@@ -454,8 +454,10 @@ Story.actions = {
             Environment.progress.landing_ageChosen = true;
             if (event.id === '18plusEntrance') {
                 Environment.fapi.data.setValue('virgin', 'Ja');
+                Game.instance.nextMap('dorf', 'dorf_spawn_r');
             } else {
                 Environment.fapi.data.setValue('virgin', 'Nein');
+                Game.instance.nextMap('dorf', 'dorf_spawn_l');
             }
         }
     },
