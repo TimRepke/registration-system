@@ -120,7 +120,6 @@ Char.prototype.physics = function() {
 	var y = this.translation[1];
 	var self = this;
 	if (!this.pathFinder.canWalkOn(x-x%5, y-y%5)) {
-		console.log('stuck');
 		var queue = [[x-x%5, y-y%5, null, null]];
 
 		function recoverWalkable() {
@@ -149,7 +148,6 @@ Char.prototype.physics = function() {
 				queue.push([x-5, y, false, false]);
 		}
 		while (recoverWalkable() !== true) {}
-		console.log('stuck fixed');
 	}
 
 	if (!this.moveTarget || (this.moveTarget && this.moveTarget.length == 0)) {
