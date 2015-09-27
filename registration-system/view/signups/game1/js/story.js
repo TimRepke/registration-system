@@ -479,7 +479,11 @@ Story.actions = {
             var relevant_dates = env_possible_dates.slice(0, 2);
             var state = Story.actions.dorf_ticket.state;
             Game.achievements.triggerAchievement('woman');
+
             Environment.progress.dorf_boughtTicket = true;
+            Game.char.svg.select('#inn_nowalk').remove();
+            delete Game.char.pathFinder.noWalkNodes['inn_nowalk'];
+            Game.char.pathFinder.generateRaster();
 
             Story.dialogueHelper([{
                 bubble: '#prinzessin_speech',
