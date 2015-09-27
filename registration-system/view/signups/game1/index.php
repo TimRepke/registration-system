@@ -76,8 +76,6 @@ class Game1SignupMethod extends SignupMethod {
             <script>
                 g_smallValue = 0.000001; // fun with floats
 
-                var FAPI = new FAPI();
-
                 var game = new Game({
                     startMap: \'map_landing\',
                     showEventLayers: false,

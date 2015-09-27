@@ -213,7 +213,7 @@ Achievements.prototype.updateStatusText = function () {
 };
 
 Achievements.prototype.logMessage = function (message) {
-    if (Environment.sound.achievements) new Audio(FAPI.resolvePath('sounds/ding.ogg')).play();
+    if (Environment.sound.achievements) new Audio(Environment.fapi.resolvePath('sounds/ding.ogg')).play();
     var list = this.getDomElem('log');
 
     var newElem = document.createElement('li');

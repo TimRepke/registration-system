@@ -182,7 +182,7 @@ Story.actions = {
         action: function () {
             Game.actionsBlocked = true;
             var blackboardForm = '' +
-                '<div id="fs_board" style="background-image: url(' + FAPI.resolvePath('graphics/fs_blackboard.png') + ');background-color: #385123;background-repeat: no-repeat;height:300px;width: 555px;position: absolute; top: 150px;left: 120px;">' +
+                '<div id="fs_board" style="background-image: url(' + Environment.fapi.resolvePath('graphics/fs_blackboard.png') + ');background-color: #385123;background-repeat: no-repeat;height:300px;width: 555px;position: absolute; top: 150px;left: 120px;">' +
                 '   <div style="margin: 70px; font-size: 15pt; font-family: \'Comic Sans MS\', cursive, sans-serif;color:white">' +
                 '       <div style="float:left">' +
                 '           <div id="fs_board_name_given_label">Vorname:</div>' +
@@ -907,7 +907,7 @@ Story.actions = {
                 Environment.progress.ufer_pickedTransport = true;
                 Game.actionsBlocked = true;
                 Game.char.image.style('opacity', '0');
-                new Audio(FAPI.resolvePath('sounds/plop.ogg')).play();
+                new Audio(Environment.fapi.resolvePath('sounds/plop.ogg')).play();
 
                 Story.credits();
             } else {
