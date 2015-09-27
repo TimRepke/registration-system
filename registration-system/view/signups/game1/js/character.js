@@ -119,7 +119,7 @@ Char.prototype.physics = function() {
 	var x = this.translation[0];
 	var y = this.translation[1];
 	var self = this;
-	if (!this.pathFinder.canWalkOn(x-x%5, y-y%5)) {
+	if (!this.pathFinder.canWalkOn(x, y)) {
 		var queue = [[x-x%5, y-y%5, null, null]];
 
 		function recoverWalkable() {
@@ -165,7 +165,7 @@ Char.prototype.physics = function() {
 		this.moveTarget.shift();
 	} else {
 		var stuckFixer = 0;
-		do {
+		//do {
 			var v = Vec.add(Vec.flipSign(this.translation), this.moveTarget[0]);
 			var d = Vec.length(v);
 
@@ -173,19 +173,19 @@ Char.prototype.physics = function() {
 				var n = Vec.mul(v, 1 / d); // normalized
 				v = Vec.mul(n, this.maxSpeed + stuckFixer);
 			}
-			stuckFixer += 0.5;
+		/*	stuckFixer += 0.5;
 
 			if (stuckFixer >= 4.0) {
 				this.setMoveTarget(this.translation[0], this.translation[1]);
 				return;
-			}
+			}*/
 
 			var nextPosition = (d < g_smallValue) ? this.moveTarget[0] : Vec.add(this.translation, v);
-		} while (!this.pathFinder.canWalkOn(nextPosition[0], nextPosition[1]));
+		//} while (!this.pathFinder.canWalkOn(nextPosition[0], nextPosition[1]));
 
-		if (stuckFixer >= 3.0)
+		/*if (stuckFixer >= 3.0)
 			this.setMoveTarget(this.translation[0], this.translation[1]);
-		else
+		else*/
 			Vec.assign(this.translation, nextPosition);
 	}
 
