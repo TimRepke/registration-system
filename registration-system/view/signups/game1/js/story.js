@@ -697,7 +697,7 @@ Story.actions = {
                             food.kaese.style('display', 'none');
                         }
                     }, {
-                        message: 'Neeee! Ich bin nicht auf Diät!',
+                        message: 'Neeee, ich bin nicht auf Diät!',
                         action: function () {
                         }
                     }]

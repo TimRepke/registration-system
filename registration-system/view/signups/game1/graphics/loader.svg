@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   height="200" width="200">
+<style>
+#load_text {
+    color: #4E8260;
+    fill: #4E8260;
+    font-style:normal;
+    font-weight:bold;
+    font-size:30px;
+    font-family:Sans;
+    stroke:none;
+}
+#load_circle {
+    fill: none;
+    stroke:#7FFF00;
+    stroke-width:2.29999995;
+    stroke-linejoin:round;
+    stroke-miterlimit:4;
+    stroke-dasharray:4.6, 4.6;
+    stroke-dashoffset:0;
+    stroke-opacity:1;
+    transform-origin: 100px 100px;
+    animation: spin 20s linear infinite reverse;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(270deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.rotate {
+    transform-origin: 100px 100px;
+    animation: spin 5s linear infinite normal;
+}
+
+</style>
+
+<path id="load_circle"
+    d="M 100, 100
+       m -75, 0
+       a 75,75 0 1,0 150,0
+       a 75,75 0 1,0 -150,0" />
+<path id="myTextPath"
+    d="M 100, 100
+       m -60, 0
+       a 60,60 0 1,0 120,0
+       a 60,60 0 1,0 -120,0" style="fill: none; stroke:none;" class="rotate"/>
+
+    <text>
+      <textPath class="rotate" xlink:href="#myTextPath" id="load_text">..Map.....Map.....Map...</textPath>
+    </text>
+
+<g xmlns="http://www.w3.org/2000/svg" fill="none" fill-rule="evenodd" stroke-width="2" stroke="#7FFF00" transform="translate(78 78)">
+        <circle cx="22" cy="22" r="18.8246">
+            <animate attributeName="r" begin="0s" dur="1.8s" values="1; 20" calcMode="spline" keyTimes="0; 1" keySplines="0.165, 0.84, 0.44, 1" repeatCount="indefinite"/>
+            <animate attributeName="stroke-opacity" begin="0s" dur="1.8s" values="1; 0" calcMode="spline" keyTimes="0; 1" keySplines="0.3, 0.61, 0.355, 1" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="22" cy="22" r="5.6492">
+            <animate attributeName="r" begin="-0.9s" dur="1.8s" values="1; 20" calcMode="spline" keyTimes="0; 1" keySplines="0.165, 0.84, 0.44, 1" repeatCount="indefinite"/>
+            <animate attributeName="stroke-opacity" begin="-0.9s" dur="1.8s" values="1; 0" calcMode="spline" keyTimes="0; 1" keySplines="0.3, 0.61, 0.355, 1" repeatCount="indefinite"/>
+        </circle>
+    </g>
+
+</svg>
