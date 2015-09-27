@@ -968,8 +968,8 @@ Story.credits = function () {
 Story.dialogueHelper = function (dialogue, context, done) {
 
     var speed = {
-        talk: !UrlComponents.isSet('fastTalk') ? 1 : 50,
-        pause: !UrlComponents.isSet('fastTalk') ? 50 : 2000
+        talk: UrlComponents.isSet('fastTalk') ? 1 : 50,
+        pause: UrlComponents.isSet('fastTalk') ? 50 : 2000
     };
 
     Game.actionsBlocked = true;
