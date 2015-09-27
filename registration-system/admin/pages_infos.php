@@ -44,7 +44,7 @@ $headers .="<!-- wysihtml5 parser rules -->
 <script src=\"../view/js/jquery-1.11.1.min.js\"></script>
 <script src=\"../view/js/jquery-ui.min.js\"></script>
 <script src=\"../view/js/jquery.datetimepicker.js\"></script>
-<script type=\"text/javascript\" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script type=\"text/javascript\" src='https://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
 <script src=\"../view/js/locationpicker.jquery.js\"></script>
 <link type='text/css' rel='stylesheet' href='../view/jquery-ui/jquery-ui.min.css' />
 <link type='text/css' rel='stylesheet' href='../view/css/jquery.datetimepicker.css' />
