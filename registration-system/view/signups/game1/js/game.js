@@ -39,7 +39,7 @@ Game.prototype.loadMap = function (map, spawn) {
     var gameRoot = document.getElementById("gameRoot");
     var gameOverlay = $('#game-overlay');
 
-    gameOverlay.html('<img src="graphics/loader.svg" style="position: absolute; left: 300px; top: 200px;" />').fadeIn(500);
+    gameOverlay.html('<img src="' + FAPI.resolvePath('graphics/loader.svg') + '" style="position: absolute; left: 300px; top: 200px;" />').fadeIn(500);
 
     var svg = null;
 
