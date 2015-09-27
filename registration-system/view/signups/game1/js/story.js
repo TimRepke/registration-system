@@ -573,6 +573,7 @@ Story.actions = {
                     .transition().attr('transform', 'translate(50, 20)')
                     .transition().attr('transform', 'translate(50, -20)')
                     .transition().attr('display', 'none');
+                Game.log("Schlafe im INN bis die Reise beginnt.");
             });
 
             function blinkChoice(id) {
@@ -644,7 +645,7 @@ Story.actions = {
                 }
             }, {
                 bubble: '#wirt_speech',
-                message: 'Wenn du kein Fleisch ist, mache ich dir Käse und Brot.',
+                message: 'Wenn du kein Fleisch isst, mache ich dir Käse und Brot.',
                 action: function () {
                     appearanceBlast(nodes.kaeseBlast, food.kaese);
                 }
@@ -729,6 +730,103 @@ Story.actions = {
                     }, 1000);
                     Game.log('Gehe zurück ins Dorf');
                 }
+            }
+        }
+    },
+
+    'sleep_inn': {
+        state: {
+        },
+        possible: function () {
+            return Environment.progress.dorf_boughtTicket && !Environment.progress.sleep_inn;
+        },
+        action: function(event, context) {
+            if (!context.bEnter) return;
+            Environment.progress.sleep_inn = true;
+
+            var gameOverlay = $('#game-overlay');
+            gameOverlay.fadeIn(300);
+
+            var queue = [
+                color('#000000'),
+                color('#ffffff'),
+                delay(2000),
+                storyTalk(0),
+                delay(2000),
+                color('#000000'),
+                color('#30f040'),
+                color('#6020f0'),
+                color('#205010'),
+                color('#6020f0'),
+                color('#30f040'),
+                color('#205010', 800),
+                color('#6020f0', 600),
+                color('#30f040', 400),
+                color('#205010', 400),
+                color('#6020f0', 350),
+                color('#205010', 300),
+                color('#6020f0', 200),
+                color('#30f040', 200),
+                color('#205010', 200),
+                color('#6020f0', 200),
+                color('#30f040', 150),
+                color('#205010', 150),
+                color('#6020f0', 150),
+                color('#205010', 100),
+                color('#30f040', 100),
+                color('#6020f0', 100),
+                color('#30f040', 60),
+                color('#6020f0', 60),
+                color('#205010', 60),
+                color('#000000', 1000),
+                delay(2000),
+                color('#ffffff', 1000),
+                delay(3000),
+                storyTalk(1),
+                delay(3000),
+                color('#000000', 2000),
+                nextMap
+            ];
+            nextAction(); // start the LSD process
+
+            function storyTalk(num) {
+                return function() {
+                    switch (num) {
+                        case 0:
+                            Story.dialogueHelper([{
+                                message: 'George: Trinkt nicht zu viel ja?!'
+                            }], null, nextAction);
+                            break;
+                        case 1:
+                            Story.dialogueHelper([{
+                                message: 'George: Ich habs euch gesagt! Ihr hättet nicht so viel trinken dürfen!'
+                            }], null, nextAction);
+                            break;
+                    }
+                };
+            }
+            function delay(time) {
+                return function() {
+                    setTimeout(nextAction, time);
+                };
+            }
+            function nextAction() {
+                if (queue.length == 0) return;
+                queue.shift()();
+            }
+            function color(color, duration) {
+                if (!duration) duration = 1000;
+                return function() {
+                    gameOverlay.animate({'backgroundColor': color}, {
+                        'duration': duration,
+                        'complete': function () {
+                            nextAction();
+                        }
+                    });
+                }
+            }
+            function nextMap() {
+                Game.instance.nextMap('ufer');
             }
         }
     },
