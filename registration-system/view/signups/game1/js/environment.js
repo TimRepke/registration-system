@@ -89,6 +89,10 @@ Environment.mapEvents = {
             if (!Environment.progress.dorf_pickedFood || Environment.progress.dorf_boughtTicket) {
                 svg.select('#ticketfrau').style('display', 'none');
             }
+            if (Environment.progress.dorf_boughtTicket) {
+                svg.select('#inn_nowalk').remove();
+                // delete Game.char.pathFinder.noWalkNodes['inn_nowalk']; // when already loaded
+            }
         }
     },
     'shop': {

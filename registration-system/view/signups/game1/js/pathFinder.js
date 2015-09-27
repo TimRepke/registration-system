@@ -1,8 +1,8 @@
 function PathFinder(svg) {
 	this.svg = svg;
 
-	this.walkNodes = [];
-	this.noWalkNodes = [];
+	this.walkNodes = {};
+	this.noWalkNodes = {};
 
 	this.raster = null;
 
@@ -21,11 +21,11 @@ PathFinder.prototype.scanWalkables = function() {
 	});
 	var walkTranslation = getTranslation(this.svg[0][0], this.walkNode);
 	d3.select(self.walkNode).selectAll('path').each(function() {
-		self.walkNodes.push(new Path(this.getAttribute("d"), walkTranslation));
+		self.walkNodes[this.getAttribute("id")] = new Path(this.getAttribute("d"), walkTranslation);
 	});
 	var noWalkTranslation = getTranslation(this.svg[0][0], this.noWalkNode);
 	d3.select(self.noWalkNode).selectAll('path').each(function() {
-		self.noWalkNodes.push(new Path(this.getAttribute("d"), noWalkTranslation));
+		self.noWalkNodes[this.getAttribute("id")] = new Path(this.getAttribute("d"), noWalkTranslation);
 	});
 };
 
@@ -164,7 +164,7 @@ PathFinder.prototype.smoothPath = function(path) {
 };
 PathFinder.prototype.isDirectlyReachable = function(fromX, fromY, x, y) {
 	var canWalk = true;
-	for (var i = 0; i < this.walkNodes.length; ++i) {
+	for (var i in this.walkNodes) {
 		if (!this.walkNodes[i].isDirectlyReachable(fromX, fromY, x, y)) {
 			canWalk = false;
 			break;
@@ -172,7 +172,7 @@ PathFinder.prototype.isDirectlyReachable = function(fromX, fromY, x, y) {
 	}
 	if (!canWalk) return false;
 
-	for (var i = 0; i < this.noWalkNodes.length; ++i) {
+	for (var i in this.noWalkNodes) {
 		if (!this.noWalkNodes[i].isDirectlyReachable(fromX, fromY, x, y)) {
 			canWalk = false;
 			break;
@@ -182,7 +182,7 @@ PathFinder.prototype.isDirectlyReachable = function(fromX, fromY, x, y) {
 };
 PathFinder.prototype.canWalkOn = function(x, y) {
 	var canWalk = false;
-	for (var i = 0; i < this.walkNodes.length; ++i) {
+	for (var i in this.walkNodes) {
 		if (this.walkNodes[i].isInside(x, y)) {
 			canWalk = true;
 			break;
@@ -190,7 +190,7 @@ PathFinder.prototype.canWalkOn = function(x, y) {
 	}
 	if (!canWalk) return false;
 
-	for (var i = 0; i < this.noWalkNodes.length; ++i) {
+	for (var i in this.noWalkNodes) {
 		if (this.noWalkNodes[i].isInside(x, y)) {
 			canWalk = false;
 			break;
