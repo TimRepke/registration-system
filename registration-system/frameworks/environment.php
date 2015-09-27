@@ -20,7 +20,8 @@ class Environment {
     }
 
     protected function __construct() {
-        global $config_db, $config_studitypen, $config_essen, $config_reisearten, $invalidCharsRegEx;
+        global $config_db, $config_studitypen, $config_essen, $config_reisearten, $invalidCharsRegEx,
+               $config_reisearten_o, $config_essen_o, $config_studitypen_o;
 
         $this->database = new medoo(array(
             'database_type' => $config_db["type"],
@@ -35,6 +36,12 @@ class Environment {
             'essen'      => $config_essen,
             'reisearten' => $config_reisearten,
             'invalidChars' => $invalidCharsRegEx
+        ];
+
+        $this->oconfig = [
+            'studitypen' => $config_studitypen_o,
+            'essen'      => $config_essen_o,
+            'reisearten' => $config_reisearten_o
         ];
     }
 
