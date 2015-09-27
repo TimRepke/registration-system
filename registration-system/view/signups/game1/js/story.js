@@ -741,7 +741,7 @@ Story.actions = {
             return Environment.progress.dorf_boughtTicket && !Environment.progress.sleep_inn;
         },
         action: function(event, context) {
-            if (!context.bEnter) return;
+            if (!context || !context.bEnter) return;
             Environment.progress.sleep_inn = true;
 
             var gameOverlay = $('#game-overlay');
