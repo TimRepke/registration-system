@@ -34,12 +34,19 @@ Game.prototype.nextMap = function (map, spawn) {
     }, Game.config.loopSpeed + 5);
 };
 
+Game.gameLoading = function(tf) {
+    if(tf) {
+        $('#game-overlay').html('').fadeIn(500).addClass('loading');
+    } else {
+        $('#game-overlay').fadeOut(500).removeClass('loading');
+    }
+};
+
 Game.prototype.loadMap = function (map, spawn) {
+    Game.gameLoading(true);
+
     var gameCanvas = document.getElementById("gameCanvas");
     var gameRoot = document.getElementById("gameRoot");
-    var gameOverlay = $('#game-overlay');
-
-    gameOverlay.html('<img src="' + FAPI.resolvePath('graphics/loader.svg') + '" style="position: absolute; left: 300px; top: 200px;" />').fadeIn(500);
 
     var svg = null;
 
@@ -126,7 +133,7 @@ Game.prototype.loadMap = function (map, spawn) {
     }
 
     function startMainLoop() {
-        gameOverlay.fadeOut(500);
+        Game.gameLoading(false);
         Game.mainLoop = setInterval(function () {
             if (Game.char && Game.char.loaded) {
                 // move player

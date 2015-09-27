@@ -65,9 +65,9 @@ class Game1SignupMethod extends SignupMethod {
                 </div>
 
                 <div id="game-game">
-                    <div id="gameCanvas" style="overflow:hidden;position:relative">
+                    <div id="gameCanvas">
                         <div id="gameRoot" style="position:relative"></div>
-                		<div id="game-overlay"></div>
+                		<div id="game-overlay" class="loading"></div>
                         <div id="gameDialogue" class="bordered-box"></div>
                     </div>
                 </div>
@@ -86,12 +86,13 @@ class Game1SignupMethod extends SignupMethod {
                     size: [800, 600]
                 });
 
-                // this following stuff is to prevent the page from scrolling, when the user
-                // actually just wants to scroll inside the logs.
-                // it removes the main scrollbar and adds a padding of its size to replace the space
+
                 $(function() {
                     game.run();
 
+                    // this following stuff is to prevent the page from scrolling, when the user
+                    // actually just wants to scroll inside the logs.
+                    // it removes the main scrollbar and adds a padding of its size to replace the space
                     var scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
                     var x = document.getElementsByClassName("sidebar-log");
                     for (var i = 0; i < x.length; i++) {
