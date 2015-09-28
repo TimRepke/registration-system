@@ -71,6 +71,8 @@ Char.prototype.animate = function() {
 	this.lastPosition = this.translation.slice();
 	var speed = Math.max(Math.abs(xSpeed), Math.abs(ySpeed)); // estimate
 
+	var postfix = Environment.progress.inventory_ruestung ? "_r" : "";
+
 	var direction = this.lastDirection;
 	if (speed > g_smallValue) {
 		if (Math.abs(xSpeed) >= Math.abs(ySpeed))
@@ -92,11 +94,12 @@ Char.prototype.animate = function() {
 	if (direction != this.lastDirection) {
 		this.lastDirection = direction;
 		this.currentFrame = 0;
-		this.frames = this.animations[Char.directionToName[direction]];
+		this.frames = this.animations[Char.directionToName[direction]+postfix];
 	}
+
 	// if no current frames available show fallback downwards frame
 	if (!this.frames || this.frames.length == 0)
-		this.frames = this.animations['DOWN'];
+		this.frames = this.animations['DOWN'+postfix];
 	// if everything fails..
 	if (!this.frames || this.frames.length == 0)
 		return;
