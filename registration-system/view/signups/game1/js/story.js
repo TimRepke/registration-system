@@ -737,37 +737,62 @@ Story.actions = {
     },
 
     'sleep_inn': {
-        state: {
-        },
+        state: {},
         possible: function () {
             return Environment.progress.dorf_boughtTicket && !Environment.progress.sleep_inn;
         },
-        action: function(event, context) {
+        action: function (event, context) {
             if (!context || !context.bEnter) return;
             Environment.progress.sleep_inn = true;
-
+            new Audio(Environment.fapi.resolvePath('sounds/elevator.ogg')).play();
             var gameOverlay = $('#game-overlay');
-            gameOverlay.fadeIn(300);
+            gameOverlay.html('<div style="position:absolute;top:0; left:0;height:50%;width:50%;margin:0; padding:0;border:0;"></div>' +
+                '<div style="position:absolute;top:0; right:0;height:50%;width:50%;margin:0; padding:0;border:0;"></div>' +
+                '<div style="position:absolute;bottom:0; right:0;height:50%;width:50%;margin:0; padding:0;border:0;"></div>' +
+                '<div style="position:absolute;bottom:0; left:0;height:50%;width:50%;margin:0; padding:0;border:0;"></div>');
+            var boxes = $('#game-overlay div').toArray();
+            gameOverlay.removeClass('loading').fadeIn(300);
 
             var queue = [
+                color(['#6020f0', '#000', '#205010', '#000'], 100),
+                color(['#000', '#6020f0', '#000', '#30f040'], 100),
+                color(['#6020f0', '#000', '#205010', '#000'], 200),
+                color(['#000', '#6020f0', '#000', '#30f040'], 200),
+                flyin('bernd', [-200, -200], [-100, 100]),
+                color(['#6020f0', '#000', '#205010', '#000'], 100),
+                color(['#000', '#6020f0', '#000', '#30f040'], 100),
+                color(['#6020f0', '#000', '#205010', '#000'], 200),
+                color(['#000', '#6020f0', '#000', '#30f040'], 200),
+                color(['#205010', '#000', '#000', '#000'], 200),
+                color(['#000', '#6020f0', '#000', '#000'], 200),
+                color(['#000', '#000', '#30f040', '#000'], 200),
+                color(['#000', '#000', '#000', '#205010'], 200),
+                color(['#205010', '#000', '#000', '#000'], 100),
+                color(['#000', '#6020f0', '#000', '#000'], 100),
+                color(['#000', '#000', '#30f040', '#000'], 100),
+                color(['#000', '#000', '#000', '#205010'], 100),
+                color(['#205010', '#000', '#000', '#000'], 60),
+                color(['#000', '#6020f0', '#000', '#000'], 60),
+                color(['#000', '#000', '#30f040', '#000'], 60),
+                color(['#000', '#000', '#000', '#205010'], 60),
+                color('#000000', 300),
+                color('#30f040', 60),
+                color('#6020f0', 60),
+                color('#205010', 60),
+                color('#30f040', 60),
+                color('#6020f0', 60),
+                color('#205010', 60),
+                color('#30f040', 200),
                 color('#000000'),
-                color('#ffffff'),
-                delay(2000),
                 storyTalk(0),
-                delay(2000),
                 color('#000000'),
                 color('#30f040'),
                 color('#6020f0'),
-                color('#205010'),
-                color('#6020f0'),
-                color('#30f040'),
-                color('#205010', 800),
-                color('#6020f0', 600),
-                color('#30f040', 400),
-                color('#205010', 400),
-                color('#6020f0', 350),
-                color('#205010', 300),
-                color('#6020f0', 200),
+                flythrough('goat', [1000, 100], [-500, -100], 3000),
+                fadeout('bernd'),
+                color('#205010', 500),
+                color('#6020f0', 400),
+                color('#30f040', 300),
                 color('#30f040', 200),
                 color('#205010', 200),
                 color('#6020f0', 200),
@@ -781,56 +806,132 @@ Story.actions = {
                 color('#6020f0', 60),
                 color('#205010', 60),
                 color('#000000', 1000),
-                delay(2000),
-                color('#ffffff', 1000),
-                delay(3000),
-                storyTalk(1),
-                delay(3000),
-                color('#000000', 2000),
                 nextMap
             ];
             nextAction(); // start the LSD process
 
             function storyTalk(num) {
-                return function() {
-                    switch (num) {
-                        case 0:
-                            Story.dialogueHelper([{
-                                message: 'George: Trinkt nicht zu viel ja?!'
-                            },{
-                                message: 'Jonas: BIIIIIIIIIER BAAAAAALLLLLLLLLLL!'
-                            },{
-                                message: 'George: ...'
-                            }], null, nextAction);
-                            break;
-                        case 1:
-                            Story.dialogueHelper([{
-                                message: 'George: Ich habs euch gesagt! Ihr hättet nicht so viel trinken dürfen!'
-                            }], null, nextAction);
-                            break;
-                    }
+                return function () {
+                    Story.dialogueHelper([{
+                        message: 'Wattn Traum ey,...'
+                    }], null, nextAction);
                 };
             }
+
             function delay(time) {
-                return function() {
+                return function () {
                     setTimeout(nextAction, time);
                 };
             }
+
             function nextAction() {
                 if (queue.length == 0) return;
                 queue.shift()();
             }
+
             function color(color, duration) {
                 if (!duration) duration = 1000;
-                return function() {
-                    gameOverlay.animate({'backgroundColor': color}, {
-                        'duration': duration,
-                        'complete': function () {
-                            nextAction();
+                if (!Array.isArray(color))
+                    color = [color, color, color, color];
+
+                return function () {
+                    boxes.forEach(function (box, i) {
+                        $(box).animate({'backgroundColor': color[i]},
+                            (i === 0) ? {
+                                'duration': duration,
+                                'complete': function () {
+                                    nextAction();
+                                }
+                            } : {'duration': duration});
+                    });
+
+                };
+
+            }
+
+            function fadeout(img) {
+                return function () {
+                    nextAction();
+
+                    $('#' + img).animate({
+                        opacity: 0
+                    }, {
+                        duration: 1000,
+                        complete: function () {
+                            $(this).remove();
                         }
                     });
-                }
+                };
             }
+
+            function flythrough(img, from, to, duration) {
+                return function () {
+                    nextAction();
+
+                    gameOverlay.append('<img id="' + img + '" style="position: absolute" src="' + Environment.fapi.resolvePath('graphics/' + img + '.png') + '" />');
+                    $('#' + img)
+                        .css('left', from[0] + 'px')
+                        .css('top', from[1] + 'px')
+                        .animate({
+                            left: to[0],
+                            top: to[1]
+                        }, {
+                            duration: duration,
+                            complete: function () {
+                                $(this).remove();
+                            }
+                        });
+                };
+            }
+
+            function flyin(img, origin, target, duration) {
+                if (!origin) origin = [400, 300];
+                if (!target) target = origin;
+                if (!duration) duration = 2000;
+
+
+                return function () {
+                    nextAction();
+
+                    gameOverlay.append('<img id="' + img + '" src="' + Environment.fapi.resolvePath('graphics/' + img + '.png') + '" />');
+                    $('#' + img)
+                        .css('transform', 'scale(0.01, 0.01')
+                        .css('transform-origin', origin[0] + 'px ' + origin[1] + 'px')
+                        .animate({
+                            scale: 1.5,
+                            targetX: target[0],
+                            targetY: target[1]
+                        }, {
+                            step: function (now, fx) {
+                                switch (fx.prop) {
+                                    case 'targetX':
+                                        $(this).css('transform-origin', getNewOrigin($(this), 0, now));
+                                        break;
+                                    case 'targetY':
+                                        $(this).css('transform-origin', getNewOrigin($(this), 1, now));
+                                        break;
+                                    case 'scale':
+                                        $(this).css('transform', 'scale(' + now + ',' + now + ')');
+                                        break;
+                                }
+
+                                function getNewOrigin(elem, index, update) {
+                                    try {
+                                        var split = elem.css('transform-origin').split(' ');
+                                        console.log(split);
+                                        console.log(update + '-' + index)
+                                        split[index] = (origin[index] + update) + 'px';
+                                        return split.join(' ');
+                                    } catch (e) {
+                                        return target[0] + 'px ' + target[1] + 'px';
+                                    }
+                                }
+                            },
+                            duration: duration
+                        });
+                };
+            }
+
             function nextMap() {
                 Game.instance.nextMap('ufer');
             }

@@ -85,14 +85,10 @@ Environment.mapEvents = {
                 Game.log("Geh ins Wirtshaus");
             } else if (!Environment.progress.dorf_pickedFootAndLeftPub && !Environment.progress.dorf_boughtTicket) {
                 Environment.progress.dorf_pickedFootAndLeftPub = true;
-                Game.log("Geh zum Reisebüro und rede mit der Prinzessin");
+                Game.log("Geh zum Prinzessinenreisebüro");
             }
             if (!Environment.progress.dorf_pickedFood || Environment.progress.dorf_boughtTicket) {
                 svg.select('#ticketfrau').style('display', 'none');
-            }
-            if (Environment.progress.dorf_boughtTicket) {
-                svg.select('#inn_nowalk').remove();
-                // delete Game.char.pathFinder.noWalkNodes['inn_nowalk']; // when already loaded
             }
         }
     },
