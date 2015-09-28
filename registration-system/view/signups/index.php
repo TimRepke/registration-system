@@ -157,13 +157,13 @@ class SignupMethods {
             $this->validateField('pseudo',  $environment->config['invalidChars'], $data, $errors, "Fehlerhafter oder fehlender Anzeigename!");
             $this->validateField('mehl', 'mail', $data, $errors, "Fehlerhafte oder fehlende E-Mail-Adresse!");
             $this->validateField('anday',    array_slice($possible_dates,0, -1), $data, $errors, 'Hilfe beim Ausfüllen: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
-            $this->validateField('antyp',    $environment->config['reisearten'], $data, $errors, 'Trolle hier lang: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
+            $this->validateField('antyp',    $environment->oconfig['reisearten'], $data, $errors, 'Trolle hier lang: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
             $this->validateField('abday',    array_slice($possible_dates,1),     $data, $errors, 'Ruth hat mitgedacht: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
-            $this->validateField('abtyp',    $environment->config['reisearten'], $data, $errors, 'Entwickler Bier geben und: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
-            $this->validateField('essen',    $environment->config['essen'],      $data, $errors, 'Hat das wirklich nicht gereicht??'); // ggf trollable machen mit /^[a-zA-Z]{2,50}$/
-            $this->validateField('studityp', $environment->config['studitypen'], $data, $errors, 'Neue Chance, diesmal FS-Ini wählen!');
-            $this->validateField('public', 'public',           $data, $errors, 'Trollololol');
-            $this->validateField('virgin', array("Ja","Nein"), $data, $errors, 'Bitte Altersbereich wählen!');
+            $this->validateField('abtyp',    $environment->oconfig['reisearten'], $data, $errors, 'Entwickler Bier geben und: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
+            $this->validateField('essen',    $environment->oconfig['essen'],      $data, $errors, 'Hat das wirklich nicht gereicht??'); // ggf trollable machen mit /^[a-zA-Z]{2,50}$/
+            $this->validateField('studityp', $environment->oconfig['studitypen'], $data, $errors, 'Neue Chance, diesmal FS-Ini wählen!');
+            $this->validateField('public',  'public',          $data, $errors, 'Trollololol');
+            $this->validateField('virgin',  'virgin',          $data, $errors, 'Bitte Altersbereich wählen!');
             $this->validateField('comment', 'comment',         $data, $errors, 'Trollololol');
             $this->validateField('captcha', 'captcha',         $data, $errors, 'Captcha falsch eingegeben.');
 
@@ -226,8 +226,17 @@ class SignupMethods {
 
             // do specific check if a set of variables is allowed
             if(is_array($check)){
-                if(!in_array($tmp,$check)) array_push($errarr, $errmess);
-                $datarr[$index] = $tmp;
+                $vals = array_values($check);
+                $keys = array_keys($check);
+
+                // on error
+                if (!in_array($tmp, $vals) && !in_array($tmp, $keys)) array_push($errarr, $errmess);
+
+                // on success
+                // take val directly
+                if (in_array($tmp,$vals)) $datarr[$index] = $tmp;
+                // or translate
+                else $datarr[$index] = $check[$tmp];
             }
 
             // check captcha
