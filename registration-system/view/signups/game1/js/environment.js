@@ -13,6 +13,9 @@ Environment.progress = {
     // -----------------------------
     // MAP RELATED things
 
+    // castle entrace related
+    castlee_niveauDropped: false,
+
     // fs related
     fs_firstApproach: false,
     fs_georgeScreamed: false,

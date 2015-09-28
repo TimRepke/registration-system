@@ -55,6 +55,91 @@ Story.actions = {
                 .attr('x', r + moveTo);
         }
     },
+    'castlee_niveaudropper': {
+        possible: function () {
+            return !Environment.progress.castlee_niveauDropped;
+        },
+        action: function (event, context) {
+            if (context.bEnter === true) {
+                Environment.progress.castlee_niveauDropped = true;
+
+                var party = d3.select('#liftparty');
+                party.style('display', 'block');
+
+                var farts = new Audio(Environment.fapi.resolvePath('sounds/fart.ogg'));
+                farts.play();
+                farts.addEventListener("ended", function () {
+                    clearInterval(animation);
+                    party.style('display', 'none');
+                    Game.log('Niveau vom Winde weg gespült');
+                    setTimeout(function () {
+                        new Audio(Environment.fapi.resolvePath('sounds/lachen.ogg')).play();
+                        Story.dialogueHelper([{message: 'Dein Niveau ist jetzt im Keller. Noch mal?'}]);
+                        Environment.progress.castlee_niveauDropped = false;
+                    }, 1000);
+                });
+
+                var sparkles = d3.selectAll('[sparkle]');
+                var leftLight = {
+                    node: d3.select('#leftlight')
+                };
+                leftLight.pos = getInfo(Game.char.svg, leftLight.node);
+                leftLight.rotationCenter = [leftLight.pos.x + 20, leftLight.pos.y];
+                var rightLight = {
+                    node: d3.select('#rightlight')
+                };
+                rightLight.pos = getInfo(Game.char.svg, rightLight.node);
+                rightLight.rotationCenter = [rightLight.pos.x, rightLight.pos.y];
+
+
+                leftLight.node
+                    .transition().duration(1000).attr('transform', rotate(-25, leftLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(0, leftLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(-20, leftLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(5, leftLight.rotationCenter))
+                    .transition().duration(800).attr('transform', rotate(-25, leftLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(0, leftLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(-30, leftLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(5, leftLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(-25, leftLight.rotationCenter))
+                    .transition().duration(1200).attr('transform', rotate(0, leftLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(10, leftLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(-25, leftLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(0, leftLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(-25, leftLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(0, leftLight.rotationCenter));
+
+                rightLight.node
+                    .transition().duration(1000).attr('transform', rotate(25, rightLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(0, rightLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(30, rightLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(20, rightLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(25, rightLight.rotationCenter))
+                    .transition().duration(600).attr('transform', rotate(10, rightLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(25, rightLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(0, rightLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(25, rightLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(10, rightLight.rotationCenter))
+                    .transition().duration(1400).attr('transform', rotate(25, rightLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(0, rightLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(25, rightLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(0, rightLight.rotationCenter))
+                    .transition().duration(1500).attr('transform', rotate(25, rightLight.rotationCenter))
+                    .transition().duration(1000).attr('transform', rotate(0, rightLight.rotationCenter));
+
+                function rotate(deg, rotationCenter) {
+                    return 'rotate(' + deg + ',' + rotationCenter[0] + ',' + rotationCenter[1] + ')';
+                }
+
+                var cnt = 0;
+                var animation = setInterval(function () {
+                    cnt++;
+                    sparkles[0][cnt % 5].style.display = (cnt % 2) ? 'none' : 'block';
+                }, 15);
+            }
+        }
+    },
+
     'fs_firstApproach': {
         state: {
             welcome_message: false, // welcome message spoken
