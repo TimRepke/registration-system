@@ -834,7 +834,8 @@ Story.actions = {
             gameOverlay.html('<div style="position:absolute;top:0; left:0;height:50%;width:50%;margin:0; padding:0;border:0;"></div>' +
                 '<div style="position:absolute;top:0; right:0;height:50%;width:50%;margin:0; padding:0;border:0;"></div>' +
                 '<div style="position:absolute;bottom:0; right:0;height:50%;width:50%;margin:0; padding:0;border:0;"></div>' +
-                '<div style="position:absolute;bottom:0; left:0;height:50%;width:50%;margin:0; padding:0;border:0;"></div>');
+                '<div style="position:absolute;bottom:0; left:0;height:50%;width:50%;margin:0; padding:0;border:0;"></div>' +
+                '<span style="position: absolute; bottom: 5px;left:5px;color:white;font-size: 8px;">Music: "Local Forecast - Elevator" Kevin MacLeod (incompetech.com)</span>');
             var boxes = $('#game-overlay div').toArray();
             gameOverlay.removeClass('loading').fadeIn(300);
 
