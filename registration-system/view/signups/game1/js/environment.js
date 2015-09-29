@@ -32,7 +32,7 @@ Environment.progress = {
     dorf_talkedToWirt: false,
     dorf_pickedFood: false,
     dorf_pickedFootAndLeftPub: false,
-    dorf_boughtTicket: false,
+    dorf_boughtTicket: !false,
     sleep_inn: false,
 
     // ufer related
