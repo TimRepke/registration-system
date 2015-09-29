@@ -401,7 +401,7 @@ function index_show_signupTable_destroyTypes($anabtyp) {
 
 
 function index_show_countdown($opentime) {
-    echo '<script type="text/javascript" src="view/js/qrcode.min.js"></script>';
+    echo '<script type="text/javascript" src="view/js/jquery.qrcode.js"></script>';
     echo "
     <script>
         var a = '0123456789abcdef';
@@ -450,8 +450,21 @@ function index_show_countdown($opentime) {
         }
         $(function () {
             var url = window.location.href;
-            console.log(url);
-            if(url.indexOf('#showQR')>0) new QRCode(document.getElementById('QRcode'), url.replace('#showQR',''));
+            if(url.indexOf('#showQR')>0) $('#QRcode').qrcode({
+                render: 'canvas',
+                ecLevel: 'Q',
+                size: 150,
+                fill: '#000',
+                background: null,
+                text:  url.replace('#showQR',''),
+                radius: 0.5,
+                quiet:2,
+                mode: 2,
+                label: 'FS Fahrt',
+                fontname: 'sans',
+                fontcolor: '#ff9818'
+
+            });
 	        hurrdurr();
 	        setInterval(hurrdurr, 1000);
         });
@@ -468,6 +481,6 @@ function index_show_countdown($opentime) {
             </div>
           </div>';
 
-    echo '<div id="QRcode" style="position: fixed; bottom: 10px; right: 10px;"></div>';
+    echo '<canvas id="QRcode" style="position: fixed; bottom: 10px; right: -240px;width:500px;height:250px;"></canvas>';
 
 }
