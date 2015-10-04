@@ -1,0 +1,1 @@
+ALTER TABLE  `waitlist` CHANGE  `transferred`  `transferred` INT( 11 ) NULL ;
