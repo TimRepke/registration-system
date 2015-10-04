@@ -131,10 +131,10 @@ function index_show_signup() {
     // Anmeldung erfolgreich
     if (isset($_REQUEST['success'])) {
         echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Die Anmeldung war erfolgreich.</div>';
-    } // Anmeldung fehlgeschlagen, weil voll
+    } // Anmeldung fehlgeschlagen, weil voll oder duplikat
     elseif (isset($_REQUEST['full'])) {
         echo '<div style="text-align:center; font-size: 20pt; font-weight: bold">Anmeldung leider fehlgeschlagen.</div>';
-        echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Die Anmeldegrenze wurde leider erreicht.</div>';
+        echo '<div style="text-align:center; font-size: 16pt; font-weight: bold">Die Anmeldegrenze wurde leider erreicht oder du bist bereits angemeldet.</div>';
         echo '<div style="text-align:center; font-size: 14pt; ">Es besteht die Möglichkeit sich auf der Warteliste einzutragen.<br />
               Wenn du das möchtest, klicke hier: <a class="normallink" href="?fid=' . $fid . '&waitlist">&#8694; Warteliste</a></div>';
     } // Formulardaten empfangen -> auswerten!

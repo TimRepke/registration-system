@@ -59,6 +59,16 @@ class Environment {
     }
 
     /**
+     * @returns TRUE iff regular registration is allowed
+     * @param $fid - fahrt id to check
+     * @param $mail - email address to check
+     * @param $list - list to check (bachelor or waitlist)
+     */
+    public function isRegistered($fid, $mail, $list = 'bachelor') {
+        return $this->database->has($list, ['AND' => ['fahrt_id'=>$fid, 'mehl' => $mail]]);
+    }
+
+    /**
      * returns value depending on registration status
      * 0 = registration open (slots available)
      * 1 = all slots taken -> waitlist open
@@ -193,19 +203,27 @@ class Environment {
 
         if($this->isInWaitlistMode()){
             if($this->getRegistrationState($data['fahrt_id'])==1){
+                $this->database->exec("LOCK TABLES fahrten, waitlist WRITE"); // count should not be calculated in two scripts at once
+
                 // === prepare data to insert ===
                 $data['waitlist_id'] = comm_generate_key($this->database,
                     ["bachelor" => "bachelor_id", "waitlist" => "waitlist_id"],
                     ['fahrt_id'=>$data['fahrt_id']]);
 
                 // === insert data ===
-                $this->database->insert("waitlist", $data);
+                $insertOk = !$this->isRegistered($data['fahrt_id'], $data['mehl'], 'waitlist');
+
+                if($insertOk) $this->database->insert("waitlist", $data);
+                $this->database->exec("UNLOCK TABLES"); // insert is done now, count may be recalculated in other threads
+                if(!$insertOk) return false;
 
                 // === notify success ===
                 $this->feedbackHelper("lang_waitmail", $data['mehl'], $data['waitlist_id'], $data['fahrt_id']);
             }
             else return false;
         } else {
+            $this->database->exec("LOCK TABLES fahrten, bachelor WRITE"); // count should not be calculated in two scripts at once
+
             // === prepare data to insert ===
             $data['version'] = 1;
             $data['bachelor_id'] = comm_generate_key($this->database,
@@ -216,12 +234,12 @@ class Environment {
             $res = $this->database->get("fahrten",
                 ["regopen", "max_bachelor"],
                 ["fahrt_id" => $data['fahrt_id']]);
-            if (!$res || $res['regopen'] != "1")
+            if (!$res || $res['regopen'] != "1") {
+                $this->database->exec("UNLOCK TABLES");
                 return false;
+            }
 
-            $this->database->exec("LOCK TABLES fahrten, bachelor WRITE"); // count should not be calculated in two scripts at once
-
-            $insertOk = $this->isRegistrationOpen($data['fahrt_id']);
+            $insertOk = $this->isRegistrationOpen($data['fahrt_id']) && !$this->isRegistered($data['fahrt_id'], $data['mehl']);
 
             if ($insertOk)
                 $this->database->insert("bachelor", $data);
