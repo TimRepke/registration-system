@@ -91,6 +91,9 @@ Story.actions = {
                 rightLight.pos = getInfo(Game.char.svg, rightLight.node);
                 rightLight.rotationCenter = [rightLight.pos.x, rightLight.pos.y];
 
+                function rotate(deg, rotationCenter) {
+                    return 'rotate(' + deg + ',' + rotationCenter[0] + ',' + rotationCenter[1] + ')';
+                }
 
                 leftLight.node
                     .transition().duration(1000).attr('transform', rotate(-25, leftLight.rotationCenter))
@@ -126,10 +129,6 @@ Story.actions = {
                     .transition().duration(1000).attr('transform', rotate(0, rightLight.rotationCenter))
                     .transition().duration(1500).attr('transform', rotate(25, rightLight.rotationCenter))
                     .transition().duration(1000).attr('transform', rotate(0, rightLight.rotationCenter));
-
-                function rotate(deg, rotationCenter) {
-                    return 'rotate(' + deg + ',' + rotationCenter[0] + ',' + rotationCenter[1] + ')';
-                }
 
                 var cnt = 0;
                 var animation = setInterval(function () {
@@ -459,24 +458,19 @@ Story.actions = {
             }
 
             function goatAttacking() {
+                function translate(relx, rely) {
+                    return 'translate(' + relx + ',' + rely + ')';
+                }
+
                 nodes.goat
                     .transition().attr('transform', translate(-10, 10))
                     .transition().attr('transform', translate(10, -10))
                     .transition().attr('transform', translate(-10, 10))
                     .transition().attr('transform', translate(10, -10));
-
-                function translate(relx, rely) {
-                    return 'translate(' + relx + ',' + rely + ')';
-                }
             }
 
             function goatShaking(callback) {
                 var goatPos = getInfo(Game.char.svg, nodes.goat);
-                nodes.goat
-                    .transition().attr('transform', rotate(15))
-                    .transition().attr('transform', rotate(-15))
-                    .transition().attr('transform', rotate(0))
-                    .call(helper_endAll, callback);
 
                 function rotate(deg) {
                     return 'rotate(' + deg + ',' + goatPos.xCenter + ',' + goatPos.yCenter + ')';
@@ -490,6 +484,12 @@ Story.actions = {
                         if (!--n && callback) callback.apply(this, arguments);
                     });
                 }
+
+                nodes.goat
+                    .transition().attr('transform', rotate(15))
+                    .transition().attr('transform', rotate(-15))
+                    .transition().attr('transform', rotate(0))
+                    .call(helper_endAll, callback);
             }
         }
     },
