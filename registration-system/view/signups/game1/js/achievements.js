@@ -179,7 +179,7 @@ function Achievements() {
         return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < distance;
     }
 
-    this.achievedAchievements = [];
+    this.achievedAchievements = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
 
     this.domElems = null;
 
@@ -255,6 +255,7 @@ Achievements.prototype.isTriggerable = function (achievementId, context) {
 };
 
 Achievements.prototype.triggerAchievement = function (achievementId, context) {
+    var wasTriggered = false;
     if (!this.achievements[achievementId]) {
         console.error("No such achievement: " + achievementId);
     }
@@ -266,10 +267,10 @@ Achievements.prototype.triggerAchievement = function (achievementId, context) {
         if (typeof this.achievements[achievementId] === 'object' && 'action' in this.achievements[achievementId]) {
             this.achievements[achievementId].action();
         }
-        return true;
+        wasTriggered = true;
     }
     // else console.warn("Achievement already achieved: " + achievementId);
 
-    if (this.numCompletedAchievements() === 42) this.triggerAchievement('achievement42');
-    return false;
+    if (this.numCompletedAchievements() >= 42) this.triggerAchievement('achievement42');
+    return wasTriggered;
 };
