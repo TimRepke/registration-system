@@ -92,7 +92,7 @@ $text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
                 <li>Erstis: ".$mitfahrer['ersti']."</li>
                 <li>Hörstis: ".$mitfahrer['hoers']."</li>
                 <li>Tutti:  ".$mitfahrer['tutti']."</li>
-                <li>= Anteil Erstis: ".round(($mitfahrer['ersti']/((($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti']) <=0) ? 1 : ($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti'])))*100,2)."%</li>
+                <li>= Anteil Erstis: ".round(($mitfahrer['ersti']/((($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti']) <=0) ? (($mitfahrer['ersti'] <= 0) ? 1 : $mitfahrer['ersti']) : ($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti'])))*100,2)."%</li>
             </ul>
         </ul></div>";
 
