@@ -179,7 +179,7 @@ function Achievements() {
         return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < distance;
     }
 
-    this.achievedAchievements = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+    this.achievedAchievements = [];
 
     this.domElems = null;
 
