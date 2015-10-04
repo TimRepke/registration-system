@@ -16,13 +16,12 @@ $mitfahrer['gesam'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id]]);
 $mitfahrer['gesaa'] = $admin_db->count("bachelor", ["fahrt_id"    => $config_current_fahrt_id]);
-try {
-    $mitfahrer['erste'] = $admin_db->query("SELECT date_format(anday, '%j') as anday, COUNT(anday) as anday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY anday ORDER BY anday ASC LIMIT 1")->fetchAll()[0]['anday_cnt'];
-    $mitfahrer['zweit'] = $admin_db->query("SELECT date_format(abday, '%j') as abday, COUNT(abday) as abday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY abday ORDER BY abday DESC LIMIT 1")->fetchAll()[0]['abday_cnt'];
-} catch(Exception $ex) {
-    $mitfahrer['erste'] = 0;
-    $mitfahrer['zweit'] = 0;
-}
+
+$mitfahrer['erste'] = $admin_db->query("SELECT date_format(anday, '%j') as anday, COUNT(anday) as anday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY anday ORDER BY anday ASC LIMIT 1")->fetchAll();
+$mitfahrer['zweit'] = $admin_db->query("SELECT date_format(abday, '%j') as abday, COUNT(abday) as abday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY abday ORDER BY abday DESC LIMIT 1")->fetchAll();
+$mitfahrer['erste'] = isset($mitfahrer['erste'][0]) ? $mitfahrer['erste'][0]['anday_cnt'] : 0;
+$mitfahrer['zweit'] = isset($mitfahrer['zweit'][0]) ? $mitfahrer['zweit'][0]['abday_cnt'] : 0;;
+
 $mitfahrer['veget'] = $admin_db->count("bachelor", ["AND"=>
                                         ["backstepped" => NULL,
                                          "fahrt_id"    => $config_current_fahrt_id,
@@ -93,7 +92,7 @@ $text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
                 <li>Erstis: ".$mitfahrer['ersti']."</li>
                 <li>Hörstis: ".$mitfahrer['hoers']."</li>
                 <li>Tutti:  ".$mitfahrer['tutti']."</li>
-                <li>= Anteil Erstis: ".round(($mitfahrer['ersti']/(($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti']) <=0) ? 1 : ($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti']))*100,2)."%</li>
+                <li>= Anteil Erstis: ".round(($mitfahrer['ersti']/((($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti']) <=0) ? 1 : ($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti'])))*100,2)."%</li>
             </ul>
         </ul></div>";
 
