@@ -6,7 +6,7 @@ function Achievements() {
         'some_water': {
             message: 'An frischem Brunnenwasser gerochen',
             condition: function (context) {
-                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 150;
+                return isWithinDist(context, 150);
             }
         },
         'saw_devs1': 'Wilde Informatiker auf Wiese gesehen',
@@ -21,13 +21,13 @@ function Achievements() {
         'hydrant': {
             message: 'Wasser aufgedreht',
             condition: function (context) {
-                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 150;
+                return isWithinDist(context, 150);
             }
         },
         'muell': {
             message: 'Altbatterien in den Hausmüll geschmissen',
             condition: function (context) {
-                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 150;
+                return isWithinDist(context, 150);
             }
         },
         'randomwalk': 'Sinnlose Wegwahl',
@@ -37,7 +37,7 @@ function Achievements() {
                 Game.char.svg.select('#rettich').style('display', 'none');
             },
             condition: function (context) {
-                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 120;
+                return isWithinDist(context, 120);
             }
         },
         'kohl': {
@@ -46,7 +46,7 @@ function Achievements() {
                 Game.char.svg.select('#kohlkopf').style('display', 'none');
             },
             condition: function (context) {
-                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 120;
+                return isWithinDist(context, 120);
             }
         },
         'mais': {
@@ -55,7 +55,7 @@ function Achievements() {
                 Game.char.svg.select('#maiskolben').style('display', 'none');
             },
             condition: function (context) {
-                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 120;
+                return isWithinDist(context, 120);
             }
         },
         'rasenmeh': {
@@ -96,7 +96,7 @@ function Achievements() {
         'laptop1': {
             message: 'Laptop ausgemacht',
             condition: function() {
-                return self.achievedAchievements.indexOf('laptop2') >= 0
+                return self.wasAchieved('laptop2');
             }
         },
         'marathon': 'Runtimeerror! dev TIM low on energy',
@@ -113,7 +113,7 @@ function Achievements() {
                 Game.char.svg.select('#stuhl').style('display', 'none');
             },
             condition: function (context) {
-                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 80;
+                return isWithinDist(context, 80);
             }
         },
         'laser': 'Laser auf den Punkt gebracht',
@@ -128,7 +128,7 @@ function Achievements() {
         'maske': {
             message: 'Warum hast du eine Maske auf?',
             condition: function () {
-                return self.achievedAchievements.indexOf('stroh') >= 0
+                return self.wasAchieved('stroh');
             }
         },
         'gentzen': 'Bei diese Baustelle machen die sich den gentzen Aufwand umsonst.',
@@ -147,7 +147,7 @@ function Achievements() {
                 Game.char.svg.select('#flowerpot').style('transform-origin', '50% 50%').style('transform', 'rotate(70deg)');
             },
             condition: function (context) {
-                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 100;
+                return isWithinDist(context, 100);
             }
         },
         'wine': {
@@ -156,7 +156,7 @@ function Achievements() {
                 Game.char.svg.select('#wine_glass').style('display', 'none');
             },
             condition: function (context) {
-                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 80;
+                return isWithinDist(context, 80);
             }
         },
         'chair': {
@@ -165,7 +165,7 @@ function Achievements() {
                 Game.char.svg.select('#stuhl').style('display', 'none');
             },
             condition: function (context) {
-                return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < 80;
+                return isWithinDist(context, 80);
             }
         },
 
@@ -174,6 +174,11 @@ function Achievements() {
         'gameDone': 'Zeit verschwendet',
         'achievement42': 'You just found the answer to everything!'
     };
+
+    function isWithinDist (context, distance) {
+        return euclidianDistance(Game.char.translation[0], Game.char.translation[1], context.x, context.y) < distance;
+    }
+
     this.achievedAchievements = [];
 
     this.domElems = null;
@@ -192,8 +197,8 @@ Achievements.prototype.numCompletedAchievements = function () {
 Achievements.prototype.initDomElems = function () {
     this.domElems = {
         'log': document.getElementById('achievement-log'),
-        'statusBar': document.getElementById('achievement-progress').getElementsByClassName('status-bar-bar')[0],
-        'statusText': document.getElementById('achievement-progress').getElementsByClassName('status-bar-text')[0]
+        'statusBar': $('#achievement-progress .status-bar-bar').first(),
+        'statusText': $('#achievement-progress .status-bar-text').first()
     };
 };
 
@@ -204,12 +209,12 @@ Achievements.prototype.getDomElem = function (elem) {
 
 Achievements.prototype.updateStatusBar = function () {
     var percent = Math.ceil((this.numCompletedAchievements() / this.numTotalAchievements()) * 100);
-    this.getDomElem('statusBar').style.width = percent + '%';
+    this.getDomElem('statusBar').css('width', percent + '%');
 };
 
 Achievements.prototype.updateStatusText = function () {
     var text = this.numCompletedAchievements() + '/' + this.numTotalAchievements();
-    this.getDomElem('statusText').innerText = text;
+    this.getDomElem('statusText').text(text);
 };
 
 Achievements.prototype.logMessage = function (message) {
@@ -235,8 +240,14 @@ Achievements.prototype.getMessage = function (achievementId) {
     return this.achievements[achievementId];
 };
 
+Achievements.prototype.wasAchieved = function(achievementId) {
+    return this.achievedAchievements.indexOf(achievementId) >= 0;
+};
+
 Achievements.prototype.isTriggerable = function (achievementId, context) {
     var achievement = this.achievements[achievementId];
+    if (this.wasAchieved(achievementId)) return false;
+
     if (typeof achievement === 'object' && 'condition' in achievement) {
         return achievement.condition(context);
     }
@@ -247,7 +258,7 @@ Achievements.prototype.triggerAchievement = function (achievementId, context) {
     if (!this.achievements[achievementId]) {
         console.error("No such achievement: " + achievementId);
     }
-    else if (this.achievedAchievements.indexOf(achievementId) < 0 && this.isTriggerable(achievementId, context)) {
+    else if (this.isTriggerable(achievementId, context)) {
         this.achievedAchievements.push(achievementId);
         this.updateStatusBar();
         this.updateStatusText();
