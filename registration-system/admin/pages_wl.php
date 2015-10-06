@@ -62,10 +62,19 @@ if(isset($_REQUEST['move'])){
         $text .= '<div style="color:green;">Transfer seems successfull, sending automatic mail now to '.$transdata['mehl'].'</div>';
 
         // === notify success ===
-        $from = $admin_db->get("fahrten", array("kontakt","leiter"), array("fahrt_id"=>$transdata['fahrt_id']));
-        $mail = comm_get_lang("lang_waittoregmail", array( "{{url}}" => $config_baseurl."status.php?hash=".$_REQUEST['move'],
-                                                           "{{organisator}}" => $from['leiter']));
-        comm_send_mail($admin_db, $transdata['mehl'], $mail, $from['kontakt']);
+        $from = $admin_db->get("fahrten", ["kontakt","leiter", "paydeadline", "payinfo", "wikilink"],
+            ["fahrt_id"=>$transdata['fahrt_id']]);
+
+        foreach ([ "lang_waittoregmail", "lang_payinfomail"] as $mail_lang) {
+            $mail = comm_get_lang($mail_lang, [
+                "{{url}}" => $config_baseurl . "status.php?hash=" . $_REQUEST['move'],
+                "{{organisator}}" => $from['leiter'],
+                "{{paydeadline}}" => $from['paydeadline'],
+                "{{payinfo}}" => $from['payinfo'],
+                "{{wikilink}}" => $from['wikilink']]);
+            $bcc = $mail_lang === "lang_payinfomail" ? $from['kontakt'] : NULL;
+            comm_send_mail($admin_db, $transdata['mehl'], $mail, $from['kontakt'], $bcc);
+        }
     }
 
 }
