@@ -17,8 +17,8 @@ $mitfahrer['gesam'] = $admin_db->count("bachelor", ["AND"=>
                                          "fahrt_id"    => $config_current_fahrt_id]]);
 $mitfahrer['gesaa'] = $admin_db->count("bachelor", ["fahrt_id"    => $config_current_fahrt_id]);
 
-$mitfahrer['erste'] = $admin_db->query("SELECT date_format(anday, '%j') as anday, COUNT(anday) as anday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY anday ORDER BY anday ASC LIMIT 1")->fetchAll();
-$mitfahrer['zweit'] = $admin_db->query("SELECT date_format(abday, '%j') as abday, COUNT(abday) as abday_cnt FROM bachelor WHERE fahrt_id=".$config_current_fahrt_id." GROUP BY abday ORDER BY abday DESC LIMIT 1")->fetchAll();
+$mitfahrer['erste'] = $admin_db->query("SELECT date_format(anday, '%j') as anday, COUNT(anday) as anday_cnt FROM bachelor WHERE backstepped is null and fahrt_id=".$config_current_fahrt_id." GROUP BY anday ORDER BY anday ASC LIMIT 1")->fetchAll();
+$mitfahrer['zweit'] = $admin_db->query("SELECT date_format(abday, '%j') as abday, COUNT(abday) as abday_cnt FROM bachelor WHERE backstepped is null and fahrt_id=".$config_current_fahrt_id." GROUP BY abday ORDER BY abday DESC LIMIT 1")->fetchAll();
 $mitfahrer['erste'] = isset($mitfahrer['erste'][0]) ? $mitfahrer['erste'][0]['anday_cnt'] : 0;
 $mitfahrer['zweit'] = isset($mitfahrer['zweit'][0]) ? $mitfahrer['zweit'][0]['abday_cnt'] : 0;;
 
