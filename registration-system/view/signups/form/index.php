@@ -119,7 +119,7 @@ class FormSignupMethod extends SignupMethod {
     private function show_formular_helper_sel2($name, $id, $values, $selected, $id2, $values2, $selected2, $subtext){
         echo '<label style="text-align:left">'.$name.'
         <span class="small">'.$subtext.'</span>
-        </label><table><tr><td>
+        </label><table style="float:left"><tr><td>
         <select name="'.$id.'" id="'.$id.'" style="width:110px; text-align: center">';
         foreach($values as $val){
             echo '<option value="'.$val.'"';
