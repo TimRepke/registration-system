@@ -241,9 +241,9 @@ class SignupMethods {
 
             // check captcha
             elseif($check == "captcha"){
-                unset($_SESSION['captcha']);
                 if(!(isset($_SESSION['captcha']) && strtolower($tmp) == strtolower($_SESSION['captcha']))) {
                     array_push($errarr, $errmess);
+                    unset($_SESSION['captcha']);
                     $datarr[$index] = "";
                 }
             }
