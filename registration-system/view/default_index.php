@@ -23,14 +23,12 @@
     -->
 
     <title>Fachschaftsfahrt</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <?php
 
     echo_headers();
 
     ?>
-
-
 </head>
 <body>
 <div class="shadowbox">
@@ -42,13 +40,14 @@
     <div id="menubox">
 
         <?php
-            show_content();
+        show_content();
         ?>
 
-
     </div>
-    <div id="footerbox">&copy;<?php echo date("Y"); ?> Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin.</div>
-    <img src="view/graphics/studityp_5.gif" style="position: fixed;bottom: 5px;left:0px" />
+    <div id="footerbox">&copy;<?php echo date("Y"); ?> Fachschaftsinitiative Informatik der Humboldt Universität zu
+        Berlin.
+    </div>
+    <img id="nyan" alt="O" src="view/graphics/studityp_5.gif" style="position: fixed;bottom: 5px;left:0px"/>
 
 </div>
 </body>

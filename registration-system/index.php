@@ -37,6 +37,8 @@ function index_get_js_includes() {
         'js/jquery-1.11.1.min.js',
         'js/jquery-ui.min.js',
         'js/angular.min.js',
+        'js/elevator.js',
+        'js/hurrdurr.js',
         'js/api.js'
     ];
     $additional_js = index_get_dependencies_helper('getJSDependencies');
@@ -44,13 +46,13 @@ function index_get_js_includes() {
     $scripts = array_merge($base_js, $additional_js);
 
     $ret = '';
-	$currPathLength = strlen(realpath("."))+1;
-	$uniq = array();
+    $currPathLength = strlen(realpath(".")) + 1;
+    $uniq = array();
 
     foreach ($scripts as $script) {
-		$script = substr(realpath($basefolder.$script), $currPathLength);
-		if (isset($uniq[$script])) continue;
-		$uniq[$script] = true;
+        $script = substr(realpath($basefolder . $script), $currPathLength);
+        if (isset($uniq[$script])) continue;
+        $uniq[$script] = true;
         $ret .= "<script type=\"text/javascript\" src=\"" . $script . "\"></script>\n";
     }
     return $ret;
@@ -107,6 +109,8 @@ function show_content() {
 
             // --- Liste der Anmeldungen
             index_show_signupTable($fid);
+
+            index_make_hurrdurr();
         } else index_show_countdown($opentime);
 
     }
@@ -150,7 +154,7 @@ function index_show_signup() {
                 header("Location: ?fid=" . $fid . "&full");
             die();
         } else {
-            if(!isset($_REQUEST['hideErrors'])) index_show_errors($sub['errors']);
+            if (!isset($_REQUEST['hideErrors'])) index_show_errors($sub['errors']);
             $environment->setDanglingFormData($sub['data']);
             $signup_method->getFallbackMethod()->showInlineHTML();
         }
@@ -399,55 +403,27 @@ function index_show_signupTable_destroyTypes($anabtyp) {
     return $anabtyp;
 }
 
+function index_make_hurrdurr() {
+    echo "<script>
+        $(function () {
+            var hurdur = new HurDur();
+            new Elevator({
+                element: $('#nyan'),
+                mainAudio: 'view/audio/audio.mp3',
+                endAudio: 'view/audio/end-audio.mp3',
+                duration: 5000,
+                startCallback: hurdur.start,
+                endCallback: hurdur.stop
+            });});</script>";
+}
 
 function index_show_countdown($opentime) {
     echo '<script type="text/javascript" src="view/js/jquery.qrcode.js"></script>';
     echo "
     <script>
-        var a = '0123456789abcdef';
         var opentime = " . $opentime . ";
-        function randstr () {
-	        var str = '';
-	        for(var i = 0; i < 6; ++i)
-		        str += a[Math.floor(Math.random()*16)];
-	        return str;
-        }
         var b = true;
-        function hurrdurr () {
-		    $('#text, body').stop().animate({color:b?'#ffffff':'#000000'}, 1000);
 
-		    hurrrdurrr($('#menubox'));
-		    hurrrdurrr($('body'));
-		    hurrrdurr();
-
-		    function hurrrdurrr(elem) {
-                elem.stop().animate({backgroundColor:'#'+randstr()}, 333,
-                    function () {
-                        elem.stop().animate({backgroundColor:'#'+randstr()}, 333,
-                            function () {
-                                elem.stop().animate({backgroundColor:'#'+randstr()}, 333);
-                            });
-                    });
-		    }
-
-		    function hurrrdurr() {
-		        var now = (Date.now() + ((new Date()).getTimezoneOffset()*60))/1000;
-		        var diff = opentime - now;
-		        var view = '';
-		        if (diff <= 0) {
-		            view = '00:00:00.00';
-		        } else {
-		            view = hurrdurrr(parseInt(diff/60/60/24, 10)) + ':' + hurrdurrr(parseInt(diff / 60 / 60 % 24, 10))
-		                + ':' + hurrdurrr(parseInt(diff / 60 % 60, 10)) + '.' + hurrdurrr(parseInt(diff%60, 10));
-		        }
-                $('#countdown').text(view);
-		        function hurrdurrr(num) {
-                    return ((num < 10) ? '0' : '') + num;
-		        }
-		    }
-
-		    b = !b;
-        }
         $(function () {
             var url = window.location.href;
             if(url.indexOf('#showQR')>0) $('#QRcode').qrcode({
@@ -465,8 +441,27 @@ function index_show_countdown($opentime) {
                 fontcolor: '#ff9818'
 
             });
-	        hurrdurr();
-	        setInterval(hurrdurr, 1000);
+            var hurdur = new HurDur({
+            cats: 10,
+            loopcb: function() {
+		        $('#text, body').stop().animate({color:b?'#ffffff':'#000000'}, 1000);
+
+                var now = (Date.now() + ((new Date()).getTimezoneOffset()*60))/1000;
+                var diff = opentime - now;
+                var view = '';
+                if (diff <= 0) {
+                    view = '00:00:00.00';
+                } else {
+                    view = hurrdurrr(parseInt(diff/60/60/24, 10)) + 'd ' + hurrdurrr(parseInt(diff / 60 / 60 % 24, 10))
+                        + 'd:' + hurrdurrr(parseInt(diff / 60 % 60, 10)) + 'm.' + hurrdurrr(parseInt(diff%60, 10)) + 's';
+                }
+                $('#countdown').html(view);
+                function hurrdurrr(num) {
+                    return ((num < 10) ? '0' : '') + num;
+                }
+		        b = !b;
+            }});
+            hurdur.start();
         });
     </script>";
 
