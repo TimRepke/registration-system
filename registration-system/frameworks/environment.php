@@ -1,10 +1,10 @@
 <?php
 
-require __DIR__.'/../config.inc.php';
-require __DIR__.'/../lang.php';
-require 'medoo.php';
-require 'commons.php';
-require 'soft_protect.php';
+require_once __DIR__.'/../config.inc.php';
+require_once __DIR__.'/../lang.php';
+require_once 'medoo.php';
+require_once 'commons.php';
+require_once 'soft_protect.php';
 
 class Environment {
 

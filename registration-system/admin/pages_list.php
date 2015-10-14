@@ -18,7 +18,7 @@ $ecols = [
     "abtyp"   => function($d){ return $d; },
     "anday"   => function($d){ return date('Y-m-d', DateTime::createFromFormat('d.m.Y',$d)->getTimestamp()); },
     "abday"   => function($d){ return date('Y-m-d', DateTime::createFromFormat('d.m.Y',$d)->getTimestamp()); },
-    "comment" => function($d){ return $d; },
+    "comment" => function($d){ return htmlspecialchars($d, ENT_QUOTES); },
     "studityp"=> function($d){ return $d; },
     "virgin"  => function($d){ return (($d=="Nein") ? 1 : 0); }, // nein zu 18+ heißt ja zu virgin => 1
     "public"  => function($d){ return $d; },
@@ -260,9 +260,9 @@ END;
 $people = $admin_db->select('bachelor',$columns, array("fahrt_id"=>$config_current_fahrt_id));
 foreach($people as $person) {
     $text .= "<tr>"; //".((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? "" : "class='list-backstepped'")."
-    foreach($columnFunctions as $key => $value)
-    {
-        $text .= "<td class='".$key.((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? '' : ' list-backstepped')."'>".$value($person)."</td>";
+    foreach($columnFunctions as $key => $value) {
+        $text .= "<td class='".$key.((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? '' :
+                ' list-backstepped')."'>".$value($person)."</td>";
     }
     $text .= "</tr>";
 }
