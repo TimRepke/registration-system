@@ -90,6 +90,7 @@ function show_content() {
 
     if (!$environment->isSelectedTripIdValid()) {
         index_show_alleFahrten();
+        index_make_hurrdurr();
     } else {
         $fid = $environment->getSelectedTripId();
 

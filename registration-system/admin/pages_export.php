@@ -13,6 +13,7 @@ $text .= '
     <li><a href="?page=export&ex=refra" target="_blank">RefRat-Liste</a> (<a href="http://www.refrat.hu-berlin.de/finanzen/TeilnehmerInnenlisteMitEinverstaendniserklaerung.pdf">orig</a>)</li>
     <li><a href="?page=export&ex=treff" target="_blank">Treffpunktanwesenheitsliste</a></li>
     <li><a href="?page=export&ex=konto" target="_blank">Kontodatenliste</a></li>
+    <li><a href="?page=export&ex=mord" target="_blank">Mörderspiel</a></li>
     <li><a href="?page=export&ex=unter" target="_blank">Anwesenheitsunterschriftsliste für Unterkunft</a></li>
     <li><a href="http://www.refrat.de/docs/finanzen/FormularFSErstattung_sepa_form_2.pdf">Erstattungsformular</a></li>
 </ul>
@@ -28,6 +29,7 @@ if(isset($_REQUEST['ex'])){
         case "refra": genRefRa(); break;
         case "treff": genTreff(); break;
         case "konto": genKonto(); break;
+        case "mord":  genMord();  break;
         case "unter": genUnter(); break;
         default:
             break;
@@ -129,6 +131,51 @@ function genKonto(){
 Diese Liste verbleibt bei dem/der Fahrtverantwortlichen <u>".$data['leiter']."</u> und wird benötigt um die Förderung und den Differenzbetrag nach der Fahrt zurück zu überweisen.<br />
 <b>Graue/mit Sternchen gekennzeichnete Fehler freilassen</b> (Trolle bekommen kein Geld!!)";
     $footer = "Kontodaten (Rücküberweisung) - ".$data['titel'];
+}
+
+function genMord(){
+    global $header, $footer, $admin_db, $config_current_fahrt_id, $text;
+
+    $people = $admin_db->select('bachelor',["forname", "sirname"], ["AND" => ["fahrt_id"=>$config_current_fahrt_id, "backstepped" => NULL], "ORDER" => "forname ASC"]);
+    $tabdata = [];
+    foreach($people as $p){
+        array_push($tabdata, [$p['forname']." ".$p['sirname'],"&nbsp;","&nbsp;","&nbsp;"]);
+    }
+
+    $tabconf = ["colwidth" => ["25%", "20%", "20%", "35%"],
+        "cellheight" => "35pt"];
+
+    printTable(["Opfer", "Zeitpunkt", "Mörder & Zeuge", "Tathergang"], $tabdata, $tabconf);
+
+    $text .= '<div class="page-break"></div>';
+
+    $people = array_map(function($piece) { return $piece[0]; }, $tabdata);
+    shuffle($people);
+    $text .= '<div style="page-break-inside: avoid;"><h1>Cheatsheet</h1><p>';
+    $text .= implode('&nbsp;->&nbsp;', $people);
+    $text .= '</p></div>';
+
+    $instructions = ['Gib deinem Opfer in einem Moment des Verlusts der Aufmerksamkeit einen Gegenstand
+     um es umzubringen und melde es dem Spielleiter. Das darf nicht erzwungen werden; Zeugen nötig.',
+    'Sammle die Wimper deines Opfers ein und händige sie über mit der Bitte sich etwas zu wünschen um dein Opfer zu ermorden.
+    Wimper darf nicht ausgerissen werden. Andere pustbare Dinge auch erlaubt. Das darf nicht erzwungen werden; Zeugen nötig.',
+    'Hilf deinem Opfer bei einer Übungsaufgabe und gib den Stift zurück um es umzubringen. Das darf nicht erzwungen werden; Zeugen nötig.'];
+
+    for($i = 1; $i < count($people); $i++) {
+        $text .= '<div class="killbox">
+                    <span role="killer">'.$people[$i-1].'</span>
+                    <span role="victim">'.$people[$i].'</span>
+                    <p role="instruction">'.$instructions[array_rand($instructions)].'</p>
+                  </div>';
+    }
+
+
+    $data = getFahrtInfo();
+
+    $header = "
+<h1>Mordaufträge und Übersicht</h1>
+Fröhliches Morden! Bitte keine tödlichen Gegenstände benutzen.";
+    $footer = "Mörderspiel - ".$data['titel'];
 }
 
 function genUnter(){
