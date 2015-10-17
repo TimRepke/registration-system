@@ -4,7 +4,7 @@ $config_verbose_level = 0; // 0 = nothing, 1 = important, 2 = somewhat important
 $config_admin_verbose_level = 0;
 
 // URL where site is hosted with trailing slash
-$config_baseurl = "localhost/fsfahrt"; //"http://fsfahrt.repke.eu/anmeldung/registration-system/";
+$config_baseurl = "http://localhost/fsfahrt"; //"http://fsfahrt.repke.eu/anmeldung/registration-system/";
 
 // absolute path to doc root withOUT trailing slash
 $config_basepath = __DIR__; //"/var/www/vhosts/fsfahrt.repke.eu/httpdocs/anmeldung/registration-system";
