@@ -5,9 +5,8 @@ Registration System
 [![Bild passt](https://img.shields.io/badge/Bild-passt-brightgreen.svg)]()
 
 This system was developed for the computer science students union at the Humboldt-Universität zu Berlin to organise our
-annual freshers weekend trips. Since the attendance grew over the years we needed a powerful system that can handle
-all the registrations, messaging and a powerful admin panel to plan costs, take notes, manage waiting list and registration
-and much more.
+annual freshers weekend trips. Since the attendance grew over the years, we needed a powerful system that helps managing 
+the registrations (including a waiting list) and finances.
 
 Props go to 
 
