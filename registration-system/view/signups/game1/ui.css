@@ -41,7 +41,7 @@
 }
 
 #game-overlay.loading {
-    background: #000 url('graphics/loader.svg') no-repeat 300px 200px !important;
+    background: #000 url('graphics/loader.gif') no-repeat 300px 200px !important;
     display: block !important;
 }
 

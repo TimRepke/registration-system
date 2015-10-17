@@ -194,7 +194,7 @@ Story.actions = {
                         condition: Environment.progress.inventory_money,
                         action: function () {
                             Environment.progress.inventory_ruestung = true;
-							if (Game.char) Game.char.animate(); // apply new visuals
+							if (Game.char) Game.char.animate(true); // apply new visuals
                         }
                     }, {
                         message: 'Was? Spende? Ich hab\' nichts!',

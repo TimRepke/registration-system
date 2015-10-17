@@ -60,12 +60,15 @@ Char.prototype.initializeAnimations = function() {
 	});
 };
 Char.directionToName = ["UP", "RIGHT", "DOWN", "LEFT"];
-Char.prototype.animate = function() {
-	this.animateStep += 1;
-	if (this.animateStep <= 8) return;
-	while (this.animateStep > 8)
-		this.animateStep -= 8;
-
+Char.prototype.animate = function(force) {
+	if(force) {
+		this.animateStep = 0;
+	} else {
+		this.animateStep += 1;
+		if (this.animateStep <= 8) return;
+		while (this.animateStep > 8)
+			this.animateStep -= 8;
+	}
 	var xSpeed = this.translation[0] - this.lastPosition[0];
 	var ySpeed = - this.translation[1] + this.lastPosition[1];
 	this.lastPosition = this.translation.slice();
@@ -91,7 +94,7 @@ Char.prototype.animate = function() {
 		lastFrame.style.display = 'none';
 	}
 	// change animation
-	if (direction != this.lastDirection) {
+	if (direction != this.lastDirection || force) {
 		this.lastDirection = direction;
 		this.currentFrame = 0;
 		this.frames = this.animations[Char.directionToName[direction]+postfix];
