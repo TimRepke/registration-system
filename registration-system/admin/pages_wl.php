@@ -32,6 +32,7 @@ if(isset($_REQUEST['move'])){
         "comment",
         "studityp",
         "virgin",
+        "public",
         "essen"],
         ["AND" => [
             "waitlist_id" => $_REQUEST['move'],
