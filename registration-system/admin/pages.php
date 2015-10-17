@@ -12,8 +12,9 @@ function page_stuff()
 
 function page_front(){
     global $text, $config_baseurl, $config_current_fahrt_id;
+    $text .= '<style>#admin-content{padding:0}</style>';
     $text .= '<a href="'.$config_baseurl.'?fid='.$config_current_fahrt_id.'">'.$config_baseurl.'?fid='.$config_current_fahrt_id.'</a><br />';
-    $text .= '<iframe src="'.$config_baseurl.'?fid='.$config_current_fahrt_id.'" style="height:100%; width:100%;"></iframe>';
+    $text .= '<iframe src="'.$config_baseurl.'?fid='.$config_current_fahrt_id.'" style="height:90vh; width:100%; position: absolute; border:0;"></iframe>';
 }
 
 function page_list(){
