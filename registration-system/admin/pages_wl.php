@@ -87,7 +87,7 @@ if(isset($_REQUEST['move'])){
 $headers =<<<END
     <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
     <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="../view/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="../view/js/jquery.dataTables.1.10.9.min.js"></script>
 END;
 
     $text .= "<h1>Warteliste</h1>";

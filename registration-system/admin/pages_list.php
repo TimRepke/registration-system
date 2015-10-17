@@ -116,7 +116,7 @@ if(isset($_REQUEST['ajax'])){
 $headers =<<<END
     <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
     <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="../view/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="../view/js/jquery.dataTables.1.10.9.min.js"></script>
 END;
 $headers .= "
 <style type='text/css'>
@@ -242,28 +242,24 @@ foreach($columnFunctions as $key => $value){
 }
 $text .= "<br />";
 
-$text .=<<<END
+$text .= '
     <table id="mlist" class="compact hover">
         <thead>
-            <tr>
-END;
-foreach($columnFunctions as $key => $value)
-{
+            <tr>';
+foreach($columnFunctions as $key => $value) {
     $text .= "<th>".$key."</th>";
 }
-$text .=<<<END
-            </tr>
+$text .="<th></th></tr>
         </thead>
-        <tbody>
-END;
+        <tbody>";
 
 $people = $admin_db->select('bachelor',$columns, array("fahrt_id"=>$config_current_fahrt_id));
 foreach($people as $person) {
-    $text .= "<tr>"; //".((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? "" : "class='list-backstepped'")."
+    $text .= "<tr>\n"; //".((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? "" : "class='list-backstepped'")."
     foreach($columnFunctions as $key => $value) {
-        $text .= "<td class='".$key.((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? '' :
-                ' list-backstepped')."'>".$value($person)."</td>";
+        $text .= "<td class='".$key."'>".$value($person)."</td>\n";
     }
+    $text .= "<td>".((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? '0' : '1')."</td>";
     $text .= "</tr>";
 }
 
@@ -284,13 +280,11 @@ $text .=<<<END
             ,
             "prb-pre": function ( a ){
                 var tmp = a.split(",");
-                //alert();
                 return ((tmp[0]==0) ? '0' : '1') + ((tmp[1]==0) ? '0' : '1') + ((tmp[2]==0) ? '0' : '1');
             }
             ,
             "dedate-pre": function(a){
                 var tmp = a.split(".");
-                console.log(tmp[2]+tmp[1]+tmp[0]);
                 if(tmp.length>2)
                     return (tmp[2]+tmp[1]+tmp[0]);
                 return a;
@@ -299,6 +293,13 @@ $text .=<<<END
         var ltab;
         $(document).ready(function(){
              ltab = $('#mlist').DataTable({
+                 "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                    var tmp = aData[$buttoncol].split(',');
+                    if (tmp[2] > 0) {
+                        $('td',nRow).addClass('list-backstepped');
+                    }
+                    return nRow;
+                },
                 "aoColumnDefs": [
                     {
                         "aTargets": [ $buttoncol ],
@@ -327,9 +328,11 @@ $text .=<<<END
                     },
                     { type: 'dedate', targets: [1,5,6]},
                     { type: 'link', targets: [0, 2] },
-                    { type: 'prb', targets: $buttoncol }
+                    { type: 'prb', targets: $buttoncol },
+                    { targets: 12, visible: false, searchable: false },
                 ],
                 "order": [[ 2, "asc" ]],
+                "orderFixed": [ 12, 'asc' ],
                 "paging": false
             });
 
@@ -362,6 +365,11 @@ $text .=<<<END
             var newstate = (((state-1)<0) ? 1 : 0);
             $.get("index.php?page=list&ajax=ajax&update="+type+"&hash="+hash+"&nstate="+newstate ,"",
                 function(){
+                    if(newstate === 1) {
+                        $('td',$(that).parent().parent()).addClass('list-backstepped');
+                    } else {
+                        $('td',$(that).parent().parent()).removeClass('list-backstepped');
+                    }
                     that.className="btn btn-"+type+"-"+newstate;
                     that.setAttribute("onclick", "btnclick(this, '"+type+"', '"+hash+"', "+newstate+")");
                 });
