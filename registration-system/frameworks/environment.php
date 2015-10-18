@@ -115,8 +115,10 @@ class Environment {
      * @return bool true iff selected trip id is in the DB
      */
     public function isSelectedTripIdValid() {
+		$fid = $this->getSelectedTripId();
+		if ($fid == null) return;
         $valid = $this->database->has('fahrten',
-            ['fahrt_id'=> $this->getSelectedTripId()]);
+            ['fahrt_id'=> $fid]);
         if(!$valid) comm_verbose(1,"FID nicht vorhanden!");
 
         return $valid;
