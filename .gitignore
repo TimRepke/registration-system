@@ -4,3 +4,4 @@
 *.swp
 **/config_current_fahrt_id
 */passwd/users.txt
+mysql_data
