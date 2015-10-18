@@ -21,6 +21,9 @@ docker-compose up -d
 Wait for containers to start up.
 Open http://localhost:8080 in your browser
 
+## Mysql Dump Upgrade
+Remove containers as in cleanup, remove mysql_dump folder and start again
+
 ## Cleanup
 Run:
 ```
