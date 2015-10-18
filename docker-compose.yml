@@ -1,7 +1,7 @@
 web:
     image: richarvey/nginx-php-fpm
     links:
-     - db:db
+     - db
     ports:
      - "8080:80"
     volumes:
@@ -18,5 +18,5 @@ db:
      - "3306"
     volumes:
      - ./mysql_data:/var/lib/mysql
-     - ./registration-system/other/sqlDumps/update_20151004.sql:/dump.sql:ro
+     - ./registration-system/other/sqlDumps/fsfahrt_20151004.sql:/dump.sql:ro
 

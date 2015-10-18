@@ -11,6 +11,8 @@ done
 mysql -uroot -e "CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD'"
 mysql -uroot -e "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER'@'%' WITH GRANT OPTION"
 mysql -uroot -e "CREATE DATABASE $MYSQL_DATABASE"
+echo "   -> SQL Dump Import ..."
 mysql -uroot $MYSQL_DATABASE < /dump.sql
+echo "   -> SQL Dump OK"
 
 mysqladmin -uroot shutdown
