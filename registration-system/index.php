@@ -409,7 +409,7 @@ function index_make_hurrdurr() {
         $(function () {
             var hurdur = new HurDur();
             new Elevator({
-                element: $('#nyan'),
+                element: document.getElementById('nyan'),
                 mainAudio: 'view/audio/audio.mp3',
                 endAudio: 'view/audio/end-audio.mp3',
                 duration: 5000,
