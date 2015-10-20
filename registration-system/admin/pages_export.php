@@ -145,7 +145,7 @@ function genMord(){
     $tabconf = ["colwidth" => ["25%", "20%", "20%", "35%"],
         "cellheight" => "35pt"];
 
-    printTable(["Opfer", "Zeitpunkt", "Mörder & Zeuge", "Tathergang"], $tabdata, $tabconf);
+    printTable(["Opfer", "Zeitpunkt", "Mörder", "Tathergang"], $tabdata, $tabconf);
 
     $text .= '<div class="page-break"></div>';
 
@@ -156,10 +156,10 @@ function genMord(){
     $text .= '</p></div>';
 
     $instructions = ['Gib deinem Opfer in einem Moment des Verlusts der Aufmerksamkeit einen Gegenstand
-     um es umzubringen und melde es dem Spielleiter. Das darf nicht erzwungen werden; Zeugen nötig.',
+     um es umzubringen und melde es dem Spielleiter. Das darf nicht erzwungen werden; keine Zeugen.',
     'Sammle die Wimper deines Opfers ein und händige sie über mit der Bitte sich etwas zu wünschen um dein Opfer zu ermorden.
-    Wimper darf nicht ausgerissen werden. Andere pustbare Dinge auch erlaubt. Das darf nicht erzwungen werden; Zeugen nötig.',
-    'Hilf deinem Opfer bei einer Übungsaufgabe und gib den Stift zurück um es umzubringen. Das darf nicht erzwungen werden; Zeugen nötig.'];
+    Wimper darf nicht ausgerissen werden. Andere pustbare Dinge auch erlaubt. Das darf nicht erzwungen werden; keine Zeugen.',
+    'Hilf deinem Opfer bei einer Übungsaufgabe und gib den Stift zurück um es umzubringen. Das darf nicht erzwungen werden; keine Zeugen.'];
 
     for($i = 1; $i < count($people); $i++) {
         $text .= '<div class="killbox">
