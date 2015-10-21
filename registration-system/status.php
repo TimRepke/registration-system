@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tim
- * Date: 8/16/14
- * Time: 5:41 PM
- */
-
 
 require 'config.inc.php';
 require 'frameworks/medoo.php';
@@ -58,6 +51,9 @@ function show_content(){
 
     if($wl)
         echo '<div style="color: red; font-weight: bold; font-size: 14pt;">Achtung, dies ist nur ein Eintrag auf der Warteliste!<br /> Sofern keine weiteren Auskünfte folgen, kannst du leider NICHT mitfahren...</div>';
+
+    if($data["backstepped"]==1)
+        echo '<div style="color: red; font-weight: bold; font-size: 14pt;">Achtung, die Anmeldung wurde ungültig gemacht!<br /> Sofern keine weiteren Auskünfte folgen, kannst du leider NICHT mitfahren...</div>';
 
     echo'
     <div class="fahrttable">';
