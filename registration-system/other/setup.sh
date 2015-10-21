@@ -58,6 +58,8 @@ function install {
     echo "[7/7] select init dump or kill script to do it manually"
     read -p "which dump do you want (latest recommended): " dump
     mysql -h $dbhost -u $dbuser -p $dbpass $dbname < ${inits[$dump]}
+
+    exit 0
 }
 
 function update {
@@ -132,6 +134,8 @@ function update {
     mv backups/config_current_fahrt_id ../
     mv backups/config.local.php ../
     mv backups/users.txt ../passwd/users.txt
+
+    exit 0
 }
 
 function printHelp {
