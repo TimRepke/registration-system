@@ -365,7 +365,7 @@ $text .=<<<END
             var newstate = (((state-1)<0) ? 1 : 0);
             $.get("index.php?page=list&ajax=ajax&update="+type+"&hash="+hash+"&nstate="+newstate ,"",
                 function(){
-                    if(newstate === 1) {
+                    if(newstate === 1 && type === "backstepped") {
                         $('td',$(that).parent().parent()).addClass('list-backstepped');
                     } else {
                         $('td',$(that).parent().parent()).removeClass('list-backstepped');
