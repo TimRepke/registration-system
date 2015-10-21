@@ -10,6 +10,8 @@ function install {
     response=${response,,}    # tolower
     if [[ ! $response =~ ^(yes|y)$ ]] ; then exit 1 ; fi
 
+    echo "[1/7] initialising"
+
     # change operation dir
     cd "${BASH_SOURCE%/*}"
     mkdir -p backups
@@ -18,15 +20,18 @@ function install {
     date +"%Y%m%d" > backups/lastUpdate
 
     # create required files
+    echo "[2/7] setting up files"
     cp ../passwd/users.example.txt ../passwd/users.txt
     echo "2" > ../config_current_fahrt_id
 
     # adjust chmod
+    echo "[3/7] setting chmod"
     chmod -R 644 ../
     chmod 777 ../config_current_fahrt_id
     chmod 777 ../passwd/users.txt
 
     # ask config stuff
+    echo "[4/7] some config params, please..."
     read -p "baseurl (i.e. \"https://domain.com/fsfahrt\"): " base
     read -p "database name: " dbname
     read -p "database user: " dbuser
@@ -34,21 +39,23 @@ function install {
     read -p "database host: " dbhost
 
     # adapt config.local.php file
-    sed -i "s/($var = \")[^\"]*/\1$base/" backups/config.local.php
-    sed -i "s/(\"dbname\" => \")[^\"]*/\1$dbname/" backups/config.local.php
-    sed -i "s/(\"dbuser\" => \")[^\"]*/\1$dbuser/" backups/config.local.php
-    sed -i "s/(\"dbpass\" => \")[^\"]*/\1$dbpass/" backups/config.local.php
-    sed -i "s/(\"dbhost\" => \")[^\"]*/\1$dbhost/" backups/config.local.php
+    echo "[5/7] writing config file"
+    sed -i "s/($var = \")[^\"]*/\1$base/" ../config.local.php
+    sed -i "s/(\"dbname\" => \")[^\"]*/\1$dbname/" ../config.local.php
+    sed -i "s/(\"dbuser\" => \")[^\"]*/\1$dbuser/" ../config.local.php
+    sed -i "s/(\"dbpass\" => \")[^\"]*/\1$dbpass/" ../config.local.php
+    sed -i "s/(\"dbhost\" => \")[^\"]*/\1$dbhost/" ../config.local.php
 
     # get init sql files
     inits=()
-    echo "available init files:"
+    echo "[6/7] available init files:"
     for initsql in sqlDumps/init_*.sql; do
         inits=("${inits[@]}" "$initsql")
         echo "${#inits[@]}) $initsql"
     done
 
     # run db init
+    echo "[7/7] select init dump or kill script to do it manually"
     read -p "which dump do you want (latest recommended): " dump
     mysql -h $dbhost -u $dbuser -p $dbpass $dbname < ${inits[$dump]}
 }
@@ -67,6 +74,7 @@ function update {
     mkdir -p backups
 
     # backup config files
+    echo "backing up config files"
     cp ../config_current_fahrt_id backups/
     cp ../passwd/users.txt backups/
     cp ../config.local.php backups/
@@ -76,10 +84,21 @@ function update {
     read -p "git origin to pull from [default: origin]: " ORIGIN
     if [[ -z $BRANCH ]] ; then BRANCH=master ; fi
     if [[ -z $ORIGIN ]] ; then ORIGIN=origin ; fi
+
+    # create backup
+    echo "creating backup on 'backup' branch"
+    git checkout -B backup
+    git add --all
+    git commit -m "backup from `date +"%d.%m.%Y"`"
+
+    # pull from origin
+    echo "force pulling from $ORIGIN/$BRANCH"
     git checkout $BRANCH
-    git pull $ORIGIN $BRANCH
+    git fetch $ORIGIN
+    git reset --hard $ORIGIN/$BRANCH
 
     # fetch db credentials
+    echo "fetching db config"
     dbname=`cat backups/config.local.php | grep \"name\" | cut -d \" -f 4`
     dbuser=`cat backups/config.local.php | grep \"user\" | cut -d \" -f 4`
     dbpass=`cat backups/config.local.php | grep \"pass\" | cut -d \" -f 4`
@@ -90,9 +109,11 @@ function update {
     today=`date +"%Y%m%d"`
 
     # create db backup
+    echo "backing up database"
     mysqldump -h $dbhost -u $dbuser -p $dbpass $dbname > backups/backup_$today.sql
 
     # look for pending SQL updates and execute
+    echo "updating database"
     for update in sqlDumps/update_*.sql; do
         if [ $lastUpdate -lt `echo $update | cut -d _ -f 2 | cut -d . -f 1` ] ; then
             echo "applying update $update"
@@ -101,6 +122,8 @@ function update {
             echo "already up to date with $update"
         fi
     done
+
+    echo "finishing up update"
 
     # update last update file
     echo $today > backups/lastUpdate
@@ -113,6 +136,7 @@ function update {
 
 function printHelp {
     echo "Script usage"
+    echo "-h | --help echo this help"
     echo "-u | --update to update the system"
     echo "-i | --install to install the system"
 }
