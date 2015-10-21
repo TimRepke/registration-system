@@ -34,9 +34,23 @@ function install {
     read -p "database host: " dbhost
 
     # adapt config.local.php file
+    sed -i "s/($var = \")[^\"]*/\1$base/" backups/config.local.php
+    sed -i "s/(\"dbname\" => \")[^\"]*/\1$dbname/" backups/config.local.php
+    sed -i "s/(\"dbuser\" => \")[^\"]*/\1$dbuser/" backups/config.local.php
+    sed -i "s/(\"dbpass\" => \")[^\"]*/\1$dbpass/" backups/config.local.php
+    sed -i "s/(\"dbhost\" => \")[^\"]*/\1$dbhost/" backups/config.local.php
+
+    # get init sql files
+    inits=()
+    echo "available init files:"
+    for initsql in sqlDumps/init_*.sql; do
+        inits=("${inits[@]}" "$initsql")
+        echo "${#inits[@]}) $initsql"
+    done
 
     # run db init
-
+    read -p "which dump do you want (latest recommended): " dump
+    mysql -h $dbhost -u $dbuser -p $dbpass $dbname < ${inits[$dump]}
 }
 
 function update {
