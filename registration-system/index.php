@@ -410,8 +410,8 @@ function index_make_hurrdurr() {
             var hurdur = new HurDur();
             new Elevator({
                 element: document.getElementById('nyan'),
-                mainAudio: 'view/audio/audio.mp3',
-                endAudio: 'view/audio/end-audio.mp3',
+                mainAudio: 'view/audio/audio.ogg',
+                endAudio: 'view/audio/end-audio.ogg',
                 duration: 5000,
                 startCallback: hurdur.start,
                 endCallback: hurdur.stop
