@@ -4,5 +4,6 @@
 *.swp
 **/config_current_fahrt_id
 */passwd/users.txt
-*/other/backups
+*/other/backups/*
+!*/other/backups/.htaccess
 mysql_data
