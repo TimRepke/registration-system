@@ -79,7 +79,13 @@ html, body{
 
 }
 @media print {
-    .page-break	{ display: block; page-break-before: always; }
+    .page-break	{
+        display: block;
+        page-break-before: always;
+    }
+    .hide-print {
+        display: none;
+    }
 }
 @page {
     margin: 3em;

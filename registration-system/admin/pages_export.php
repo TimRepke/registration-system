@@ -14,6 +14,7 @@ $text .= '
     <li><a href="?page=export&ex=treff" target="_blank">Treffpunktanwesenheitsliste</a></li>
     <li><a href="?page=export&ex=konto" target="_blank">Kontodatenliste</a></li>
     <li><a href="?page=export&ex=mord" target="_blank">Mörderspiel</a></li>
+    <li><a href="?page=export&ex=room" target="_blank">Zimmerliste</a></li>
     <li><a href="?page=export&ex=unter" target="_blank">Anwesenheitsunterschriftsliste für Unterkunft</a></li>
     <li><a href="http://www.refrat.de/docs/finanzen/FormularFSErstattung_sepa_form_2.pdf">Erstattungsformular</a></li>
 </ul>
@@ -30,6 +31,7 @@ if(isset($_REQUEST['ex'])){
         case "treff": genTreff(); break;
         case "konto": genKonto(); break;
         case "mord":  genMord(); $noheader = '_noheaders'; break;
+        case "room": genRoom(); break;
         case "unter": genUnter(); break;
         default:
             break;
@@ -180,6 +182,50 @@ Fröhliches Morden! Bitte keine tödlichen Gegenstände benutzen.";
     $footer = "Mörderspiel - ".$data['titel'];
 }
 
+function genRoom(){
+    global $header,$text, $footer;
+
+    $text .= '
+        <script type="text/javascript">
+            function updateRoomCnt(val) {
+                var table = document.getElementById("roomtab").getElementsByTagName("tbody")[0];
+                table.innerHTML = "";
+                for(var i = 0; i < val; i++) {
+                    var row = table.insertRow(table.rows.length);
+                    row.insertCell(0).style.height="30pt";
+                    row.insertCell(1);
+                    row.insertCell(2);
+                    row.insertCell(3);
+                    row.insertCell(4);
+                    row.insertCell(5);
+                }
+            }
+        </script>
+        <p class="hide-print">Anzahl Zimmer: <input type="number" id="roomcnt" value="10" onchange="updateRoomCnt(this.value)" /><br>
+        Hint: Es kann sinnvoll sein ein paar mehr Spalten zu generieren als nötig.</p>';
+
+    $tabconf = [
+        "colwidth" => ["16%", "10%", "10%", "30%", "12%", "12%"],
+        "cellheight" => "35pt",
+        "id" => "roomtab"
+    ];
+
+    printTable(["Haus/ Etage/ Raum", "# Betten", "# Schlüssel", "Verantwortlich", "Erhalten", "Zurück"],
+        [], $tabconf);
+
+    $data = getFahrtInfo();
+
+    $header = "
+<h1>Übersicht der Schlüssel</h1>
+Mit der Unterschrift in der Spalte 'Erhalten' bestätigt die Person, angegeben in der Spalte 'Verantwortlich', den/die
+Schlüssel zum entsprechenden Raum erhalten zu haben. Bei Verlust des Schlüssels oder Schäden im Zimmer wird diese
+Person Rechenschaft tragen.
+In der Spalte 'Zurück' bestätigt der/die Organisator/in der Fahrt (".$data['leiter'].") den Schlüssel wieder in Empfang genommen zu haben.<br>
+Diese Liste ist gültig für die Fahrt '".$data['titel']."' nach '".$data['ziel']. "' von " . $data['von'] . " bis " . $data['bis'] . ".";
+
+    $footer = "Schlüsselliste - ".$data['titel'];
+}
+
 function genUnter(){
     global $header, $footer, $admin_db, $config_current_fahrt_id;
 
@@ -214,7 +260,7 @@ function printTable($headers, $data, $tabconf = []){
     global $text;
 
     $text.="
-    <table class='dattable'>
+    <table class='dattable' id='".$tabconf['id']."'>
         <thead>
             <tr>";
                 $cell = 0;
