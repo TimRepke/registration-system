@@ -22,18 +22,20 @@ NOTE: No Chrome support! Webkit/Blink haven\'t implemented support for @media pr
 
 if(isset($_REQUEST['ex'])){
     global $template;
-    $template = file_get_contents("../view/print_template.html");
     $text = "";
+    $noheader = "";
 
     switch($_REQUEST['ex']){
         case "refra": genRefRa(); break;
         case "treff": genTreff(); break;
         case "konto": genKonto(); break;
-        case "mord":  genMord();  break;
+        case "mord":  genMord(); $noheader = '_noheaders'; break;
         case "unter": genUnter(); break;
         default:
             break;
     }
+
+    $template = file_get_contents("../view/print_template$noheader.html");
 }
 
 function genRefRa(){

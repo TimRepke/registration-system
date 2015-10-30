@@ -3,130 +3,16 @@
 <head>
     <title>{title}</title>
     {headers}
-    <style type="text/css">
-        html, body{
-            margin: 0;
-            padding: 0;
-            border: 0;
-            font-family:Verdana,Helvetica,sans-serif;
-            font-size:12pt;
-        }
-
-        @media print, screen {
-            *{float: none}
-            h1{
-                font-size: 14pt;
-            }
-            h2{
-                font-size: 13pt;
-            }
-
-            th.header{
-                width: 100%;
-                border-bottom: 1px dashed black;
-                text-decoration: none;
-                font-weight: normal;
-                text-align: left;
-            }
-
-            thead{
-                display: table-header-group;
-            }
-
-
-            #footer {
-                display: block;
-                position: fixed;
-                bottom: 0;
-                border-top: 1px dashed #000000;
-            }
-            #footer:after {
-                counter-increment: page;
-                content: "Seite" counter(page);
-                right: 0;
-                top: 0pt;
-                position: absolute;
-            }
-
-            table {
-                border-collapse: collapse;
-                border-spacing: 0;
-                width: 100%;
-                margin: 0;
-            }
-
-            .dattable table, .dattable th, .dattable td {
-                border: 1px solid black;
-                vertical-align: top;
-            }
-
-            .graycell{
-                background-color: transparent;
-                overflow: hidden;
-                z-index: 1;
-                border-right: 0;
-                border-bottom: 0;
-            }
-            .graycell:before{
-                content: "";
-                padding: 0;
-                height: 1px;
-                line-height: 1px;
-                width: 1px;
-                margin: -4px -994px -996px -6px;
-                display: block;
-                border: 0;
-                z-index: -1;
-                position:relative;
-                top: -500px;
-                border-top: 999px solid #d3d3d3;
-                border-left: 999px solid #d3d3d3;;
-            }
-
-        }
-        @media print {
-            .page-break	{ display: block; page-break-before: always; height: 80pt}
-        }
-        @page {
-            margin: 3em;
-        }
-
-        .killbox {
-            border: 1px solid black;
-            height: 230px;
-            width: 45%;
-            float: left;
-            padding: 8px;
-            margin: 20px 20px 0 0;
-            page-break-inside: avoid;
-        }
-        .killbox:nth-child(odd) {
-            margin: 20px 0 0 0;
-        }
-        .killbox [role="killer"], .killbox [role="victim"] {
-            border-bottom: 1px dashed black;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .killbox [role="killer"]:before {
-            content: 'Mörder: ';
-            font-weight: bold;
-        }
-        .killbox [role="victim"]:before {
-            content: 'Opfer: ';
-            font-weight: bold;
-        }
-
-    </style>
+    <link href="../view/print_style.css" rel="stylesheet" />
 </head>
 <body>
 
 <!-- Jaaaa... Tabellenfoo! Aber anders geht es einfach nicht! -->
 <table width="100%">
     <thead>
-        <tr>
-            <th class="header">{header}</th>
-        </tr>
+    <tr>
+        <th class="header">{header}</th>
+    </tr>
     </thead>
     <tfoot>
     <tr>
