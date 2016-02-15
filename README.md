@@ -31,8 +31,8 @@ Props go to
 
 # Demo of the RPG registration mode
 
-[Game hosted on 0x17.de](https://www.0x17.de/fsfahrt/game1/)
-[Short screencast](https://www.youtube.com/watch?v=6HaQEVPJar0)
+ - [Game hosted on 0x17.de](https://www.0x17.de/fsfahrt/game1/)
+ - [Short screencast](https://www.youtube.com/watch?v=6HaQEVPJar0)
 
 # Usage
 
