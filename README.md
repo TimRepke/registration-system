@@ -29,6 +29,11 @@ Props go to
 - precisely spreading expenses over individual registrations
 - calculation of specific amounts to pay back to everybody
 
+# Demo of the RPG registration mode
+
+[Game hosted on 0x17.de](https://www.0x17.de/fsfahrt/game1/)
+[Short screencast](https://www.youtube.com/watch?v=6HaQEVPJar0)
+
 # Usage
 
 Check the guides in the wiki:
