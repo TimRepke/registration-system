@@ -10,7 +10,7 @@ the registrations (including a waiting list) and finances.
 
 Props go to 
 
-- [Manuel Herrmann](https://github.com/icetruckde/)
+- [Manuel Herrmann](https://github.com/0x17de/)
 - [Tim Repke](https://github.com/TimRepke/)
 
 # Features
