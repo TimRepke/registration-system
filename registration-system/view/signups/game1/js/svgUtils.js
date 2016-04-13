@@ -1,3 +1,9 @@
+// Chrome removed getTranfformToElement https://github.com/cpettitt/dagre-d3/issues/202
+SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(toElement) {
+    return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM());
+};
+
+
 function translate(x, y) {
 	return "translate("+x+", "+y+")";
 }
