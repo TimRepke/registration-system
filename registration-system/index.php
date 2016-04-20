@@ -454,7 +454,7 @@ function index_show_countdown($opentime) {
                     view = '00:00:00.00';
                 } else {
                     view = hurrdurrr(parseInt(diff/60/60/24, 10)) + 'd ' + hurrdurrr(parseInt(diff / 60 / 60 % 24, 10))
-                        + 'd:' + hurrdurrr(parseInt(diff / 60 % 60, 10)) + 'm.' + hurrdurrr(parseInt(diff%60, 10)) + 's';
+                        + 'h:' + hurrdurrr(parseInt(diff / 60 % 60, 10)) + 'm.' + hurrdurrr(parseInt(diff%60, 10)) + 's';
                 }
                 $('#countdown').html(view);
                 function hurrdurrr(num) {
