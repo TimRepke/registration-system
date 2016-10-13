@@ -100,8 +100,8 @@ $text .= "<div style='float:left; margin-left: 15px'><h2>Zahlungen</h2>
         <ul>
             <li>Zahlungen</li>
             <ul>
-                <li>Erhalten:".$money['erhalten']."</li>
-                <li>Ausstehende Zahlungen:".$money['aus']."</li>
+                <li>Erhalten: ".$money['erhalten']."</li>
+                <li>Ausstehende Zahlungen: ".$money['aus']."</li>
                 <li>Ausgezahlt: ".$money['gezahlt']."</li>
                 <li>Ausstehende Rückzahlungen: ".$money['ausstehend']."</li>
             </ul>
