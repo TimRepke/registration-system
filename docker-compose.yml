@@ -7,6 +7,20 @@ web:
     volumes:
      - ./registration-system:/usr/share/nginx/html
 
+phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+     - db
+    environment:
+     - PMA_HOST=db
+     - PMA_PORT=3306
+     - PMA_USER=fsfahrt
+     - PMA_PASSWORD=9Lug*96q
+    ports:
+     - "8090:80"
+    volumes:
+     - /sessions
+
 db:
     build: docker
     dockerfile: DockerfileMariaDB
