@@ -23,7 +23,8 @@ Wait for containers to start up.
 Run a bash inside the web container (`docker exec -it registrationsystem_web_1 bash`) and
 ```
 cd usr/share/nginx/html/
-echo 1 > config_current_fahrt_id
+echo 2 > config_current_fahrt_id
+chmod 777 config_current_fahrt_id 
 cp passwd/users.example.txt passwd/users.txt
 ```
 
