@@ -364,7 +364,8 @@ function index_show_signupTable($fid) {
         ["pseudo", "antyp", "abtyp", "anday", "abday", "comment", "studityp"],
         ["AND" => [
             'fahrt_id' => (int)$fid,
-            'public' => 1
+            'public' => 1,
+            'backstepped' => NULL
         ]]);
 
     if (!$data) echo '<div class="signups">Noch keine (sichtbaren) Anmeldungen!</div>';
