@@ -1,5 +1,5 @@
 <?php
-require_once 'environment.php';
+require_once 'Environment.php';
 require_once 'commons.php';
 
 class Bachelor {
@@ -8,6 +8,7 @@ class Bachelor {
     const SAVE_ERROR_DUPLICATE = 2;
     const SAVE_ERROR_CLOSED = 3;
     const SAVE_ERROR_EXCEPTION = 4;
+    const SAVE_ERROR_MISSING_RIGHTS = 5;
 
     /** @var  Environment */
     protected $environment;
@@ -193,6 +194,9 @@ class Bachelor {
                 $this->environment->database->exec("UNLOCK TABLES");
             }
         } else {
+            if (!$this->environment->isAdmin())
+                return Bachelor::SAVE_ERROR_MISSING_RIGHTS;
+
             $this->data['version']++;
             $code = $this->environment->database->update('bachelor', $this->data, ['AND' => [
                 'fahrt_id' => $this->fahrt->getID(), 'bachelor_id' => $this->data['bachelor_id']]]);
