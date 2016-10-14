@@ -256,22 +256,5 @@ class Environment {
         return true;
     }
 
-    private function feedbackHelper($mail_langs, $to, $hash, $fid) {
-        global $config_baseurl;
 
-        if (!is_array($mail_langs)) $mail_langs = [$mail_langs];
-
-        $from = $this->database->get("fahrten", ["kontakt","leiter", "paydeadline", "payinfo", "wikilink"], ["fahrt_id"=>$fid]);
-
-        foreach ($mail_langs as $mail_lang) {
-            $mail = comm_get_lang($mail_lang, [
-                "{{url}}" => $config_baseurl . "status.php?hash=" . $hash,
-                "{{organisator}}" => $from['leiter'],
-                "{{paydeadline}}" => $from['paydeadline'],
-                "{{payinfo}}" => $from['payinfo'],
-                "{{wikilink}}" => $from['wikilink']]);
-            $bcc = $mail_lang === "lang_payinfomail" ? $from['kontakt'] : NULL;
-            comm_send_mail($this->database, $to, $mail, $from['kontakt'], $bcc);
-        }
-    }
 }
