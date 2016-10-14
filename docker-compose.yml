@@ -7,7 +7,7 @@ web:
     volumes:
      - ./registration-system:/usr/share/nginx/html
 
-phpmyadmin:
+pma:
     image: phpmyadmin/phpmyadmin
     links:
      - db
@@ -18,8 +18,6 @@ phpmyadmin:
      - PMA_PASSWORD=9Lug*96q
     ports:
      - "8090:80"
-    volumes:
-     - /sessions
 
 db:
     build: docker
