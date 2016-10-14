@@ -19,7 +19,21 @@ docker-compose up -d
 
 ### Step 4
 Wait for containers to start up.
+
+Run a bash inside the web container (`docker exec -it registrationsystem_web_1 bash`) and
+```
+cd usr/share/nginx/html/
+echo 2 > config_current_fahrt_id
+chmod 777 config_current_fahrt_id 
+cp passwd/users.example.txt passwd/users.txt
+```
+
 Open http://localhost:8080 in your browser
+
+Admin interface is at http://localhost:8080/admin (login with sudo:password)
+
+For phpMyAdmin find the IP it runs on (`docker inspect registrationsystem_phpmyadmin_1` and find IPAddress) and open
+http://<ip>:8090
 
 ## Mysql Dump Upgrade
 Remove containers as in cleanup, remove mysql_dump folder and start again
