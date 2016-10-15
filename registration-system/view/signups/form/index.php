@@ -32,12 +32,13 @@ class FormSignupMethod extends SignupMethod {
     }
 
     public function showInlineHTML() {
-        $environment = Environment::getEnv();
         $soft_prot   = new soft_protect();
 
-        $bachelor = $environment->getBachelor();
-        $possible_dates = comm_get_possible_dates($environment->database, $environment->getSelectedTripId());
-        $waitlist_mode  = $environment->isInWaitlistMode();
+        $bachelor = $this->environment->getBachelor(false, true);
+        $fahrt = $this->environment->getTrip();
+
+        $possible_dates = $fahrt->getPossibleDates();
+        $waitlist_mode  = $this->environment->isInWaitlistMode();
 
         $link_params = $this->getFormSubmitBaseParams();
 
@@ -55,18 +56,18 @@ class FormSignupMethod extends SignupMethod {
         $this->show_formular_helper_input("Vorname",     "forname", $bachelor["forname"], "");
         $this->show_formular_helper_input("Nachname",    "sirname", $bachelor["sirname"], "");
         $this->show_formular_helper_input("Anzeigename", "pseudo",  $bachelor["pseudo"],  "");
-        echo $soft_prot->add(array('forname', 'sirname', 'pseudo'), $environment->config['invalidChars'])->write();
+        echo $soft_prot->add(array('forname', 'sirname', 'pseudo'), $this->environment->config['invalidChars'])->write();
 
         $this->show_formular_helper_input("E-Mail-Adresse", "mehl",    $bachelor["mehl"],    "regelmäßig lesen!");
 
-        $this->show_formular_helper_sel("Du bist", "studityp",   $environment->config['studitypen'], $bachelor["studityp"], "");
+        $this->show_formular_helper_sel("Du bist", "studityp",   $this->environment->config['studitypen'], $bachelor["studityp"], "");
         $this->show_formular_helper_sel("Alter 18+?", "virgin",  array("", "Nein", "Ja"),
             isset($bachelor['virgin']) ?  ($bachelor['virgin'] == 0 ? "Ja" : "Nein") : '', "Bist du älter als 18 Jahre?");
-        $this->show_formular_helper_sel("Essenswunsch", "essen", $environment->config['essen'], $bachelor["essen"],"Info für den Koch.");
+        $this->show_formular_helper_sel("Essenswunsch", "essen", $this->environment->config['essen'], $bachelor["essen"],"Info für den Koch.");
         $this->show_formular_helper_sel2("Anreise","anday", array_slice($possible_dates,0, -1), $bachelor["anday"],
-            "antyp", $environment->config['reisearten'], $bachelor["antyp"], "");
+            "antyp", $this->environment->config['reisearten'], $bachelor["antyp"], "");
         $this->show_formular_helper_sel2("Abreise","abday", array_slice($possible_dates,1), $bachelor["abday"],
-            "abtyp", $environment->config['reisearten'], $bachelor["abtyp"], "");
+            "abtyp", $this->environment->config['reisearten'], $bachelor["abtyp"], "");
 
         echo'<label>Anmerkung</label>
             <textarea id="comment" name ="comment" rows="3" cols="50">' . $bachelor["comment"] . '</textarea>

@@ -1,12 +1,14 @@
 <?php
 
-require_once "abstract_signup_class.php";
+require_once 'abstract_signup_class.php';
 
 class SignupMethods {
 
     private static $__instance = NULL;
     private $signup_methods = [];
     private $fallback_method = 'form';
+
+    private $environment;
 
     public static function getInstance() {
         if(self::$__instance == NULL) self::$__instance = new SignupMethods();
@@ -15,6 +17,7 @@ class SignupMethods {
 
     protected function __construct() {
         $this->signup_methods = $this->loadSignupMethods();
+        $this->environment = Environment::getEnv();
     }
 
     public function getSignupMethods() {
@@ -28,10 +31,10 @@ class SignupMethods {
         $tmp = [];
         foreach($this->signup_methods as $method) {
             array_push($tmp, [
-                "id"           => $method["id"],
-                "name"         => $method["class"]::getName(),
-                "description"  => $method["class"]::getAltText(),
-                "meta"         => $method["class"]::getMetaInfo()
+                'id'           => $method['id'],
+                'name'         => $method['class']::getName(),
+                'description'  => $method['class']::getAltText(),
+                'meta'         => $method['class']::getMetaInfo()
             ]);
         }
         return $tmp;
@@ -57,7 +60,7 @@ class SignupMethods {
 
     /**
      * @return class (instantiated) of the active signup method
-     * @throws ErrorException when $_GET["method"] is missing or not available in the list
+     * @throws ErrorException when $_GET['method'] is missing or not available in the list
      */
     public function getActiveMethod() {
         $method = $this->getActiveMethodObj();
@@ -66,7 +69,7 @@ class SignupMethods {
 
     /**
      * @return id of the class (and with that the folder)
-     * @throws ErrorException when $_GET["method"] is missing or not available in the list
+     * @throws ErrorException when $_GET['method'] is missing or not available in the list
      */
     public function getActiveMethodId() {
         $method = $this->getActiveMethodObj();
@@ -75,16 +78,16 @@ class SignupMethods {
 
     /**
      * @return array
-     * @throws ErrorException when $_GET["method"] is missing or not available in the list
+     * @throws ErrorException when $_GET['method'] is missing or not available in the list
      */
     private function getActiveMethodObj() {
-        if(!isset($_REQUEST["method"])) throw new ErrorException("No signup-method selected!");
-        return $this->getMethodObj($_REQUEST["method"]);
+        if(!isset($_REQUEST['method'])) throw new ErrorException('No signup-method selected!');
+        return $this->getMethodObj($_REQUEST['method']);
     }
 
     private function getMethodObj($mode) {
         if(Environment::getEnv()->formDataReceived()) $mode = $this->fallback_method;
-        if(!isset($this->signup_methods[$mode])) throw new ErrorException("Signup-method does not exist!");
+        if(!isset($this->signup_methods[$mode])) throw new ErrorException('Signup-method does not exist!');
         return [ 'id' => $mode, 'class' => $this->signup_methods[$mode]['class']];
     }
 
