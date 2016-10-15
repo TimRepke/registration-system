@@ -1,10 +1,10 @@
 <?php
 
 require_once __DIR__ . '/../config.inc.php';
-require_once __DIR__ . '/../lang.php';
-require_once __DIR__.'/medoo.php';
-require_once __DIR__.'/commons.php';
-require_once __DIR__.'/soft_protect.php';
+require_once __DIR__ . '/medoo.php';
+require_once __DIR__ . '/soft_protect.php';
+require_once __DIR__ . '/Fahrt.php';
+require_once __DIR__ . '/Bachelor.php';
 
 class Environment {
 
@@ -18,8 +18,13 @@ class Environment {
     public $config;
     public $sysconf;
 
-    private $dangling_form_data;
     private $permission_level = Environment::LOGIN_RIGHTS_NONE;
+
+    // if the context provides a specific trip or bachelor, these are set
+    /** @var Fahrt */
+    private $fahrt;
+    /** @var Bachelor */
+    private $bachelor;
 
     public static function getEnv($admin = false) {
         if (self::$__instance == NULL) self::$__instance = new Environment($admin);
@@ -27,9 +32,9 @@ class Environment {
     }
 
     protected function __construct($admin = false) {
-        global $config_db, $config_studitypen, $config_essen, $config_reisearten, $invalidCharsRegEx,
+        global $config_db, $config_studitypen, $config_essen, $config_reisearten, $config_invalidCharsRegEx,
                $config_reisearten_o, $config_essen_o, $config_studitypen_o, $config_baseurl, $config_basepath,
-               $config_mailtag;
+               $config_mailtag, $config_impressum;
 
         $this->database = new medoo(array(
             'database_type' => $config_db["type"],
@@ -43,7 +48,7 @@ class Environment {
             'studitypen' => $config_studitypen,
             'essen' => $config_essen,
             'reisearten' => $config_reisearten,
-            'invalidChars' => $invalidCharsRegEx
+            'invalidChars' => $config_invalidCharsRegEx
         ];
 
         $this->oconfig = [
@@ -56,8 +61,12 @@ class Environment {
             'currentTripId' => $this->readCurrentTripId(),
             'baseURL' => $config_baseurl,
             'basePath' => $config_basepath,
-            'mailTag' => $config_mailtag
+            'mailTag' => $config_mailtag,
+            'impressum' => $config_impressum
         ];
+
+        $this->bachelor = null;
+        $this->fahrt = null;
 
         if ($admin) {
             self::adminCheckIfLogin();
@@ -148,28 +157,8 @@ class Environment {
     }
 
 
-    /**
-     * @return int|null trip selected via $_REQUEST (or null)
-     */
-    public function getSelectedTripId() {
-        if (isset($_REQUEST['fid']))
-            return (int)$_REQUEST['fid'];
-        else
-            return null;
-    }
-
-    public function getCurrentTripId() {
-        return $this->sysconf['currentTripId'];
-    }
-
-    /**
-     * @return bool true iff selected trip id is in the DB
-     */
-    public function isSelectedTripIdValid() {
-        $fid = $this->getSelectedTripId();
-        if ($fid == null) return false;
-        return $this->database->has('fahrten', ['fahrt_id' => $fid]);
-    }
+    // ===========================================================================================================
+    // Some context based trip getters
 
     private function readCurrentTripId() {
         global $config_current_fahrt_file;
@@ -181,22 +170,53 @@ class Environment {
         return null;
     }
 
+    private function isTripIdValid($fid) {
+        if (empty($fid) and !$fid == 0) return false;
+        return $this->database->has('fahrten', ['fahrt_id' => $fid]);
+    }
+
+    public function getCurrentTripId() {
+        return $this->sysconf['currentTripId'];
+    }
+
+    public function getSelectedTripId() {
+        if (isset($_REQUEST['fid']))
+            return (int)$_REQUEST['fid'];
+        else
+            return null;
+    }
+
+    public function isSelectedTripIdValid() {
+        return $this->isTripIdValid($this->getSelectedTripId());
+    }
+
+    public function getTrip($fallbackCurrent = false) {
+        $tripID = $this->getSelectedTripId();
+
+        if (is_null($tripID) and !$fallbackCurrent)
+            return null;
+
+        if (!is_null($this->fahrt))
+            return $this->fahrt;
+
+        if (is_null($tripID) and $fallbackCurrent)
+            $tripID = $this->getCurrentTripId();
+
+        if (!$this->isTripIdValid($tripID))
+            return null;
+
+        $this->fahrt = new Fahrt($tripID);
+        return $this->fahrt;
+    }
 
 
-    /**
-     * @return bool true iff user confirmed to enter waitlist
-     */
+    // ===========================================================================================================
+    // Some context based bachelor getters
+
     public function isInWaitlistMode() {
         return isset($_REQUEST['waitlist']);
     }
 
-    /**
-     * Stash form data in this class (i.e. for edit)
-     * @param $data
-     */
-    public function setDanglingFormData($data) {
-        $this->dangling_form_data = $data;
-    }
 
     /**
      * @return bool true iff formdata is received
@@ -205,13 +225,23 @@ class Environment {
         return isset($_REQUEST['submit']) || isset($_REQUEST['storySubmit']);
     }
 
-    public function getBachelor($bid = NULL) {
-        if (!is_null($this->dangling_form_data))
-            return $this->dangling_form_data;
-        if (is_null($bid))
-            return $this->getEmptyBachelor();
-        else
-            return $this->getBachelorFromDB($bid);
+    public function getSelectedBachelorId() {
+        if (isset($_REQUEST['bid']))
+            return $_REQUEST['bid'];
+        if (isset($_REQUEST['hash']))
+            return $_REQUEST['hash'];
+
+        return null;
+    }
+
+    public function getBachelor($allowTripIdFallback=false) {
+        if ($this->formDataReceived())
+            return Bachelor::makeFromForm();
+        $bid = $this->getSelectedBachelorId();
+        $trip = $this->getTrip($allowTripIdFallback);
+        if (!is_null($bid) and !is_null($trip))
+            return Bachelor::makeFromDB($trip, $bid);
+        return null;
     }
 
 }
