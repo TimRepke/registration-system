@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../config.inc.php';
+require_once __DIR__ . '/../lang.php';
 require_once __DIR__ . '/medoo.php';
 require_once __DIR__ . '/soft_protect.php';
 require_once __DIR__ . '/Fahrt.php';
@@ -234,7 +235,7 @@ class Environment {
         return null;
     }
 
-    public function getBachelor($allowTripIdFallback=false) {
+    public function getBachelor($allowTripIdFallback = false) {
         if ($this->formDataReceived())
             return Bachelor::makeFromForm();
         $bid = $this->getSelectedBachelorId();
@@ -244,4 +245,38 @@ class Environment {
         return null;
     }
 
+
+    // ==========================================================================================================
+    // SOME OTHER STUFF
+
+    /**
+     * sends mail
+     *
+     * first line of $cont is used as subject iff terminated by double backslash (\\)
+     * note that there should be no "\\" anywhere else in the string!!!
+     *
+     * returns true/false depending on success
+     */
+    public function sendMail($addr, $cont, $from = null, $bcc = null) {
+        $subj = "Wichtige Information";
+        $mess = $cont;
+        $tmp = explode("\\\\", $cont);
+        if (count($tmp) > 1) {
+            $subj = $tmp[0];
+            $mess = $tmp[1];
+        }
+        $subj = $this->sysconf['mailTag'] . $subj;
+
+        $headers = 'From: ' . $from . "\r\n" .
+            'Reply-To: ' . $from . "\r\n" .
+            'X-Mailer: PHP/' . phpversion();
+        if (!is_null($bcc)) $headers .= "\r\nBcc: " . $bcc;
+
+        return mail($addr, $subj, $mess, $headers);
+    }
+
+    public function getLanguageString($lang, $replace) {
+        global $$lang;
+        return str_replace(array_keys($replace), array_values($replace), $$lang);
+    }
 }

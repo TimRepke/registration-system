@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/Environment.php';
-require_once __DIR__ . '/commons.php';
 
 class Bachelor {
     const SAVE_SUCCESS = 0;
@@ -9,6 +8,7 @@ class Bachelor {
     const SAVE_ERROR_CLOSED = 3;
     const SAVE_ERROR_EXCEPTION = 4;
     const SAVE_ERROR_MISSING_RIGHTS = 5;
+    const SAVE_ERROR_INVALID = 6;
 
     /** @var  Environment */
     protected $environment;
@@ -192,6 +192,9 @@ class Bachelor {
                 // lock database tables to prevent funny things
                 $this->environment->database->exec("LOCK TABLES fahrten, bachelor WRITE");
 
+                if (!$this->isDataValid())
+                    return Bachelor::SAVE_ERROR_INVALID;
+
                 // get status
                 $state = $this->fahrt->getRegistrationState();
                 $wlmode = $this->environment->isInWaitlistMode();
@@ -268,12 +271,10 @@ class Bachelor {
         for ($run = 0; $run < 10; $run++) {
             $bytes = openssl_random_pseudo_bytes(8);
             $hex = bin2hex($bytes);
-            comm_verbose(3, 'generated hex for test: ' . $hex);
 
             if ($this->environment->database->has('fahrten', ['AND' => ['fahrt_id' => $fid]]) and
                 !$this->environment->database->has('bachelor', ['AND' => ['fahrt_id' => $fid, 'bachelor_id' => $hex]])
             ) {
-                comm_verbose(2, 'generated hex: ' . $hex);
                 return $hex;
             }
         }
@@ -290,14 +291,14 @@ class Bachelor {
         $hash = $this->data['bachelor_id'];
 
         foreach ($mail_langs as $mail_lang) {
-            $mail = comm_get_lang($mail_lang, [
+            $mail = $this->environment->getLanguageString($mail_lang, [
                 '{{url}}' => $config_baseurl . 'status.php?fid=' . $this->fahrt->getID() . 'hash=' . $hash,
                 '{{organisator}}' => $fahrt_details['leiter'],
                 '{{paydeadline}}' => $fahrt_details['paydeadline'],
                 '{{payinfo}}' => $fahrt_details['payinfo'],
                 '{{wikilink}}' => $fahrt_details['wikilink']]);
             $bcc = $mail_lang === 'lang_payinfomail' ? $fahrt_details['kontakt'] : NULL;
-            comm_send_mail($to, $mail, $fahrt_details['kontakt'], $bcc);
+            $this->environment->sendMail($to, $mail, $fahrt_details['kontakt'], $bcc);
         }
     }
 
