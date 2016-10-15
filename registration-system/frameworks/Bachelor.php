@@ -1,6 +1,6 @@
 <?php
-require_once 'Environment.php';
-require_once 'commons.php';
+require_once __DIR__.'/Environment.php';
+require_once __DIR__.'/commons.php';
 
 class Bachelor {
     const SAVE_SUCCESS = 0;
@@ -19,10 +19,10 @@ class Bachelor {
     /** @var  Fahrt the fahrt object this bachelor belongs to */
     protected $fahrt;
 
-    const ALLOWED_FIELDS = ['bachelor_id', 'fahrt_id', 'anm_time', 'forname', 'sirname', 'mehl',
+    public static $ALLOWED_FIELDS = ['bachelor_id', 'fahrt_id', 'anm_time', 'forname', 'sirname', 'mehl',
         'pseudo', 'antyp', 'abtyp', 'anday', 'abday', 'comment', 'studityp', 'paid', 'repaid', 'backstepped',
         'virgin', 'essen', 'on_waitlist', 'transferred', 'public', 'version'];
-    const NULLFIELDS = ['paid', 'repaid', 'backstepped', 'transferred', 'on_waitlist'];
+    public static $NULLFIELDS = ['paid', 'repaid', 'backstepped', 'transferred', 'on_waitlist'];
 
     /**
      * Bachelor constructor.
@@ -43,8 +43,8 @@ class Bachelor {
     public static function makeNewBachelor($fahrt) {
         $newBachelor = new Bachelor($fahrt);
         $data = [];
-        foreach (Bachelor::ALLOWED_FIELDS as $field) {
-            if (!in_array($field, Bachelor::NULLFIELDS))
+        foreach (Bachelor::$ALLOWED_FIELDS as $field) {
+            if (!in_array($field, Bachelor::$NULLFIELDS))
                 $data[$field] = '';
         }
         $possible_dates = $fahrt->getPossibleDates();
@@ -65,15 +65,20 @@ class Bachelor {
      * @throws Exception
      */
     public static function makeFromDB($fahrt, $bid) {
-        $newBachelor = new Bachelor($fahrt);
-        $data = $newBachelor->environment->database->get('bachelor',
-            Bachelor::ALLOWED_FIELDS,
-            ['AND' => [
-                'fahrt_id' => $fahrt->getID(),
-                'bachelor_id' => $bid
-            ]]);
-        $newBachelor->set($data);
-        return $newBachelor;
+        try {
+            $newBachelor = new Bachelor($fahrt);
+            $data = $newBachelor->environment->database->get('bachelor',
+                Bachelor::$ALLOWED_FIELDS,
+                ['AND' => [
+                    'fahrt_id' => $fahrt->getID(),
+                    'bachelor_id' => $bid
+                ]]);
+
+            $newBachelor->set($data);
+            return $newBachelor;
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     /**
@@ -90,8 +95,10 @@ class Bachelor {
     }
 
     public function set($data) {
+        if (is_null($data) or !isset($data) or empty($data))
+            throw new Exception('No data to set!');
         foreach ($data as $key => $val) {
-            if (in_array($key, Bachelor::ALLOWED_FIELDS)) {
+            if (in_array($key, Bachelor::$ALLOWED_FIELDS)) {
                 $this->data[$key] = $val;
             } else {
                 throw new Exception('Bachelor hat kein Feld: ' . $key);
@@ -99,8 +106,26 @@ class Bachelor {
         }
     }
 
-    public function get() {
+    public function getData() {
         return $this->data;
+    }
+
+    public function isOnWaitlist() {
+        return $this->data['on_waitlist'] == 1;
+    }
+
+    public function isTransferred() {
+        return $this->data['transferred'] == null;
+    }
+
+    public function isWaiting() {
+        return $this->isOnWaitlist() and !$this->isTransferred();
+    }
+
+    public function isBackstepped() {
+        if (isset($this->data['backstepped']) and !is_null($this->data['backstepped']))
+            return true;
+        return false;
     }
 
     /**
@@ -225,12 +250,12 @@ class Bachelor {
         for ($run = 0; $run < 10; $run++) {
             $bytes = openssl_random_pseudo_bytes(8);
             $hex = bin2hex($bytes);
-            comm_verbose(3, "generated hex for test: " . $hex);
+            comm_verbose(3, 'generated hex for test: ' . $hex);
 
             if ($this->environment->database->has('fahrten', ['AND' => ['fahrt_id' => $fid]]) and
                 !$this->environment->database->has('bachelor', ['AND' => ['fahrt_id' => $fid, 'bachelor_id' => $hex]])
             ) {
-                comm_verbose(2, "generated hex: " . $hex);
+                comm_verbose(2, 'generated hex: ' . $hex);
                 return $hex;
             }
         }
@@ -248,12 +273,12 @@ class Bachelor {
 
         foreach ($mail_langs as $mail_lang) {
             $mail = comm_get_lang($mail_lang, [
-                "{{url}}" => $config_baseurl . "status.php?hash=" . $hash,
-                "{{organisator}}" => $fahrt_details['leiter'],
-                "{{paydeadline}}" => $fahrt_details['paydeadline'],
-                "{{payinfo}}" => $fahrt_details['payinfo'],
-                "{{wikilink}}" => $fahrt_details['wikilink']]);
-            $bcc = $mail_lang === "lang_payinfomail" ? $fahrt_details['kontakt'] : NULL;
+                '{{url}}' => $config_baseurl . 'status.php?fid=' . $this->fahrt->getID() . 'hash=' . $hash,
+                '{{organisator}}' => $fahrt_details['leiter'],
+                '{{paydeadline}}' => $fahrt_details['paydeadline'],
+                '{{payinfo}}' => $fahrt_details['payinfo'],
+                '{{wikilink}}' => $fahrt_details['wikilink']]);
+            $bcc = $mail_lang === 'lang_payinfomail' ? $fahrt_details['kontakt'] : NULL;
             comm_send_mail($to, $mail, $fahrt_details['kontakt'], $bcc);
         }
     }
