@@ -21,6 +21,14 @@ abstract class DefaultIndex {
         return date('d.m.Y', strtotime($date));
     }
 
+    protected function transformMail($mail) {
+        return str_replace(array("@","."),array("&Oslash;", "&middot;"), $mail);
+    }
+
+    protected function echoImpressum() {
+        echo '<a href="'.$this->environment->sysconf['impressum'].'">Impressum</a>';
+    }
+
     public function render() {
         ?>
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -63,7 +71,7 @@ abstract class DefaultIndex {
                     <?php $this->echoContent(); ?>
                 </div>
                 <div id="footerbox">&copy;<?php echo date("Y"); ?>
-                    Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin.
+                    Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin. <?php $this->echoImpressum() ?>
                 </div>
                 <img id="nyan" alt="O" src="<?php echo $this->resolvePath('graphics/studityp_5.gif') ?>"
                      style="position: fixed;bottom: 5px;left:0"/>
