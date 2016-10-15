@@ -235,13 +235,15 @@ class Environment {
         return null;
     }
 
-    public function getBachelor($allowTripIdFallback = false) {
+    public function getBachelor($allowTripIdFallback = false, $fallbackNew=false) {
         if ($this->formDataReceived())
             return Bachelor::makeFromForm();
         $bid = $this->getSelectedBachelorId();
         $trip = $this->getTrip($allowTripIdFallback);
         if (!is_null($bid) and !is_null($trip))
             return Bachelor::makeFromDB($trip, $bid);
+        if ($fallbackNew)
+            return Bachelor::makeEmptyBachelor($trip);
         return null;
     }
 

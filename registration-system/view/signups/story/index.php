@@ -11,8 +11,8 @@ class StorySignupMethod extends SignupMethod {
 
     public static function getMetaInfo() {
         return [
-            "version"      => '1.1',
-            "date"         => '20.09.2014',
+            "version" => '1.1',
+            "date" => '20.09.2014',
             "contributors" => ['Manuel Herrmann <fsfahrt@icetruck.de>']
         ];
     }
@@ -30,12 +30,10 @@ class StorySignupMethod extends SignupMethod {
     }
 
     public function showInlineHTML() {
-        global $config_reisearten_o, $config_essen_o;
-        $environment = Environment::getEnv();
+        $dates = $this->environment->getTrip()->getPossibleDates();
 
-        $dates = comm_get_possible_dates($environment->database, $environment->getSelectedTripId());
-        foreach($dates as &$date)
-            $date = '"'.$date.'"';
+        foreach ($dates as &$date)
+            $date = '"' . $date . '"';
 
         echo '
         <div id="storyhead"></div>
@@ -50,10 +48,10 @@ class StorySignupMethod extends SignupMethod {
 					return [];
 				}
 				function config_get_travel_types() {
-					return ' . $this->putTypesInObject($config_reisearten_o) . ';
+					return ' . $this->putTypesInObject($this->environment->oconfig['reisearten']) . ';
 				}
 				function config_get_food_types() {
-					return ' . $this->putTypesInObject($config_essen_o) . ';
+					return ' . $this->putTypesInObject($this->environment->oconfig['essen']) . ';
 				}
 			</script>
 		</div>';
@@ -67,7 +65,7 @@ class StorySignupMethod extends SignupMethod {
                 $first = false;
             else
                 $text .= ', ';
-            $text .= '"'.$key.'":"'.$value.'"';
+            $text .= '"' . $key . '":"' . $value . '"';
         }
         $text .= ' }';
         return $text;

@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../frameworks/Environment.php';
+
 interface SignupMethodStatics {
     /**
      * @return string with humanly readable name of this method
@@ -63,6 +65,13 @@ abstract class SignupMethod implements SignupMethodStatics {
     // Shared functions
     // available to each signup method
     // =================================================================================================================
+
+    protected static $signupsBasepath = 'signups/';
+    protected $environment;
+
+    protected function __construct() {
+        $this->environment = Environment::getEnv();
+    }
 
     /**
      * @return string containing the basic form submit parameters
