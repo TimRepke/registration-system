@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__.'/Environment.php';
-require_once __DIR__.'/commons.php';
+require_once __DIR__ . '/Environment.php';
+require_once __DIR__ . '/commons.php';
 
 class Bachelor {
     const SAVE_SUCCESS = 0;
@@ -18,6 +18,8 @@ class Bachelor {
     protected $isNew;
     /** @var  Fahrt the fahrt object this bachelor belongs to */
     protected $fahrt;
+
+    protected $validationErrors = null;
 
     public static $ALLOWED_FIELDS = ['bachelor_id', 'fahrt_id', 'anm_time', 'forname', 'sirname', 'mehl',
         'pseudo', 'antyp', 'abtyp', 'anday', 'abday', 'comment', 'studityp', 'paid', 'repaid', 'backstepped',
@@ -40,7 +42,7 @@ class Bachelor {
      * @return Bachelor
      * @throws Exception
      */
-    public static function makeNewBachelor($fahrt) {
+    public static function makeEmptyBachelor($fahrt) {
         $newBachelor = new Bachelor($fahrt);
         $data = [];
         foreach (Bachelor::$ALLOWED_FIELDS as $field) {
@@ -79,6 +81,22 @@ class Bachelor {
         } catch (Exception $e) {
             return null;
         }
+    }
+
+    public static function makeFromForm($isNew = true) {
+        $tmpEnv = Environment::getEnv();
+        $fahrt = $tmpEnv->getTrip();
+        $errors = [];
+        if (is_null($fahrt))
+            $errors = ['Ungültige Fahrt!'];
+        elseif ($fahrt->getRegistrationState() == Fahrt::STATUS_IS_CLOSED)
+            $errors = ['Anmeldung zur Fahrt bereits geschlossen!'];
+        else {
+            $newBachelor = new Bachelor($fahrt, $isNew);
+            $newBachelor->populateAndValidate();
+            return $newBachelor;
+        }
+        return $errors;
     }
 
     /**
@@ -281,5 +299,121 @@ class Bachelor {
             $bcc = $mail_lang === 'lang_payinfomail' ? $fahrt_details['kontakt'] : NULL;
             comm_send_mail($to, $mail, $fahrt_details['kontakt'], $bcc);
         }
+    }
+
+    public function isDataValid() {
+        return !empty($this->validationResult);
+    }
+
+    /**
+     * This function takes submitted form data from $_REQUEST and validates the input.
+     *
+     * returns assoc array looking like this:
+     * [
+     *   "valid" => true|false,
+     *   "message" => 'a message',
+     *   "errors"  => ['array of', 'errors'],
+     *   "data"    => [<validated data as assoc array>]
+     * ]
+     *
+     * @return array (see above)
+     */
+    private function populateAndValidate() {
+        $possibleDates = $this->fahrt->getPossibleDates();
+        $invalidChars = $this->environment->config['invalidChars'];
+        $oconf = $this->environment->oconfig;
+
+        $this->set(['fahrt_id' => $this->fahrt->getID(), 'version' => 1]);
+
+        $this->validateField('forname', $invalidChars, 'Fehlerhafter oder fehlender Vorname!');
+        $this->validateField('sirname', $invalidChars, 'Fehlerhafter oder fehlender Nachname!');
+        $this->validateField('pseudo', $invalidChars, 'Fehlerhafter oder fehlender Anzeigename!');
+        $this->validateField('mehl', 'mail', 'Fehlerhafte oder fehlende E-Mail-Adresse!');
+        $this->validateField('anday', array_slice($possibleDates, 0, -1), 'Hilfe beim Ausfüllen: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
+        $this->validateField('abday', array_slice($possibleDates, 1), 'Ruth hat mitgedacht: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
+        $this->validateField('antyp', $oconf['reisearten'], 'Trolle hier lang: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
+        $this->validateField('abtyp', $oconf['reisearten'], 'Entwicklern Bier geben und: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
+        $this->validateField('essen', $oconf['essen'], 'Hat das wirklich nicht gereicht??');
+        $this->validateField('studityp', $oconf['studitypen'], 'Neue Chance, diesmal FS-Ini wählen!');
+        $this->validateField('public', 'public', 'Trollololol');
+        $this->validateField('virgin', 'virgin', 'Bitte Altersbereich wählen!');
+        $this->validateField('comment', 'comment', 'Trollololol');
+        $this->validateField('captcha', 'captcha', 'Captcha falsch eingegeben.');
+
+        if ($this->data['anday'] == $this->data['abday'])
+            array_push($this->validationErrors, 'Anreisetag = Abreisetag -> Bitte prüfen!');
+    }
+
+    /**
+     * checks for correctness of a given field ($index) by trying $check.
+     * pushes $errmess into $errarr, if $check fails
+     * pushes empty data on fail or correct data on success into $data
+     *
+     * check can be regex or array or special (public, mail, comment).
+     * if array, than check only succeeds if sent data is inside that array
+     *
+     * @param $index
+     * @param $check
+     * @param $errmess
+     */
+    private function validateField($index, $check, $errmess) {
+        try {
+            // check that first because if unchecked it doesnt exist
+            if ($check == "public") {
+                $this->set([$index => (isset($_REQUEST[$index])) ? 0 : 1]);
+            } // if index is missing -> error!
+            elseif (!isset($_REQUEST[$index])) {
+                array_push($this->validationErrors, $errmess);
+                // set it in every case so corrections are possible
+                $this->set([$index => '']);
+            } // index is there -> check if value is allowed
+            else {
+                $tmp = trim($_REQUEST[$index]);
+
+                // do specific check if a set of variables is allowed
+                if (is_array($check)) {
+                    $vals = array_values($check);
+                    $keys = array_keys($check);
+
+                    // on error
+                    if (!in_array($tmp, $vals) && !in_array($tmp, $keys))
+                        array_push($this->validationErrors, $errmess);
+
+                    // on success
+                    $this->set([$index => (in_array($tmp, $vals)) ? $tmp : $check[$tmp]]);
+                } // check captcha
+                elseif ($check == "captcha") {
+                    if (!(isset($_SESSION['captcha']) && strtolower($tmp) == strtolower($_SESSION['captcha']))) {
+                        array_push($this->validationErrors, $errmess);
+                        unset($_SESSION['captcha']);
+                    }
+                } // check mail address
+                elseif ($check == "mail") {
+                    if (!filter_var($tmp, FILTER_VALIDATE_EMAIL))
+                        array_push($this->validationErrors, $errmess);
+
+                    // set it in every case so corrections are possible
+                    $this->set([$index => $tmp]);
+                } // check comment field
+                elseif ($check == "comment") {
+                    $this->set([$index => htmlspecialchars($tmp, ENT_QUOTES)]);
+                } // check virgin field
+                elseif ($index == "virgin") {
+                    // NOTE: for consistency: virgin = 0 means > 18
+                    $this->set([$index => ($_REQUEST[$index] == "Ja") ? 0 : 1]);
+                } //everything else
+                else {
+                    // check with regex
+                    if (!(preg_match($check, $tmp) == 1))
+                        array_push($this->validationErrors, $errmess);
+
+                    // set it in every case so corrections are possible
+                    $this->set([$index => $tmp]);
+                }
+            }
+        } catch (Exception $e) {
+            array_push($this->validationErrors, 'Neeee du, voll daneben!');
+        }
+
     }
 }

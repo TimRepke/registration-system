@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__.'/Bachelor.php';
+require_once __DIR__.'/Environment.php';
 
 class Fahrt {
 
@@ -116,16 +117,23 @@ class Fahrt {
         return $ret;
     }
 
+    public function getNumMaxSpots() {
+        return $this->getFahrtDetails()['max_bachelor'];
+    }
+
+    public function getNumTakenSpots() {
+        $selector = $this->getBachelorsSelector(['backstepped' => false, 'waiting' => false]);
+        return $this->environment->database->count('bachelor', $selector['where']);
+    }
+
     public function getRegistrationState() {
         comm_verbose(3, 'checking if fid ' . $this->fid . ' is open');
 
         if (!$this->environment->database->has('fahrten', ['AND' => ['fahrt_id' => $this->fid, 'regopen' => 1]]))
             return Fahrt::STATUS_IS_CLOSED;
 
-        $selector = $this->getBachelorsSelector(['backstepped' => false, 'waiting' => false]);
-
-        $cnt = $this->environment->database->count('bachelor', $selector['where']);
-        $max = $this->getFahrtDetails()['max_bachelor'];
+        $cnt = $this->getNumTakenSpots();
+        $max = $this->getNumMaxSpots();
 
         if ($cnt < $max)
             return Fahrt::STATUS_IS_OPEN_NOT_FULL;
