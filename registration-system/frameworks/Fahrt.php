@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Bachelor.php';
+require_once __DIR__.'/Bachelor.php';
 
 class Fahrt {
 
@@ -8,7 +8,7 @@ class Fahrt {
     const STATUS_IS_OPEN_FULL = 1;
     const STATUS_IS_CLOSED = 2;
 
-    const ALLOWED_FIELDS = ['fahrt_id', 'titel', 'ziel', 'vom', 'bis', 'regopen', 'beschreibung', 'leiter', 'kontakt',
+    public static $ALLOWED_FIELDS = ['fahrt_id', 'titel', 'ziel', 'von', 'bis', 'regopen', 'beschreibung', 'leiter', 'kontakt',
         'map_pin', 'max_bachelor', 'wikilink', 'paydeadline', 'payinfo', 'opentime'];
 
     private $environment;
@@ -46,7 +46,7 @@ class Fahrt {
 
         $selector = [
             'table' => 'bachelor',
-            'fields' => !isset($params['fields']) ? Bachelor::ALLOWED_FIELDS : $params['fields'],
+            'fields' => !isset($params['fields']) ? Bachelor::$ALLOWED_FIELDS : $params['fields'],
             'where' => ['AND' => $conditions]
         ];
 
@@ -83,11 +83,18 @@ class Fahrt {
     }
 
     public function getFahrtDetails() {
-        if (!is_null($this->data))
+        if (!is_null($this->data) and !empty($this->data))
             return $this->data;
 
-        $this->data = $this->environment->database->get('fahrten', Fahrt::ALLOWED_FIELDS, ['fahrt_id' => $this->fid]);
+        $this->data = $this->environment->database->get('fahrten', Fahrt::$ALLOWED_FIELDS, ['fahrt_id' => $this->fid]);
         return $this->data;
+    }
+
+    public function get($field) {
+        if (in_array($field, Fahrt::$ALLOWED_FIELDS))
+            return $this->data[$field];
+        else
+            throw new Exception('Dieses Feld ist nicht vorhanden!');
     }
 
     public function getID() {

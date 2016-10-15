@@ -2,9 +2,9 @@
 
 require_once __DIR__ . '/../config.inc.php';
 require_once __DIR__ . '/../lang.php';
-require_once 'medoo.php';
-require_once 'commons.php';
-require_once 'soft_protect.php';
+require_once __DIR__.'/medoo.php';
+require_once __DIR__.'/commons.php';
+require_once __DIR__.'/soft_protect.php';
 
 class Environment {
 
@@ -16,6 +16,7 @@ class Environment {
 
     public $database;
     public $config;
+    public $sysconf;
 
     private $dangling_form_data;
     private $permission_level = Environment::LOGIN_RIGHTS_NONE;
@@ -27,7 +28,8 @@ class Environment {
 
     protected function __construct($admin = false) {
         global $config_db, $config_studitypen, $config_essen, $config_reisearten, $invalidCharsRegEx,
-               $config_reisearten_o, $config_essen_o, $config_studitypen_o;
+               $config_reisearten_o, $config_essen_o, $config_studitypen_o, $config_baseurl, $config_basepath,
+               $config_mailtag;
 
         $this->database = new medoo(array(
             'database_type' => $config_db["type"],
@@ -48,6 +50,13 @@ class Environment {
             'studitypen' => $config_studitypen_o,
             'essen' => $config_essen_o,
             'reisearten' => $config_reisearten_o
+        ];
+
+        $this->sysconf = [
+            'currentTripId' => $this->readCurrentTripId(),
+            'baseURL' => $config_baseurl,
+            'basePath' => $config_basepath,
+            'mailTag' => $config_mailtag
         ];
 
         if ($admin) {
@@ -149,18 +158,30 @@ class Environment {
             return null;
     }
 
+    public function getCurrentTripId() {
+        return $this->sysconf['currentTripId'];
+    }
+
     /**
      * @return bool true iff selected trip id is in the DB
      */
     public function isSelectedTripIdValid() {
         $fid = $this->getSelectedTripId();
         if ($fid == null) return false;
-        $valid = $this->database->has('fahrten',
-            ['fahrt_id' => $fid]);
-        if (!$valid) comm_verbose(1, "FID nicht vorhanden!");
-
-        return $valid;
+        return $this->database->has('fahrten', ['fahrt_id' => $fid]);
     }
+
+    private function readCurrentTripId() {
+        global $config_current_fahrt_file;
+        if (file_exists($config_current_fahrt_file)) {
+            $tmp = file_get_contents($config_current_fahrt_file);
+            if (is_numeric($tmp))
+                return $tmp;
+        }
+        return null;
+    }
+
+
 
     /**
      * @return bool true iff user confirmed to enter waitlist
