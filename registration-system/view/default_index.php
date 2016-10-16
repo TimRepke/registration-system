@@ -25,10 +25,6 @@ abstract class DefaultIndex {
         return str_replace(array("@","."),array("&Oslash;", "&middot;"), $mail);
     }
 
-    protected function echoImpressum() {
-        echo '<a href="'.$this->environment->sysconf['impressum'].'">Impressum</a>';
-    }
-
     public function render() {
         ?>
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -70,11 +66,16 @@ abstract class DefaultIndex {
                 <div id="menubox">
                     <?php $this->echoContent(); ?>
                 </div>
-                <div id="footerbox">&copy;<?php echo date("Y"); ?>
-                    Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin. <?php $this->echoImpressum() ?>
+                <div id="footerbox">&nbsp;
+                    <span style="float:left; margin-left:10px">
+                        &copy;<?php echo date("Y"); ?> Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin.
+                    </span>
+                    <a href="<?php $this->environment->sysconf['impressum'] ?>" style="float:right; margin-right: 10px">Impressum</a>
                 </div>
                 <img id="nyan" alt="O" src="<?php echo $this->resolvePath('graphics/studityp_5.gif') ?>"
                      style="position: fixed;bottom: 5px;left:0"/>
+                <a style="position: fixed;top:5px; right:5px;" href="https://github.com/TimRepke/registration-system">
+                    <img alt="GitHub" title="Auf GitHub gabeln" src="<?php echo $this->resolvePath('graphics/GitHub-Mark-32px.png') ?>"/></a>
             </div>
         </body>
         </html>
