@@ -19,12 +19,9 @@ require("config.local.php");
 $config_invalidCharsRegEx = "/^[^0-9<>!?.::,#*@^_$\\\"'%;()&+]{2,50}$/"; // d©_©b
 
 $config_studitypen_o = array(
-    "ERSTI" => "Ersti",       // 0
-    //"Wechsli",     // 1 - woanders/was anderes studiert, jetzt hier
-    //"MasterErsti", // 2
-    "HOERS" => "Hoersti",      // 3 - länger an der HU
-    "TUTTI" => "Tutor"       // 4 - Tutor
-    //"Fachi"        // 5 - FS Ini
+    "ERSTI" => "Ersti",
+    "HOERS" => "Hörsti",
+    "TUTTI" => "Tutor"
 );
 $config_studitypen = array_values($config_studitypen_o);
 
@@ -32,19 +29,13 @@ $config_essen_o = array(
     "ALLES" => "Alles",
     "VEGE" => "Vegetarisch",
     "VEGA" => "Vegan"
-    //,"Frutarisch",
-    //"Grießbrei",
-    //"Carnivore",
-    //"Extrawurst"
 );
 $config_essen = array_values($config_essen_o);
 
 $config_reisearten_o = array(
     "BUSBAHN" => "gemeinsam mit Bus/Bahn",
     "RAD" => "gemeinsam mit Rad",
-    "AUTO" => "selbst mit Auto",
     "INDIVIDUELL" => "Kamel/Individuell"
-    //,"mit Kamel"
 );
 $config_reisearten = array_values($config_reisearten_o);
 
