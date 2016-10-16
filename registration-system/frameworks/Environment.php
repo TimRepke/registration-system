@@ -35,7 +35,7 @@ class Environment {
     protected function __construct($admin = false) {
         global $config_db, $config_studitypen, $config_essen, $config_reisearten, $config_invalidCharsRegEx,
                $config_reisearten_o, $config_essen_o, $config_studitypen_o, $config_baseurl, $config_basepath,
-               $config_mailtag, $config_impressum;
+               $config_mailtag, $config_impressum, $config_reisearten_destroyed;
 
         $this->database = new medoo(array(
             'database_type' => $config_db["type"],
@@ -49,7 +49,8 @@ class Environment {
             'studitypen' => $config_studitypen,
             'essen' => $config_essen,
             'reisearten' => $config_reisearten,
-            'invalidChars' => $config_invalidCharsRegEx
+            'invalidChars' => $config_invalidCharsRegEx,
+            'reiseartenDestroyed' => $config_reisearten_destroyed
         ];
 
         $this->oconfig = [
@@ -172,7 +173,7 @@ class Environment {
     }
 
     private function isTripIdValid($fid) {
-        if (empty($fid) and !$fid == 0) return false;
+        if (empty($fid) and $fid != 0) return false;
         return $this->database->has('fahrten', ['fahrt_id' => $fid]);
     }
 
