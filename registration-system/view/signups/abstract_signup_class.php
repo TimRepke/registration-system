@@ -69,7 +69,7 @@ abstract class SignupMethod implements SignupMethodStatics {
     protected static $signupsBasepath = 'signups/';
     protected $environment;
 
-    protected function __construct() {
+    public function __construct() {
         $this->environment = Environment::getEnv();
     }
 
@@ -79,11 +79,12 @@ abstract class SignupMethod implements SignupMethodStatics {
     protected function getFormSubmitBaseParams() {
         $environment    = Environment::getEnv();
         $waitlist_mode  = $environment->isInWaitlistMode();
-        $bachelor       = $environment->getBachelor();
+        $bachelor       = $environment->getBachelor(false, true, true);
+        $bachelorData   = $bachelor->getData();
 
         return '?fid=' . $environment->getSelectedTripId() .
             '&method=' . SignupMethods::getInstance()->getActiveMethodId() .
-            (isset($bachelor['id']) ? '&bid=' . $bachelor['id'] : '') .
+            (isset($bachelorData['id']) ? '&bid=' . $bachelorData['id'] : '') .
             ($waitlist_mode         ? '&waitlist'               : '');
     }
 
