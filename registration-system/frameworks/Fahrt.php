@@ -8,6 +8,7 @@ class Fahrt {
     const STATUS_IS_OPEN_NOT_FULL = 0;
     const STATUS_IS_OPEN_FULL = 1;
     const STATUS_IS_CLOSED = 2;
+    const STATUS_IS_COUNTDOWN = 3;
 
     public static $ALLOWED_FIELDS = ['fahrt_id', 'titel', 'ziel', 'von', 'bis', 'regopen', 'beschreibung', 'leiter', 'kontakt',
         'map_pin', 'max_bachelor', 'wikilink', 'paydeadline', 'payinfo', 'opentime'];
@@ -22,13 +23,59 @@ class Fahrt {
         $this->data = null;
     }
 
+    public static function getFahrtFromData($data) {
+        $newFahrt = new Fahrt($data['fahrt_id']);
+        try {
+            $newFahrt->set($data);
+            return $newFahrt;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    public static function getAlleFahrten() {
+        $tmpEnvironment = Environment::getEnv();
+        $fahrtenData = $tmpEnvironment->database->select('fahrten', Fahrt::$ALLOWED_FIELDS, 'ORDER BY fahrt_id DESC');
+
+        if (empty($fahrtenData))
+            return null;
+
+        $fahrten = array_map(function($fahrtData) {
+            return Fahrt::getFahrtFromData($fahrtData);
+        }, $fahrtenData);
+        return $fahrten;
+    }
+
+    public function set($data) {
+        if (is_null($data) or !isset($data) or empty($data))
+            throw new Exception('No data to set!');
+        foreach ($data as $key => $val) {
+            if (in_array($key, Fahrt::$ALLOWED_FIELDS)) {
+                $this->data[$key] = $val;
+            } else {
+                throw new Exception('Fahrt hat kein Feld: ' . $key);
+            }
+        }
+    }
+
     private function getBachelorsSelector($params) {
         $conditions = [
             'fahrt_id' => $this->fid
         ];
         if (isset($params['waiting'])) {
-            $conditions['transferred' . (($params['waiting']) ? '' : '[!]')] = null;
-            $conditions['on_waitlist'] = ($params['waiting']) ? 1 : 0;
+            if ($params['waiting']) {
+                $conditions['transferred'] = null;
+                $conditions['on_waitlist'] = 1;
+            } else {
+                $conditions['OR'] = [
+                    'on_waitlist' => 0,
+                    'AND' => [
+                        'transferred[!]' => null,
+                        'on_waitlist' => 1
+                    ]
+                ];
+            }
+
         }
         if (isset($params['essen']))
             $conditions['essen'] = $params['essen'];
@@ -75,7 +122,6 @@ class Fahrt {
      */
     public function getBachelors($params) {
         $selector = $this->getBachelorsSelector($params);
-
         return $this->environment->database->select($selector['table'], $selector['fields'], $selector['where']);
     }
 
@@ -93,7 +139,7 @@ class Fahrt {
 
     public function get($field) {
         if (in_array($field, Fahrt::$ALLOWED_FIELDS))
-            return $this->data[$field];
+            return $this->getFahrtDetails()[$field];
         else
             throw new Exception('Dieses Feld ist nicht vorhanden!');
     }
@@ -117,6 +163,13 @@ class Fahrt {
         return $ret;
     }
 
+    public function getGPS() {
+        $pin = $this->getFahrtDetails()['map_pin'];
+        if (!preg_match("/\\d+\\.\\d+ \\d+\\.\\d+/m", $pin))
+            return '71.555267 99.690962';
+        return $pin;
+    }
+
     public function getNumMaxSpots() {
         return $this->getFahrtDetails()['max_bachelor'];
     }
@@ -126,11 +179,22 @@ class Fahrt {
         return $this->environment->database->count('bachelor', $selector['where']);
     }
 
-    public function getRegistrationState() {
-        comm_verbose(3, 'checking if fid ' . $this->fid . ' is open');
+    public function getTimeToOpen() {
+        $opentime = $this->getFahrtDetails()['opentime'];
+        return $opentime - time();
+    }
 
+    public function getOpenTime() {
+        return $this->getFahrtDetails()['opentime'];
+    }
+
+    public function getRegistrationState() {
         if (!$this->environment->database->has('fahrten', ['AND' => ['fahrt_id' => $this->fid, 'regopen' => 1]]))
             return Fahrt::STATUS_IS_CLOSED;
+
+        $timeToOpen = $this->getTimeToOpen();
+        if ($timeToOpen > 0)
+            return Fahrt::STATUS_IS_COUNTDOWN;
 
         $cnt = $this->getNumTakenSpots();
         $max = $this->getNumMaxSpots();

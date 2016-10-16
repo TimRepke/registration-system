@@ -86,17 +86,18 @@ class Bachelor {
     public static function makeFromForm($isNew = true) {
         $tmpEnv = Environment::getEnv();
         $fahrt = $tmpEnv->getTrip();
-        $errors = [];
+        $errorBachelor = new Bachelor(null);
+
         if (is_null($fahrt))
-            $errors = ['Ungültige Fahrt!'];
+            $errorBachelor->validationErrors = ['Ungültige Fahrt!'];
         elseif ($fahrt->getRegistrationState() == Fahrt::STATUS_IS_CLOSED)
-            $errors = ['Anmeldung zur Fahrt bereits geschlossen!'];
+            $errorBachelor->validationErrors = ['Anmeldung zur Fahrt bereits geschlossen!'];
         else {
             $newBachelor = new Bachelor($fahrt, $isNew);
             $newBachelor->populateAndValidate();
             return $newBachelor;
         }
-        return $errors;
+        return $errorBachelor;
     }
 
     /**
@@ -303,7 +304,11 @@ class Bachelor {
     }
 
     public function isDataValid() {
-        return !empty($this->validationResult);
+        return empty($this->validationErrors);
+    }
+
+    public function getValidationErrors() {
+        return $this->validationErrors;
     }
 
     /**
@@ -326,6 +331,7 @@ class Bachelor {
 
         $this->set(['fahrt_id' => $this->fahrt->getID(), 'version' => 1]);
 
+        $this->validationErrors = [];
         $this->validateField('forname', $invalidChars, 'Fehlerhafter oder fehlender Vorname!');
         $this->validateField('sirname', $invalidChars, 'Fehlerhafter oder fehlender Nachname!');
         $this->validateField('pseudo', $invalidChars, 'Fehlerhafter oder fehlender Anzeigename!');
@@ -376,12 +382,17 @@ class Bachelor {
                     $vals = array_values($check);
                     $keys = array_keys($check);
 
-                    // on error
-                    if (!in_array($tmp, $vals) && !in_array($tmp, $keys))
+                    if (in_array($tmp, $vals))
+                        $val = array_search($tmp, $check);
+                    elseif (in_array($tmp, $keys))
+                        $val = $tmp;
+                    else {
                         array_push($this->validationErrors, $errmess);
-
-                    // on success
-                    $this->set([$index => (in_array($tmp, $vals)) ? $tmp : $check[$tmp]]);
+                        $val = $keys[0];
+                    }
+                    if ($index == 'anday' or $index == 'abday')
+                        $val = $tmp;
+                    $this->set([$index => $val]);
                 } // check captcha
                 elseif ($check == "captcha") {
                     if (!(isset($_SESSION['captcha']) && strtolower($tmp) == strtolower($_SESSION['captcha']))) {
@@ -399,9 +410,12 @@ class Bachelor {
                 elseif ($check == "comment") {
                     $this->set([$index => htmlspecialchars($tmp, ENT_QUOTES)]);
                 } // check virgin field
-                elseif ($index == "virgin") {
+                elseif ($check == "virgin") {
                     // NOTE: for consistency: virgin = 0 means > 18
-                    $this->set([$index => ($_REQUEST[$index] == "Ja") ? 0 : 1]);
+                    if (empty($tmp) or $tmp == 'UNSET')
+                        array_push($this->validationErrors, $errmess);
+                    else
+                        $this->set([$index => ($tmp == 'JA') ? 0 : 1]);
                 } //everything else
                 else {
                     // check with regex
