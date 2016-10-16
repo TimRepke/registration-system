@@ -35,7 +35,7 @@ class Environment {
     protected function __construct($admin = false) {
         global $config_db, $config_studitypen, $config_essen, $config_reisearten, $config_invalidCharsRegEx,
                $config_reisearten_o, $config_essen_o, $config_studitypen_o, $config_baseurl, $config_basepath,
-               $config_mailtag, $config_impressum, $config_reisearten_destroyed;
+               $config_mailtag, $config_impressum, $config_reisearten_destroyed, $config_databse_debug;
 
         $this->database = new medoo(array(
             'database_type' => $config_db["type"],
@@ -64,7 +64,8 @@ class Environment {
             'baseURL' => $config_baseurl,
             'basePath' => $config_basepath,
             'mailTag' => $config_mailtag,
-            'impressum' => $config_impressum
+            'impressum' => $config_impressum,
+            'databaseDebug' => $config_databse_debug
         ];
 
         $this->bachelor = null;
@@ -77,6 +78,13 @@ class Environment {
         }
     }
 
+    public function __destruct() {
+        if ($this->sysconf['databaseDebug']) {
+            echo '<pre>';
+            var_dump($this->database->log());
+            echo '</pre>';
+        }
+    }
     // ========================================================================================================
     // ADMIN STUFF
 
@@ -236,9 +244,9 @@ class Environment {
         return null;
     }
 
-    public function getBachelor($allowTripIdFallback = false, $fallbackNew=false) {
+    public function getBachelor($allowTripIdFallback = false, $fallbackNew = false, $declareNew = false) {
         if ($this->formDataReceived())
-            return Bachelor::makeFromForm();
+            return Bachelor::makeFromForm($declareNew);
         $bid = $this->getSelectedBachelorId();
         $trip = $this->getTrip($allowTripIdFallback);
         if (!is_null($bid) and !is_null($trip))
