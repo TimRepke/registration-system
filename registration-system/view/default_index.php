@@ -25,6 +25,13 @@ abstract class DefaultIndex {
         return str_replace(array("@","."),array("&Oslash;", "&middot;"), $mail);
     }
 
+    protected function translateOption($opt, $val) {
+        $conf = $this->environment->oconfig[$opt];
+        if (isset($conf[$val]))
+            return $conf[$val];
+        return $val;
+    }
+
     public function render() {
         ?>
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
