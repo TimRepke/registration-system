@@ -20,6 +20,7 @@ class Environment {
     public $sysconf;
 
     private $permission_level = Environment::LOGIN_RIGHTS_NONE;
+    private $adminEnv;
 
     // if the context provides a specific trip or bachelor, these are set
     /** @var Fahrt */
@@ -29,6 +30,7 @@ class Environment {
 
     public static function getEnv($admin = false) {
         if (self::$__instance == NULL) self::$__instance = new Environment($admin);
+        if (!self::$__instance->adminEnv and $admin) self::$__instance = new Environment($admin);
         return self::$__instance;
     }
 
@@ -36,6 +38,8 @@ class Environment {
         global $config_db, $config_studitypen, $config_essen, $config_reisearten, $config_invalidCharsRegEx,
                $config_reisearten_o, $config_essen_o, $config_studitypen_o, $config_baseurl, $config_basepath,
                $config_mailtag, $config_impressum, $config_reisearten_destroyed, $config_databse_debug;
+
+        $this->adminEnv = $admin;
 
         $this->database = new medoo(array(
             'database_type' => $config_db["type"],

@@ -7,7 +7,7 @@ abstract class DefaultAdmin {
     protected $environment;
 
     protected function __construct() {
-        $this->environment = Environment::getEnv();
+        $this->environment = Environment::getEnv(true);
     }
 
     abstract protected function echoHeaders();
@@ -125,7 +125,7 @@ abstract class DefaultAdmin {
         <!DOCTYPE html>
         <html>
         <head>
-            <title><?php $this->echoTitle() ?>}</title>
+            <title><?php $this->echoTitle() ?></title>
             <meta charset="UTF-8"/>
             <link rel="stylesheet" href="<?php echo $this->resolvePath('admin_style.css') ?>"/>
             <?php $this->echoHeaders(); ?>
