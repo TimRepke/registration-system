@@ -10,7 +10,6 @@ class AdminBase extends DefaultAdmin {
     const STATE_404 = 2;
     const STATE_500 = 3;
 
-    protected $ajaxMode;
     protected $isAdmin;
     protected $isSudo;
     protected $requerestedPage;
@@ -137,7 +136,11 @@ class AdminBase extends DefaultAdmin {
     }
 
     public function exec() {
-        $this->render();
+        if ($this->pageStatus === AdminBase::STATE_200 and $this->page->ajaxMode) {
+            echo $this->page->getAjax();
+        } else {
+            $this->render();
+        }
     }
 }
 
