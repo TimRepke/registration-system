@@ -2,13 +2,8 @@
 
 class AdminAdminPage extends AdminPage {
 
-    private $message_succ;
-    private $message_err;
-
     public function __construct($base) {
         parent::__construct($base);
-        $this->message_succ = null;
-        $this->message_err = null;
 
         if (isset($_REQUEST['us_submit'])) {
             if (!isset($_REQUEST['users'])) {
@@ -66,17 +61,6 @@ class AdminAdminPage extends AdminPage {
                 }
             }
         }
-    }
-
-    private function getMessage() {
-        $ret = '';
-        if (!empty($this->message_succ)) {
-            $ret .= $this->getMessageBox($this->message_succ, 'success');
-        }
-        if (!empty($this->message_err)) {
-            $ret .= $this->getMessageBox($this->message_err, 'error');
-        }
-        return $ret;
     }
 
     private function getUserFileContent() {
