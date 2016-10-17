@@ -1,108 +1,161 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: it
- * Date: 8/8/14
- * Time: 4:19 PM
- */
+
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
 session_start();
 
-require_once("commons_admin.php");
-require_once("../frameworks/commons.php");
-require_once("pages.php");
-require_once("../config.inc.php");
-require_once("../frameworks/medoo.php");
-require_once('../frameworks/Environment.php');
-require '../lang.php';
+require_once __DIR__ . '/../view/default_admin.php';
 
-$template = file_get_contents("../view/admin_template.html");
-$title = "FSFahrt - Admin Panel";
-$navigation = "";
-$headers = "";
-$header = "";
-$footer = "";
-$text = "";
-$ajax = "";
+class AdminBase extends DefaultAdmin {
 
-$environment = Environment::getEnv(true);
+    const STATE_200 = 0;
+    const STATE_403 = 1;
+    const STATE_404 = 2;
 
+    protected $ajaxMode;
+    protected $isAdmin;
+    protected $isSudo;
+    protected $requerestedPage;
+    /** @var AdminPage */
+    protected $page;
+    protected $pageStatus = null;
 
-if ($environment->isAdmin()) {
-    $menu = array(
-        "Anmeldung" => "front",
-        "Übersicht" => "stuff",
-        "Meldeliste" => "list",
-        "Warteliste" => "wl",
-        "Kosten" => "cost",
-        "Rundmail" => "mail",
-        "Notizen" => "notes",
-        "Listenexport" => "export",
-        "Infos" => "infos",
-        "SA*" => "admin"
-    );
+    private static $PAGES = [
+        'front' => 'Anmeldung',
+        'overview' => 'Übersicht',
+        'list' => 'Meldeliste',
+        'wl' => 'Warteliste',
+        'cost' => 'Kosten',
+        'mail' => 'Rundmail',
+        'notes' => 'Notizen',
+        'export' => 'Listenexport',
+        'infos' => 'Infos',
+        'admin' => 'SA*'
+    ];
+    private static $DEFAULT_PAGE = 'overview';
+    private static $SUPERADMIN_PAGES = ['admin'];
 
-    $admin_db = new medoo(array(
-        'database_type' => $config_db["type"],
-        'database_name' => $config_db["name"],
-        'server' => $config_db["host"],
-        'username' => $config_db["user"],
-        'password' => $config_db["pass"]
-    ));
+    public function __construct() {
+        parent::__construct();
 
-    $page = isset($_GET['page']) ? $_GET['page'] : "";
-    $navigation = generateNavigationItems($page, $menu);
+        $this->isAdmin = $this->environment->isAdmin();
+        $this->isSudo = $this->environment->isSuperAdmin();
 
-    switch ($page) {
-        case "front":
-            page_front();
-            break;
-        case "":
-        case "stuff":
-            page_stuff();
-            break;
-        case "list":
-            page_list();
-            break;
-        case "wl":
-            page_wl();
-            break;
-        case "cost":
-            page_cost();
-            break;
-        case "mail":
-            page_mail();
-            break;
-        case "notes":
-            page_notes();
-            break;
-        case "export":
-            page_export();
-            break;
-        case "infos":
-            page_infos();
-            break;
-        case "admin":
-            if (isSuperAdmin()) page_sa();
-            else page_404($page);
-            break;
-        default:
-            page_404($page);
+        $this->requerestedPage = isset($_GET['page']) ? $_GET['page'] : AdminBase::$DEFAULT_PAGE;
+        $this->page = $this->getRequestedPage();
     }
-} else {
-    $text .= file_get_contents("../view/admin_login_form.html");
+
+    private function isLoggedIn() {
+        return $this->isAdmin or $this->isSudo;
+    }
+
+    private function getRequestedPage() {
+        if ($this->isLoggedIn()) {
+            $pagefile = __DIR__ . '/pages_' . $this->requerestedPage . '.php';
+            if (!isset(AdminBase::$PAGES[$this->requerestedPage]) or
+                (in_array($this->requerestedPage, AdminBase::$SUPERADMIN_PAGES) and !$this->isSudo) or
+                !@file_exists($pagefile)
+            ) {
+                $this->pageStatus = AdminBase::STATE_404;
+                return null;
+            } else {
+                try {
+                    require_once $pagefile;
+                    $classname = 'Admin' . ucfirst($this->requerestedPage) . 'Page';
+                    $this->pageStatus = AdminBase::STATE_200;
+                    return new $classname();
+                } catch (Exception $e) {
+                    $this->pageStatus = AdminBase::STATE_404;
+                    return null;
+                }
+            }
+        } else {
+            $this->pageStatus = AdminBase::STATE_403;
+            return null;
+        }
+
+    }
+
+    protected function echoHeaders() {
+        if (!empty($this->page))
+            echo $this->page->getHeaders();
+    }
+
+    protected function echoContent() {
+        if ($this->pageStatus === AdminBase::STATE_200) {
+            $this->page->getText();
+        } elseif ($this->pageStatus === AdminBase::STATE_403) {
+            $this->echoLoginForm();
+        } elseif ($this->requerestedPage == 'front') {
+            $this->echoRegistrationPage();
+        } else {
+            $this->echoPage404();
+        }
+    }
+
+    protected function echoHeader() {
+        if (!empty($this->page))
+            echo $this->page->getHeader();
+    }
+
+    protected function echoTitle() {
+        echo 'FSFahrt - Admin Panel';
+    }
+
+    protected function echoFooter() {
+        if (!empty($this->page))
+            echo $this->page->getFooter();
+    }
+
+    protected function echoNavigation() {
+        if ($this->isLoggedIn()) {
+            echo $this->makeNavigationItems(array_flip(AdminBase::$PAGES));
+        }
+    }
+
+    private function echoPage404() {
+        echo '
+        <div style="background-color:black; color:antiquewhite; font-family: \'Courier New\', Courier, monospace;height: 100%; width: 100%;position:fixed; top:0; padding-top:40px;">
+            $ get-page ' . $this->requerestedPage . '<br />
+            404 - page not found (' . $this->requerestedPage . ')<br />
+            $ <blink>&#9611;</blink>
+        </div>';
+    }
+
+    private function echoRegistrationPage() {
+        $baseurl = $this->environment->sysconf['baseURL'];
+        $fid = $this->environment->getCurrentTripId();
+        echo '<style>#admin-content{padding:0}</style>
+            <a href="' . $baseurl . '?fid=' . $fid . '">' . $baseurl . '?fid=' . $fid . '</a><br />
+            <iframe src="' . $baseurl . '?fid=' . $fid . '"
+                    style="height:90vh; width:100%; position: absolute; border:0;"></iframe>';
+    }
+
+    public function exec() {
+
+    }
 }
 
-if (isset($_REQUEST['ajax']))
-    echo $ajax;
-else {
-    $rep = ["{headers}" => $headers,
-        "{text}" => $text,
-        "{navigation}" => $navigation,
-        "{title}" => $title,
-        "{header}" => $header,
-        "{footer}" => $footer];
-    echo str_replace(array_keys($rep), array_values($rep), $template);
+abstract class AdminPage {
+    public $printMode = false;
+
+    abstract public function getHeaders();
+
+    abstract public function getHeader();
+
+    abstract public function getFooter();
+
+    abstract public function getText();
+
+    abstract public function getAjax();
+
+    public function __construct($base) {
+        $this->environment = Environment::getEnv(true);
+        $this->ajaxMode = isset($_REQUEST['ajax']);
+        $this->base = $base;
+    }
+
 }
+
+(new AdminBase())->exec();
