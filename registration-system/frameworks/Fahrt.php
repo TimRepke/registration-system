@@ -198,6 +198,10 @@ class Fahrt {
         return $pin;
     }
 
+    public function getLenTage() {
+        return $this->environment->database->query("SELECT DATEDIFF(bis, von) AS diff FROM fahrten WHERE fahrt_id=" . $this->fid)->fetch(0)['diff'];
+    }
+
     public function getNumMaxSpots() {
         return $this->getFahrtDetails()['max_bachelor'];
     }
