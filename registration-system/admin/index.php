@@ -1,8 +1,4 @@
 <?php
-
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
-
 session_start();
 
 require_once __DIR__ . '/../view/default_admin.php';
@@ -64,7 +60,7 @@ class AdminBase extends DefaultAdmin {
                     require_once $pagefile;
                     $classname = 'Admin' . ucfirst($this->requerestedPage) . 'Page';
                     $this->pageStatus = AdminBase::STATE_200;
-                    return new $classname();
+                    return new $classname($this);
                 } catch (Exception $e) {
                     $this->pageStatus = AdminBase::STATE_404;
                     return null;
@@ -84,7 +80,7 @@ class AdminBase extends DefaultAdmin {
 
     protected function echoContent() {
         if ($this->pageStatus === AdminBase::STATE_200) {
-            $this->page->getText();
+            echo $this->page->getText();
         } elseif ($this->pageStatus === AdminBase::STATE_403) {
             $this->echoLoginForm();
         } elseif ($this->requerestedPage == 'front') {
@@ -133,12 +129,17 @@ class AdminBase extends DefaultAdmin {
     }
 
     public function exec() {
-
+        $this->render();
     }
 }
 
 abstract class AdminPage {
     public $printMode = false;
+    public $ajaxMode = false;
+    /** @var  AdminBase */
+    protected $base;
+    /** @var  Fahrt */
+    protected $fahrt;
 
     abstract public function getHeaders();
 
@@ -154,6 +155,7 @@ abstract class AdminPage {
         $this->environment = Environment::getEnv(true);
         $this->ajaxMode = isset($_REQUEST['ajax']);
         $this->base = $base;
+        $this->fahrt = $this->environment->getTrip(true);
     }
 
 }
