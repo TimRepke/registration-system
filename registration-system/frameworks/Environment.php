@@ -37,7 +37,8 @@ class Environment {
     protected function __construct($admin = false) {
         global $config_db, $config_studitypen, $config_essen, $config_reisearten, $config_invalidCharsRegEx,
                $config_reisearten_o, $config_essen_o, $config_studitypen_o, $config_baseurl, $config_basepath,
-               $config_mailtag, $config_impressum, $config_reisearten_destroyed, $config_databse_debug;
+               $config_mailtag, $config_impressum, $config_reisearten_destroyed, $config_databse_debug,
+               $config_userfile, $config_current_fahrt_file;
 
         $this->adminEnv = $admin;
 
@@ -69,7 +70,9 @@ class Environment {
             'basePath' => $config_basepath,
             'mailTag' => $config_mailtag,
             'impressum' => $config_impressum,
-            'databaseDebug' => $config_databse_debug
+            'databaseDebug' => $config_databse_debug,
+            'adminUsersFile' => $config_userfile,
+            'currentFahrtFile' => $config_current_fahrt_file
         ];
 
         $this->bachelor = null;

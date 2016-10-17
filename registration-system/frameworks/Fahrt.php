@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__.'/Bachelor.php';
-require_once __DIR__.'/Environment.php';
+require_once __DIR__ . '/Bachelor.php';
+require_once __DIR__ . '/Environment.php';
 
 class Fahrt {
 
@@ -13,14 +13,32 @@ class Fahrt {
     public static $ALLOWED_FIELDS = ['fahrt_id', 'titel', 'ziel', 'von', 'bis', 'regopen', 'beschreibung', 'leiter', 'kontakt',
         'map_pin', 'max_bachelor', 'wikilink', 'paydeadline', 'payinfo', 'opentime'];
 
+    /** @var Environment */
     private $environment;
     private $fid;
     private $data;
+    private $newFahrt = false;
 
     function __construct($fid) {
         $this->environment = Environment::getEnv();
         $this->fid = $fid;
         $this->data = null;
+    }
+
+    public static function getEmptyFahrt() {
+        $newFahrt = new Fahrt(null);
+        foreach (Fahrt::$ALLOWED_FIELDS as $field) {
+            $newFahrt->data[$field] = '';
+        }
+        unset($newFahrt->data['fahrt_id']);
+        $newFahrt->set([
+            'titel' => 'Neue Fahrt',
+            'map_pin' => '52.42951196033782 13.530490995971718',
+            'von' => date('Y-m-d'),
+            'bis' => date('Y-m-d')
+        ]);
+        $newFahrt->newFahrt = true;
+        return $newFahrt;
     }
 
     public static function getFahrtFromData($data) {
@@ -40,7 +58,7 @@ class Fahrt {
         if (empty($fahrtenData))
             return null;
 
-        $fahrten = array_map(function($fahrtData) {
+        $fahrten = array_map(function ($fahrtData) {
             return Fahrt::getFahrtFromData($fahrtData);
         }, $fahrtenData);
         return $fahrten;
@@ -55,6 +73,16 @@ class Fahrt {
             } else {
                 throw new Exception('Fahrt hat kein Feld: ' . $key);
             }
+        }
+    }
+
+    public function save() {
+        if ($this->environment->isSuperAdmin() and $this->newFahrt) {
+            return $this->environment->database->insert('fahrten', $this->data);
+        } elseif ($this->environment->isAdmin() and !$this->newFahrt) {
+            return $this->environment->database->update('fahrten', $this->data, ['fahrt_id' => $this->fid]);
+        } else {
+            throw new Exception('Nicht erlaubt!');
         }
     }
 
@@ -148,16 +176,16 @@ class Fahrt {
         return $this->fid;
     }
 
-    public function getPossibleDates(){
+    public function getPossibleDates() {
         $details = $this->getFahrtDetails();
         $end = new DateTime($details['bis']);
         $period = new DatePeriod(
             new DateTime($details['von']),
             new DateInterval('P1D'),
-            $end->modify( '+1 day' )
+            $end->modify('+1 day')
         );
         $ret = [];
-        foreach($period as $d){
+        foreach ($period as $d) {
             array_push($ret, $d->format("d.m.Y"));
         }
         return $ret;

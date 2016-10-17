@@ -8,6 +8,7 @@ class AdminBase extends DefaultAdmin {
     const STATE_200 = 0;
     const STATE_403 = 1;
     const STATE_404 = 2;
+    const STATE_500 = 3;
 
     protected $ajaxMode;
     protected $isAdmin;
@@ -62,7 +63,8 @@ class AdminBase extends DefaultAdmin {
                     $this->pageStatus = AdminBase::STATE_200;
                     return new $classname($this);
                 } catch (Exception $e) {
-                    $this->pageStatus = AdminBase::STATE_404;
+                    $this->pageStatus = AdminBase::STATE_500;
+                    $this->exceptionMessage = $e->getMessage();
                     return null;
                 }
             }
@@ -113,9 +115,15 @@ class AdminBase extends DefaultAdmin {
     private function echoPage404() {
         echo '
         <div style="background-color:black; color:antiquewhite; font-family: \'Courier New\', Courier, monospace;height: 100%; width: 100%;position:fixed; top:0; padding-top:40px;">
-            $ get-page ' . $this->requerestedPage . '<br />
-            404 - page not found (' . $this->requerestedPage . ')<br />
-            $ <blink>&#9611;</blink>
+            $ get-page ' . $this->requerestedPage . '<br />';
+        if ($this->pageStatus == AdminBase::STATE_500) {
+            echo '500 - internal error (' . $this->exceptionMessage . ')<br />';
+        } else {
+            echo '404 - page not found (' . $this->requerestedPage . ')<br />';
+        }
+        echo 'access level admin: ' . ($this->isAdmin ? 'yes' : 'no') .
+            '<br /> access level sudo: ' . ($this->isAdmin ? 'yes' : 'no') .
+            '<br />$ <blink>&#9611;</blink>
         </div>';
     }
 
@@ -150,6 +158,15 @@ abstract class AdminPage {
     abstract public function getText();
 
     abstract public function getAjax();
+
+    /**
+     * @param $content
+     * @param $mode string (info, success, warning, error)
+     * @return string
+     */
+    protected function getMessageBox($content, $mode) {
+        return '<div class="' . $mode . '">' . $content . '</div>';
+    }
 
     public function __construct($base) {
         $this->environment = Environment::getEnv(true);
