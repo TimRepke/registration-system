@@ -152,6 +152,9 @@ abstract class AdminPage {
     /** @var  Fahrt */
     protected $fahrt;
 
+    protected $message_succ;
+    protected $message_err;
+
     abstract public function getHeaders();
 
     abstract public function getHeader();
@@ -171,11 +174,24 @@ abstract class AdminPage {
         return '<div class="' . $mode . '">' . $content . '</div>';
     }
 
+    protected function getMessage() {
+        $ret = '';
+        if (!empty($this->message_succ)) {
+            $ret .= $this->getMessageBox($this->message_succ, 'success');
+        }
+        if (!empty($this->message_err)) {
+            $ret .= $this->getMessageBox($this->message_err, 'error');
+        }
+        return $ret;
+    }
+
     public function __construct($base) {
         $this->environment = Environment::getEnv(true);
         $this->ajaxMode = isset($_REQUEST['ajax']);
         $this->base = $base;
         $this->fahrt = $this->environment->getTrip(true);
+        $this->message_err = null;
+        $this->message_succ = null;
     }
 
 }

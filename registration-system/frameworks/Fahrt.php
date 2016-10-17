@@ -194,7 +194,7 @@ class Fahrt {
     public function getGPS() {
         $pin = $this->getFahrtDetails()['map_pin'];
         if (!preg_match("/\\d+\\.\\d+ \\d+\\.\\d+/m", $pin))
-            return '71.555267 99.690962';
+            return '52.4263218 13.5223815';//'71.555267 99.690962';
         return $pin;
     }
 
