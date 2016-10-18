@@ -139,12 +139,23 @@ class AdminBase extends DefaultAdmin {
         if ($this->pageStatus === AdminBase::STATE_200 and $this->page->ajaxMode) {
             echo $this->page->getAjax();
         } else {
-            $this->render();
+            if (!empty($this->page) and $this->page->template == AdminPage::TEMPLATE_PRINT_FULL) {
+                $this->renderPrint();
+            } elseif (!empty($this->page) and $this->page->template == AdminPage::TEMPLATE_PRINT_FULL) {
+                $this->renderPrintNoHeaders();
+            } else {
+                $this->render();
+            }
         }
     }
 }
 
 abstract class AdminPage {
+
+    const TEMPLATE_DEFAULT = 0;
+    const TEMPLATE_PRINT_FULL = 1;
+    const TEMPLATE_PRINT_MIN = 2;
+
     public $printMode = false;
     public $ajaxMode = false;
     /** @var  AdminBase */
@@ -154,6 +165,8 @@ abstract class AdminPage {
 
     protected $message_succ;
     protected $message_err;
+
+    public $template;
 
     abstract public function getHeaders();
 
@@ -192,6 +205,7 @@ abstract class AdminPage {
         $this->fahrt = $this->environment->getTrip(true);
         $this->message_err = null;
         $this->message_succ = null;
+        $this->template = self::TEMPLATE_DEFAULT;
     }
 
     /**

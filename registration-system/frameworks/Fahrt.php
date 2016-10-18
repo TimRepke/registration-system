@@ -107,6 +107,8 @@ class Fahrt {
         }
         if (isset($params['essen']))
             $conditions['essen'] = $params['essen'];
+        if (isset($params['antyp']))
+            $conditions['antyp'] = $params['antyp'];
         if (isset($params['studityp']))
             $conditions['studityp'] = $params['studityp'];
         if (isset($params['virgin']))
@@ -148,8 +150,10 @@ class Fahrt {
      *
      * @return medoo result
      */
-    public function getBachelors($params) {
+    public function getBachelors($params, $order = null) {
         $selector = $this->getBachelorsSelector($params);
+        if (!empty($order))
+            $selector['where']['ORDER'] = $order;
         return $this->environment->database->select($selector['table'], $selector['fields'], $selector['where']);
     }
 
