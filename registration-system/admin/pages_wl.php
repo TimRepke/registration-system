@@ -1,214 +1,141 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tim
- * Date: 10/2/14
- * Time: 7:53 PM
- */
-error_reporting(E_ALL | E_STRICT);
-ini_set("display_errors",1);
-global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_studitypen, $config_essen, $config_reisearten, $config_essen_o, $config_reisearten_o, $config_baseurl;
 
-require_once("../frameworks/commons.php");
+class AdminWlPage extends AdminPage {
 
-// deletes the entry completely
-if(isset($_REQUEST['delete'])){
-    $admin_db->delete("bachelor", ["bachelor_id"=> $_REQUEST['delete']]);
-}
+    public function __construct($base) {
+        parent::__construct($base);
 
-// moves entry to final list
-if(isset($_REQUEST['move'])){
-    $transdata = $admin_db->get("waitlist", [
-        "fahrt_id",
-        "anm_time",
-        "forname",
-        "sirname",
-        "mehl",
-        "pseudo",
-        "antyp",
-        "abtyp",
-        "anday",
-        "abday",
-        "comment",
-        "studityp",
-        "virgin",
-        "public",
-        "essen"],
-        ["AND" => [
-            "waitlist_id" => $_REQUEST['move'],
-            "fahrt_id"    => $config_current_fahrt_id
-        ]]
-    );
-    $tinsert = $tupdate = NULL;
-    if($transdata){
-        $transdata['bachelor_id'] = $_REQUEST['move'];
+        $db = $this->environment->database;
+        $fid = $this->fahrt->getID();
 
-        $duplicate = FALSE;
-        if($admin_db->has("bachelor", ["AND" =>[
-                                         "bachelor_id" => $_REQUEST['move'],
-                                         "fahrt_id"    => $config_current_fahrt_id]]))
-            $duplicate = TRUE;
-        else{
-            $tinsert = $admin_db->insert("bachelor", $transdata);
-            $tupdate = $admin_db->update("waitlist", ["transferred" => time()], ["AND" => [
-                                                                                    "waitlist_id" => $_REQUEST['move'],
-                                                                                    "fahrt_id"    => $config_current_fahrt_id
-                                                                                ]]);
+        // deletes the entry completely
+        if(isset($_REQUEST['delete'])){
+            $delResult = $db->delete('bachelor', ['AND' => ['bachelor_id' => $_REQUEST['delete'], 'fahrt_id' => $fid]]);
+            if (empty($delResult)) $this->message_err = 'Löschversuch versagt!';
+            else $this->message_succ = 'Löschung geglückt.';
         }
+
+        // moves entry to final list
+        if(isset($_REQUEST['move'])){
+            try {
+                $bachelor = Bachelor::makeFromDB($this->fahrt, $_REQUEST['move']);
+                $transferResult = $bachelor->waitlistToRegistration();
+                if ($transferResult == Bachelor::SAVE_SUCCESS) {
+                    $this->message_succ = 'Person erfolgreich von Warteliste auf Anmeldeliste übertragen.';
+                } else {
+                    throw new Exception('Hat nicht geklappt. Fehlercode '.$transferResult);
+                }
+            } catch (Exception $e) {
+                $this->message_err = $e->getMessage();
+            }
+        }
+
     }
 
-    if(!$transdata || is_null($tinsert) || is_null($tupdate) || $duplicate)
-        $text .= '<div style="color:red;">Some error at transfer...</div>';
-    else{
-        $text .= '<div style="color:green;">Transfer seems successfull, sending automatic mail now to '.$transdata['mehl'].'</div>';
-
-        // === notify success ===
-        $from = $admin_db->get("fahrten", ["kontakt","leiter", "paydeadline", "payinfo", "wikilink"],
-            ["fahrt_id"=>$transdata['fahrt_id']]);
-
-        foreach ([ "lang_waittoregmail", "lang_payinfomail"] as $mail_lang) {
-            $mail = comm_get_lang($mail_lang, [
-                "{{url}}" => $config_baseurl . "status.php?hash=" . $_REQUEST['move'],
-                "{{organisator}}" => $from['leiter'],
-                "{{paydeadline}}" => $from['paydeadline'],
-                "{{payinfo}}" => $from['payinfo'],
-                "{{wikilink}}" => $from['wikilink']]);
-            $bcc = $mail_lang === "lang_payinfomail" ? $from['kontakt'] : NULL;
-            comm_send_mail($admin_db, $transdata['mehl'], $mail, $from['kontakt'], $bcc);
-        }
+    public function getHeaders() {
+        return '
+            <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
+            <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
+            <script type="text/javascript" src="../view/js/jquery.dataTables.1.10.9.min.js"></script>';
     }
 
-}
+    public function getHeader() {
+        return '';
+    }
 
+    public function getFooter() {
+        return '';
+    }
 
+    public function getText() {
+        $people = $this->environment->database->select('bachelor',
+            Bachelor::$ALLOWED_FIELDS,
+            ['AND'=> ['on_waitlist'=> 1, 'fahrt_id'=>$this->fahrt->getID()]]);
 
-
-
-$headers =<<<END
-    <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
-    <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="../view/js/jquery.dataTables.1.10.9.min.js"></script>
-END;
-
-    $text .= "<h1>Warteliste</h1>";
-
-    $columns = array(
-        "waitlist_id",
-        "fahrt_id",
-        "anm_time",
-        "forname",
-        "sirname",
-        "mehl",
-        "pseudo",
-        "antyp",
-        "abtyp",
-        "anday",
-        "abday",
-        "comment",
-        "studityp",
-        "virgin",
-        "essen",
-        "transferred"
-    );
-
-    $columnFunctions = array(
-        "Anmelde-ID" => function($person) { return $person["waitlist_id"]; }
-        //,"FahrtID" => function($person) { return $person["fahrt_id"]; }
-        ,"Anmeldung" => function($person) { return date("d.m.Y", $person['anm_time']); },
-        "Name" => function($person) { return "<a href='mailto:".$person["mehl"]."?subject=FS-Fahrt'>".$person["forname"]." ".$person["sirname"]." (".$person["pseudo"].")</a>"; },
-        "Anreisetyp" => function($person) { global $config_reisearten_o; return array_search($person["antyp"], $config_reisearten_o); },
-        "Abreisetyp" => function($person) { global $config_reisearten_o; return array_search($person["abtyp"], $config_reisearten_o); },
-        "Anreisetag" => function($person) { return  comm_from_mysqlDate( $person["anday"]); },
-        "Abreisetag" => function($person) { return comm_from_mysqlDate( $person["abday"]); },
-        "Kommentar" => function($person) { return $person["comment"]; },
-        "StudiTyp" => function($person) { return $person["studityp"]; },
-        "Essen" => function($person) { global $config_essen_o; return array_search($person["essen"], $config_essen_o); },
-        "18+" => function($person) { return (($person["virgin"]==0) ? "Ja" : "Nein"); },
-        "Uebertragen" => function($person) {
-                if(!is_numeric($person["transferred"]))
-                    return "<a href='?page=wl&move=".$person["waitlist_id"]."'>&#8614; übertragen</a>";
+        $columnFunctions = [
+            'Anmelde-ID' => function($person) { return $person['bachelor_id']; },
+            'Anmeldung' => function($person) { return date('d.m.Y', $person['anm_time']); },
+            'Name' => function($person) { return '<a href="mailto:'.$person['mehl'].'?subject=FS-Fahrt">'. $person['forname'].' '.$person['sirname'].' ('.$person['pseudo'].')</a>'; },
+            'Anreisetyp' => function($person) { return $person['antyp']; },
+            'Abreisetyp' => function($person) { return $person['abtyp']; },
+            'Anreisetag' => function($person) { return  $this->base->mysql2german( $person['anday']); },
+            'Abreisetag' => function($person) { return $this->base->mysql2german( $person['abday']); },
+            'Kommentar' => function($person) { return $person['comment']; },
+            'StudiTyp' => function($person) { return $person['studityp']; },
+            'Essen' => function($person) { global $config_essen_o; return array_search($person['essen'], $config_essen_o); },
+            '18+' => function($person) { return (($person['virgin']==0) ? 'Ja' : 'Nein'); },
+            'Uebertragen' => function($person) {
+                if(!is_numeric($person['transferred']))
+                    return '<a href="?page=wl&move='.$person['bachelor_id'].'">&#8614; übertragen</a>';
                 else
-                    return date("d.m.Y", $person['transferred']);
+                    return date('d.m.Y', $person['transferred']);
             }
-    );
+        ];
 
-    $text .= "Toggle Column: ";
-    $tcnt = 0;
-    foreach($columnFunctions as $key => $value){
-        $text .= '<a class="toggle-vis" data-column="'.$tcnt.'">'.$key.'</a> - ';
-        $tcnt++;
-    }
-    $text .= "<br />";
-
-    $text .= '
-    <table id="mlist" class="compact hover">
-        <thead>
-            <tr>';
-
-    foreach($columnFunctions as $key => $value)
-    {
-        $text .= "<th>".$key."</th>";
-    }
-    $text .= '
-            </tr>
-        </thead>
-        <tbody>';
-
-    $people = $admin_db->select('waitlist',$columns, array("fahrt_id"=>$config_current_fahrt_id));
-
-    foreach($people as $person) {
-        $text .= "<tr>";
-        foreach($columnFunctions as $key => $value){
-            $text .= "<td class='".$key.((strpos($columnFunctions['Uebertragen']($person), "href")>0) ? '' : ' list-backstepped')."'>".$value($person)."</td>";
+        $toggles = 'Toggle Column: ';
+        $thead = '';
+        foreach(array_keys($columnFunctions) as $tcnt => $key){
+            $toggles .= '<a class="toggle-vis" data-column="'.$tcnt.'">'.$key.'</a> - ';
+            $thead .= '<th>'.$key.'</th>';
         }
-        $text .= "</tr>";
-    }
 
-    $buttoncol = 11;
-    $text .=<<<END
-        </tbody>
-    </table>
-    <script type='text/javascript'>
-        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
-            "link-pre": function ( a ) {
-                var tmp = a.match(/<a [^>]+>([^<]+)<\/a>/);
-                if(tmp)
-                    return a.match(/<a [^>]+>([^<]+)<\/a>/)[1];
-                else
-                    return a;
+        $tbody = '';
+        foreach($people as $person) {
+            $tbody .= '<tr>';
+            foreach($columnFunctions as $key => $value){
+                $tbody .= '<td class="'.$key.((strpos($columnFunctions['Uebertragen']($person), "href")>0) ? '' : ' list-backstepped').'">'.$value($person).'</td>';
             }
-            ,
-            "dedate-pre": function(a){
-                var tmp = a.split(".");
-                console.log(tmp[2]+tmp[1]+tmp[0]);
-                if(tmp.length>2)
-                    return (tmp[2]+tmp[1]+tmp[0]);
-                return a;
-            }
-        } );
-        var ltab;
-        $(document).ready(function(){
-             ltab = $('#mlist').DataTable({
-                "columnDefs": [
-                    { type: 'dedate', targets: [1,5,6]},
-                    { type: 'link', targets: [2, 11] }
-                ],
-                "order": [[ 11, "desc" ], [1,"asc" ]],
-                "paging": false
+            $tbody .= '</tr>';
+        }
+
+        return '<h1>Warteliste</h1>'.
+            $toggles.'<br />
+            <table id="mlist" class="compact hover">
+                <thead>
+                    <tr>'.$thead.'</tr>
+                </thead>
+                <tbody>' .
+                    $tbody .
+                '</tbody>
+            </table>
+
+            <script type="text/javascript">
+                jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+                    "link-pre": function ( a ) {
+                        var tmp = a.match(/<a [^>]+>([^<]+)<\/a>/);
+                        if(tmp) return a.match(/<a [^>]+>([^<]+)<\/a>/)[1];
+                        else return a;
+                    },
+                    "dedate-pre": function(a){
+                        var tmp = a.split(".");
+                        console.log(tmp[2]+tmp[1]+tmp[0]);
+                        if(tmp.length>2) return (tmp[2]+tmp[1]+tmp[0]);
+                        return a;
+                    }
+                });
+                var ltab;
+                $(document).ready(function(){
+                    ltab = $("#mlist").DataTable({
+                        "columnDefs": [
+                            { type: "dedate", targets: [1,5,6]},
+                            { type: "link", targets: [2, 11] }
+                        ],
+                        "order": [[ 11, "desc" ], [1,"asc" ]],
+                        "paging": false
+                    });
+                $("a.toggle-vis").click( function (e) {
+                    e.preventDefault();
+                    // Get the column API object
+                    var column = ltab.column( $(this).attr("data-column") );
+                    // Toggle the visibility
+                    column.visible( ! column.visible() );
+                } );
             });
+        </script>';
+    }
 
-            $('a.toggle-vis').click( function (e) {
-                e.preventDefault();
-
-                // Get the column API object
-                var column = ltab.column( $(this).attr('data-column') );
-
-                // Toggle the visibility
-                column.visible( ! column.visible() );
-            } );
-
-        });
-
-    </script>
-END;
+    public function getAjax() {
+        return '';
+    }
+}
 
