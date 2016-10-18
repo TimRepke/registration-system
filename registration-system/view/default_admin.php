@@ -22,11 +22,15 @@ abstract class DefaultAdmin {
 
     abstract protected function echoFooter();
 
-    protected function resolvePath($resource) {
+    public function resolvePath($resource) {
         return $this->environment->sysconf['baseURL'] . 'view/' . $resource;
     }
 
     public static function mysql2german($date) {
+        if (preg_match('/\d{4}-\d{2}-\d{2}/', $date))
+            return date('d.m.Y', DateTime::createFromFormat('Y-m-d', $date)->getTimestamp());
+        if (preg_match('/\d{9}/', $date))
+            return date('d.m.Y', $date);
         return date('d.m.Y', strtotime($date));
     }
 
@@ -51,73 +55,6 @@ abstract class DefaultAdmin {
             $text .= '<a href="?page=' . $page . '">' . $name . '</a>';
         }
         return $text;
-    }
-
-
-    /**
-     * Puts out Label and Selection box
-     *
-     * @param $name
-     * @param $id
-     * @param $values
-     * @param $selected
-     * @param $subtext
-     * @return string
-     */
-    protected function getFormSel($name, $id, $values, $selected, $subtext) {
-        $r = '<label>' . $name . '
-        <span class="small">' . $subtext . '</span>
-        </label>
-        <select name="' . $id . '" id="' . $id . '">';
-        foreach ($values as $val) {
-            $r .= '<option value="' . $val . '"';
-            if ($val == $selected) $r .= ' selected';
-            $r .= '>' . $val . '</option>';
-        }
-        $r .= '</select>';
-
-        return $r;
-    }
-
-    /**
-     * Puts out Label and two selection boxes side by side right below
-     *
-     * @param $name
-     * @param $id
-     * @param $values
-     * @param $selected
-     * @param $id2
-     * @param $values2
-     * @param $selected2
-     * @param $subtext
-     * @return string
-     */
-    protected function getFormSel2($name, $id, $values, $selected, $id2, $values2, $selected2, $subtext) {
-        $r = '<label style="text-align:left">' . $name . '
-        <span class="small">' . $subtext . '</span>
-        </label><table><tr><td>
-        <select name="' . $id . '" id="' . $id . '" style="width:110px; text-align: center">';
-        foreach ($values as $val) {
-            $r .= '<option value="' . $val . '"';
-            if ($val == $selected) $r .= ' selected';
-            $r .= '>' . $val . '</option>';
-        }
-        $r .= '</select></td><td><select name="' . $id2 . '" id="' . $id2 . '">';
-        foreach ($values2 as $val) {
-            $r .= '<option value="' . $val . '"';
-            if ($val == $selected2) $r .= ' selected';
-            $r .= '>' . $val . '</option>';
-        }
-        $r .= '</select></td></tr></table>';
-        return $r;
-    }
-
-    protected function getFormInput($name, $id, $value, $subtext) {
-        $r = '<label>' . $name .
-            '<span class="small">' . $subtext . '</span>
-        </label>
-        <input type="text" name="' . $id . '" id="' . $id . '" value="' . $value . '" />';
-        return $r;
     }
 
     public function render() {

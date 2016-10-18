@@ -1,379 +1,316 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tim
- * Date: 9/3/14
- * Time: 7:09 PM
- */
 
+class AdminListPage extends AdminPage {
 
-global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_studitypen, $config_essen, $config_reisearten, $config_essen_o, $config_reisearten_o;
+    public function __construct($base) {
+        parent::__construct($base);
 
-$ecols = [
-    "forname" => function($d){ return $d; },
-    "sirname" => function($d){ return $d; },
-    "mehl"    => function($d){ return $d; },
-    "pseudo"  => function($d){ return $d; },
-    "antyp"   => function($d){ return $d; },
-    "abtyp"   => function($d){ return $d; },
-    "anday"   => function($d){ return date('Y-m-d', DateTime::createFromFormat('d.m.Y',$d)->getTimestamp()); },
-    "abday"   => function($d){ return date('Y-m-d', DateTime::createFromFormat('d.m.Y',$d)->getTimestamp()); },
-    "comment" => function($d){ return htmlspecialchars($d, ENT_QUOTES); },
-    "studityp"=> function($d){ return $d; },
-    "virgin"  => function($d){ return (($d=="Nein") ? 1 : 0); }, // nein zu 18+ heißt ja zu virgin => 1
-    "public"  => function($d){ return $d; },
-    "essen"   => function($d){ return $d; }
-];
-
-if(isset($_REQUEST['change'])){
-    $update = [];
-    foreach($ecols as $k=>$e){
-        if($k == "public")
-            $update[$k] = isset($_REQUEST[$k]) ? 0 : 1;
-        else
-            $update[$k] = $e($_REQUEST[$k]);
-    }
-    $admin_db->update("bachelor", $update, ["bachelor_id"=> $_REQUEST['change']]);
-}
-
-if(isset($_REQUEST['delete'])){
-    $admin_db->delete("bachelor", ["bachelor_id"=> $_REQUEST['delete']]);
-}
-
-if(isset($_REQUEST['ajax'])){
-
-    if(isset($_REQUEST['update']) && isset($_REQUEST['hash']) && isset($_REQUEST['nstate'])){
-        $col = $_REQUEST['update'];
-        $id  = $_REQUEST['hash'];
-        $val = ($_REQUEST['nstate'] == 1) ? time() : NULL;
-        $admin_db->update("bachelor", array($col=>$val), array("bachelor_id"=> $id));
-    }
-
-
-    elseif(isset($_REQUEST['form'])){
-        $bid = $_REQUEST['hash'];
-
-
-        $rcols = [
-            "bachelor_id" => ["Hash",   function( $b ){ return $b; }],
-            "fahrt_id" => ["Fahrt",     function( $b ){ return "ID ".$b; }],
-            "anm_time" => ["Anmeldung", function( $b ){ return date("d.m.Y",$b); }],
-            "paid"     => ["Bezahlt",   function( $b ){ return ($b==0) ? "Nein" : date("d.m.Y", $b); }],
-            "repaid"   => ["Rückgezahlt", function($b){ return ($b==0) ? "Nein" : date("d.m.Y", $b); }],
-            "backstepped" => ["Zurückgetreten", function( $b ){ return ($b==0) ? "Nein" : date("d.m.Y", $b); }]
-        ];
-
-
-        $bachelor = $admin_db->get('bachelor', array_merge(array_keys($ecols), array_keys($rcols)), array('bachelor_id'=>$bid));
-        $possible_dates = comm_get_possible_dates($admin_db, $bachelor['fahrt_id']);
-
-        foreach($rcols as $k=>$r){
-            $ajax .= "<b>".$r[0].":</b> ".$r[1]($bachelor[$k])."<br />";
+        if (isset($_REQUEST['change'])) {
+            $b = Bachelor::makeFromForm(false, $this->fahrt, true);
+            $b->set(['bachelor_id' => $_REQUEST['change']]);
+            $b->save();
         }
 
-        $ajax .= '<br />
-        <div id="stylized" class="myform">
-        <form id="form" name="form" method="post" action="?page=list">';
-        $ajax .= '<input type="hidden" value="'.$bid.'" name="change" id="change" />';
+        if (isset($_REQUEST['delete'])) {
+            $this->environment->database->delete('bachelor', ['AND' => ['bachelor_id' => $_REQUEST['delete'], 'fahrt_id'=>$_REQUEST['fahrt_id']]]);
+        }
+    }
 
-        $ajax .= admin_show_formular_helper_input("Vorname", "forname", $bachelor["forname"], "");
-        $ajax .= admin_show_formular_helper_input("Nachname","sirname",$bachelor["sirname"],"");
-        $ajax .= admin_show_formular_helper_input("Anzeigename","pseudo",$bachelor["pseudo"],"");
-        $ajax .= admin_show_formular_helper_input("E-Mail-Adresse","mehl",$bachelor["mehl"],"regelmäßig lesen!");
-        $ajax .= admin_show_formular_helper_sel("Er/Sie/Es ist","studityp",$config_studitypen, $bachelor["studityp"],"");
-        $ajax .= admin_show_formular_helper_sel("Alter 18+?","virgin",array("Nein", "Ja"), (($bachelor["virgin"]==1) ? "Nein" : "Ja"), "Älter als 18?");
-        $ajax .= admin_show_formular_helper_sel("Essenswunsch","essen",$config_essen, $bachelor["essen"],"Info für den Koch.");
-        $ajax .= "<div style='clear: both;'></div>";
-        $ajax .= admin_show_formular_helper_sel2("Anreise","anday", array_slice($possible_dates,0, -1), comm_from_mysqlDate($bachelor["anday"])
-            ,"antyp",$config_reisearten, $bachelor["antyp"],"");
-        $ajax .= admin_show_formular_helper_sel2("Abreise","abday", array_slice($possible_dates,1), comm_from_mysqlDate($bachelor["abday"])
-            ,"abtyp",$config_reisearten,$bachelor["abtyp"],"");
-        $ajax .= '
-        <label>Anmerkung</label>
-        <textarea id="comment" name="comment" rows="3" cols="40">'.$bachelor["comment"].'</textarea>
-        <input type="checkbox" name="public" value="public" style="width:40px" '.(($bachelor['public']==0 ? " checked" : "")).'><span style="float:left">Anmeldung verstecken</span><br/>
-        <div style="clear:both"></div>
-        Note: No check for validity of data here!
-        <button type="submit" name="submit" id="submit" value="submit">Ändern!</button>
-        <div class="spacer"></div>';
+    public function getHeaders() {
+        return '<link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
+                <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
+                <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.12/datatables.js"></script>
+                <!--script type="text/javascript" src="../view/js/jquery.dataTables.1.10.9.min.js"></script-->
+                <style type="text/css">
+                    div.btn{
+                        width: 18px;
+                        height: 18px;
+                        padding: 3px 5px;
+                        background-image: url("../view/graphics/MyEbaySprite.png");
+                        background-repeat: no-repeat;
+                        float: left;
+                        cursor: pointer;
+                    }
+                    .btn-paid-0{
+                        background-position: -23px -90px;
+                    }
+                    .btn-paid-1{
+                        background-position: -70px -90px;
+                    }
+                    .btn-repaid-0{
+                        background-position: -148px -89px;
+                    }
+                    .btn-repaid-1{
+                        background-position:-194px -89px;
+                    }
+                    .btn-backstepped-0{
+                        background-position: -51px -169px;
+                    }
+                    .btn-backstepped-1{
+                        background-position: -23px -169px;
+                    }
 
+                    #editForm{
+                        display: none;
+                        position: fixed;
+                        top:100px;
+                        left: 200px;
+                        width: 700px;
+                        height: 80%;
+                        border: 1px solid #000000;
+                        background-color: beige;
+                        padding: 20px 10px 10px 10px;
+                    }
 
-        $ajax .= '</form>
+                    #editForm>p{
+                        display: block;
+                        position:absolute;
+                        height:auto;
+                        bottom:0;
+                        top:0;
+                        left:0;
+                        right:0;
+                        overflow: auto;
+                        padding: 10px;
+                        margin: 20px 0 0 0;
+                    }
+                    #editFormTopbar{
+                        background-color: #b0bed9;
+                        height: 20px;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        padding: 0;
+                    }
+                    #editFormTopbar p{
+                        position: absolute;
+                        float: right;
+                        top: 0;
+                        padding: 0;
+                        margin: 0;
+                        right: 5px;
+                        cursor: none;
+                        height: 20px;
+                        display: block;
+                    }
+                </style>';
+    }
+
+    public function getHeader() {
+        return '';
+    }
+
+    public function getFooter() {
+        return '';
+    }
+
+    public function getText() {
+        $cols = ['Anmelde-ID','Anmeldung','Name','Anreisetyp','Abreisetyp', 'Anreisetag','Abreisetag',
+            'Kommentar','Studityp','Essen', '18+','PaidReBack'];
+        $buttoncol = count($cols)-1;
+
+        $thead = '';
+        $toggle = 'Toggle Column:';
+        foreach ($cols as $tcnt => $col) {
+            $thead .= '<th>'.$col.'</th>';
+            $toggle .= '<a class="toggle-vis" data-column="' . $tcnt . '">' . $col . '</a> - ';
+        }
+
+        $people = $this->fahrt->getBachelors(['waiting'=>false]);
+        $tbody = '';
+        foreach ($people as $b) {
+            $tbody .= '
+                <tr>
+                    <td><a href=\'#\' class=\'edit_bachelor\'>'.$b['bachelor_id'].'</a></td>
+                    <td>'.$this->mysql2german($b['anm_time']).'</td>
+                    <td><a href="mailto:'.$b['mehl'].'?subject=FS-Fahrt">' . $b['forname'] . ' ' . $b['sirname'] . ' (' . $b['pseudo'] . ')</a></td>
+                    <td>'.$b['antyp'].'</td>
+                    <td>'.$b['abtyp'].'</td>
+                    <td>'.$this->mysql2german($b['anday']).'</td>
+                    <td>'.$this->mysql2german($b['abday']).'</td>
+                    <td>'. htmlspecialchars($b['comment'], ENT_QUOTES).'</td>
+                    <td>'.$b['studityp'].'</td>
+                    <td>'.$b['essen'].'</td>
+                    <td>'.($b['virgin']==0 ? 'Ja' : 'Nein').'</td>
+                    <td>'.($b['paid'] ? $b['paid'] : '0') . ',' . ($b['repaid'] ? $b['repaid'] : '0') . ',' . ($b['backstepped'] ? $b['backstepped'] : '0').'</td>
+                    <td>'.($b['backstepped'] ? 1 : '0').'</td>
+                </tr>';
+        }
+        
+        return '<h1>Meldeliste</h1>
+        '.$toggle.'<br />
+        <br />
+        <table id="mlist" class="compact hover">
+            <thead>
+                <tr>'.$thead.'<th></th></tr>
+            </thead>
+            <tbody>'.$tbody.'</tbody>
+        </table>
+        <div id="editForm">
+            <div id="editFormTopbar"><p>X</p></div>
+            <p></p>
         </div>
-        ';
+        <script type="text/javascript">
+            jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+                "link-pre": function ( a ) {
+                    return a.match(/<a [^>]+>([^<]+)<\/a>/)[1];
+                },
+                "prb-pre": function ( a ) {
+                    var tmp = a.split(",");
+                    return ((tmp[0]==0) ? "0" : "1") + ((tmp[1]==0) ? "0" : "1") + ((tmp[2]==0) ? "0" : "1");
+                },
+                "dedate-pre": function( a ) {
+                    var tmp = a.split(".");
+                    if(tmp.length>2)
+                        return (tmp[2]+tmp[1]+tmp[0]);
+                    return a;
+                }
+            });
+            var ltab;
+            $(document).ready(function(){
+                ltab = $("#mlist").DataTable({
+                    "rowCallback": function (row, data, index) {
+                        if (data['.$buttoncol.'].split(",")[2] != 0) {
+                            $("td", row).addClass("list-backstepped");
+                        }
+                    },
+                    "columnDefs": [
+                        {
+                            "targets": ['.$buttoncol.'],
+                            "render": function(data, type, row, meta) {
+                                if (type === "display"){
+                                    var bid = row[0].match(/<a [^>]+>([^<]+)<\/a>/)[1];
+                                    var classes = ["paid", "repaid", "backstepped"];
+                                    var btns = "";
+                                    var parts = data.split(",");
+                                    for (var i = 0; i < parts.length; i++) {
+                                        var tmp = (parts[i] ==0) ? 0 : 1;
+                                        btns +="<div onclick=\\"btnclick(this, \'"+classes[i]+"\',\'"+bid+"\',"+tmp+");\\" class=\\"btn btn-"+classes[i]+"-"+tmp+"\\">&nbsp;</div>";
+                                    }
+                                    return btns;
+                                }
+                                return data;
+                            }
+                        },
+                        { type: "dedate", targets: [1,5,6]},
+                        { type: "link", targets: [0, 2] },
+                        { type: "prb", targets: ' . $buttoncol . ' },
+                        { targets: 12, visible: false, searchable: false }
+                    ],
 
-        $ajax .= '<br /><hr /> <br/>
+                    "order": [[ 2, "asc" ]],
+                    "paging": false,
+                    "orderFixed": [ 12, "asc" ]
+                });
+
+                $("a.toggle-vis").click( function (e) {
+                    e.preventDefault();
+
+                    // Get the column API object
+                    var column = ltab.column( $(this).attr("data-column") );
+
+                    // Toggle the visibility
+                    column.visible( ! column.visible() );
+                });
+                $(".edit_bachelor").click( function(){
+                    var bid = $(this).text();
+                    $.get( "?page=list&ajax=ajax&form=form&hash="+bid, function( data ) {
+                        $("#editForm > p").html(data);
+                    });
+
+                    $("#editForm").show();
+                });
+
+                $("#editFormTopbar > p").click( function(){
+                    $(this).parent().parent().hide();
+                });
+
+
+            });
+
+            function btnclick(that, type, hash, state){
+                var newstate = (((state-1)<0) ? 1 : 0);
+                $.get("index.php?page=list&ajax=ajax&update="+type+"&hash="+hash+"&nstate="+newstate ,"",
+                    function(){
+                        if(newstate === 1 && type === "backstepped") {
+                            $("td", $(that).parent().parent()).addClass("list-backstepped");
+                        } else {
+                            $("td", $(that).parent().parent()).removeClass("list-backstepped");
+                        }
+                        that.className="btn btn-"+type+"-"+newstate;
+                        that.setAttribute("onclick", "btnclick(this, \'"+type+"\', \'"+hash+"\', "+newstate+")");
+                    });
+            }
+        </script>';
+    }
+
+    public function getAjax() {
+        if (isset($_REQUEST['update']) && isset($_REQUEST['hash']) && isset($_REQUEST['nstate'])) {
+            $b = Bachelor::makeFromDB($this->fahrt, $_REQUEST['hash']);
+            $b->set([$_REQUEST['update'] => ($_REQUEST['nstate'] == 1) ? time() : null]);
+            return $b->save();
+        } elseif (isset($_REQUEST['form'])) {
+            return $this->getEditForm(Bachelor::makeFromDB($this->fahrt, $_REQUEST['hash']));
+        }
+    }
+
+    private function nulltime2german($time) {
+        if (empty($time)) return 'Nein';
+        return $this->mysql2german($time);
+    }
+
+    /**
+     * @param $bachelor Bachelor
+     * @return string
+     */
+    private function getEditForm($bachelor) {
+        $data = $bachelor->getData();
+        $bid = $data['bachelor_id'];
+        $fid = $data['fahrt_id'];
+        $possibleDates = $this->fahrt->getPossibleDates();
+
+        return '
+            <b>Hash:</b> ' . $bid . '<br/>
+            <b>Fahrt:</b> ID ' . $fid . '<br/>
+            <b>Anmeldung:</b> ' . $this->mysql2german($data['anm_time']) . '<br/>
+            <b>Bezahlt:</b> ' . $this->nulltime2german($data['paid']) . '<br/>
+            <b>Rückgezahlt:</b> ' . $this->nulltime2german($data['repaid']) . '<br/>
+            <b>Zurückgetreten:</b> ' . $this->nulltime2german($data['backstepped']) . '<br/>
+            <br />
+            <div id="stylized" class="myform">
+                <form id="form" name="form" method="post" action="?page=list">
+                    <input type="hidden" value="' . $bid . '" name="change" id="change" />
+                    <input type="hidden" value="' . $fid . '" name="fahrt_id" id="fahrt_id" />' .
+        $this->getFormInput('Vorname', 'forname', $data['forname'], '') .
+        $this->getFormInput('Nachname', 'sirname', $data['sirname'], '') .
+        $this->getFormInput('Anzeigename', 'pseudo', $data['pseudo'], '') .
+        $this->getFormInput('E-Mail', 'mehl', $data['mehl'], 'regelmäßig lesen!') .
+        $this->getFormSel('Er/Sie/Es ist', 'studityp', array_keys($this->environment->oconfig['studitypen']), $data['studityp'], '') .
+        $this->getFormSel('Alter 18+?', 'virgin', ['Ja', 'Nein'], ($data['virgin'] == 1) ? 'Nein' : 'Ja', 'Älter als 18?') .
+        $this->getFormSel('Essenswunsch', 'essen', array_keys($this->environment->oconfig['essen']), $data['essen'], 'Info für den Koch') .
+        '<div style="clear:both;"></div>' .
+        $this->getFormSel2('Anreise', 'anday', array_slice($possibleDates, 0, -1), $this->mysql2german($data['anday']),
+            'antyp', array_keys($this->environment->oconfig['reisearten']), $data['antyp'], '') .
+        $this->getFormSel2('Abreise', 'abday', array_slice($possibleDates, 1), $this->mysql2german($data['abday']),
+            'abtyp', array_keys($this->environment->oconfig['reisearten']), $data['abtyp'], '') .
+        '<label>Anmerkung</label>
+                    <textarea id="comment" name="comment" rows="3" cols="40">' . $data['comment'] . '</textarea>
+                    <input type="checkbox" name="public" value="public" style="width:40px" ' . (($data['public'] == 0 ? " checked" : "")) . '>
+                    <span style="float:left">Anmeldung verstecken</span><br/>
+                    <div style="clear:both"></div>
+                    Note: No check for validity of data here!
+                    <button type="submit" name="submit" id="submit" value="submit">Ändern!</button>
+                    <div class="spacer"></div>
+                </form>
+            </div>
+            <br /><hr /> <br/>
             <form method="POST" >
                 Note: Keine Nachfrage, löscht direkt und unwiederruflich!!<br />
                 <input type="submit" name="submit_del" value="DELETE" />
-                <input type="hidden" name="delete" value="'.$bid.'" />
-            </form>
-        ';
+                <input type="hidden" name="delete" value="' . $bid . '" />
+                <input type="hidden" name="bachelor_id" value="' . $bid . '" />
+                <input type="hidden" name="fahrt_id" value="' . $fid . '" />
+            </form>';
     }
-
-
-} else {
-$headers =<<<END
-    <link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
-    <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="../view/js/jquery.dataTables.1.10.9.min.js"></script>
-END;
-$headers .= "
-<style type='text/css'>
-div.btn{
-    width: 18px;
-    height: 18px;
-    padding: 3px 5px;
-    background-image: url('../view/graphics/MyEbaySprite.png');
-    background-repeat: no-repeat;
-    float: left;
-    cursor: pointer;
-}
-.btn-paid-0{
-    background-position: -23px -90px;
-}
-.btn-paid-1{
-    background-position: -70px -90px;
-}
-.btn-repaid-0{
-    background-position: -148px -89px;
-}
-.btn-repaid-1{
-    background-position:-194px -89px;
-}
-.btn-backstepped-0{
-    background-position: -51px -169px;
-}
-.btn-backstepped-1{
-    background-position: -23px -169px;
-}
-
-#editForm{
-    display: none;
-    position: fixed;
-    top:100px;
-    left: 200px;
-    width: 700px;
-    height: 80%;
-    border: 1px solid #000000;
-    background-color: beige;
-    padding: 20px 10px 10px 10px;
-}
-
-#editForm>p{
-    display: block;
-    position:absolute;
-    height:auto;
-    bottom:0;
-    top:0;
-    left:0;
-    right:0;
-    overflow: auto;
-    padding: 10px;
-    margin: 20px 0 0 0;
-}
-#editFormTopbar{
-    background-color: #b0bed9;
-    height: 20px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 0;
-}
-#editFormTopbar p{
-    position: absolute;
-    float: right;
-    top: 0;
-    padding: 0;
-    margin: 0;
-    right: 5px;
-    cursor: none;
-    height: 20px;
-    display: block;
-}
-
-</style>";
-
-$text .= "<h1>Meldeliste</h1>";
-
-$columns = array(
-    "bachelor_id",
-    "fahrt_id",
-    "anm_time",
-    "forname",
-    "sirname",
-    "mehl",
-    "pseudo",
-    "antyp",
-    "abtyp",
-    "anday",
-    "abday",
-    "comment",
-    "studityp",
-    "paid",
-    "repaid",
-    "backstepped",
-    "virgin",
-    "essen"
-);
-
-$columnFunctions = array(
-    "Anmelde-ID" => function($person) { return "<a href='#' class='edit_bachelor'>".$person["bachelor_id"]."</a>"; }
-    //,"FahrtID" => function($person) { return $person["fahrt_id"]; }
-,"Anmeldung" => function($person) { return date("d.m.Y", $person['anm_time']); },
-    "Name" => function($person) { return "<a href='mailto:".$person["mehl"]."?subject=FS-Fahrt'>".$person["forname"]." ".$person["sirname"]." (".$person["pseudo"].")</a>"; },
-    "Anreisetyp" => function($person) { global $config_reisearten_o; return array_search($person["antyp"], $config_reisearten_o); },
-    "Abreisetyp" => function($person) { global $config_reisearten_o; return array_search($person["abtyp"], $config_reisearten_o); },
-    "Anreisetag" => function($person) { return  comm_from_mysqlDate( $person["anday"]); },
-    "Abreisetag" => function($person) { return comm_from_mysqlDate( $person["abday"]); },
-    "Kommentar" => function($person) { return $person["comment"]; },
-    "StudiTyp" => function($person) { return $person["studityp"]; },
-    "Essen" => function($person) { global $config_essen_o; return array_search($person["essen"], $config_essen_o); },
-    "18+" => function($person) { return (($person["virgin"]==0) ? "Ja" : "Nein"); },
-    "PaidReBack" => function($person) { return ($person["paid"] ? $person["paid"] : "0") .",". ($person["repaid"] ? $person["repaid"] : "0") .",". ($person["backstepped"] ? $person["backstepped"] : "0"); }
-);
-
-$text .= "Toggle Column: ";
-    $tcnt = 0;
-foreach($columnFunctions as $key => $value){
-    $text .= '<a class="toggle-vis" data-column="'.$tcnt.'">'.$key.'</a> - ';
-    $tcnt++;
-}
-$text .= "<br />";
-
-$text .= '
-    <table id="mlist" class="compact hover">
-        <thead>
-            <tr>';
-foreach($columnFunctions as $key => $value) {
-    $text .= "<th>".$key."</th>";
-}
-$text .="<th></th></tr>
-        </thead>
-        <tbody>";
-
-$people = $admin_db->select('bachelor',$columns, array("fahrt_id"=>$config_current_fahrt_id));
-foreach($people as $person) {
-    $text .= "<tr>\n"; //".((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? "" : "class='list-backstepped'")."
-    foreach($columnFunctions as $key => $value) {
-        $text .= "<td class='".$key."'>".$value($person)."</td>\n";
-    }
-    $text .= "<td>".((explode(',',$columnFunctions['PaidReBack']($person))[2]==0) ? '0' : '1')."</td>";
-    $text .= "</tr>";
-}
-
-    $buttoncol = 11;
-$text .=<<<END
-        </tbody>
-    </table>
-    <div id="editForm">
-        <div id="editFormTopbar"><p>X</p></div>
-        <p></p>
-    </div>
-    <script type='text/javascript'>
-
-        jQuery.extend( jQuery.fn.dataTableExt.oSort, {
-            "link-pre": function ( a ) {
-                return a.match(/<a [^>]+>([^<]+)<\/a>/)[1];
-            }
-            ,
-            "prb-pre": function ( a ){
-                var tmp = a.split(",");
-                return ((tmp[0]==0) ? '0' : '1') + ((tmp[1]==0) ? '0' : '1') + ((tmp[2]==0) ? '0' : '1');
-            }
-            ,
-            "dedate-pre": function(a){
-                var tmp = a.split(".");
-                if(tmp.length>2)
-                    return (tmp[2]+tmp[1]+tmp[0]);
-                return a;
-            }
-        } );
-        var ltab;
-        $(document).ready(function(){
-             ltab = $('#mlist').DataTable({
-                 "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                    var tmp = aData[$buttoncol].split(',');
-                    if (tmp[2] > 0) {
-                        $('td',nRow).addClass('list-backstepped');
-                    }
-                    return nRow;
-                },
-                "aoColumnDefs": [
-                    {
-                        "aTargets": [ $buttoncol ],
-                        "mDataProp": function ( data, type, row ) {
-                            if (type === 'set') {
-                                data[$buttoncol] = row;
-
-                                var btns = "";
-                                var classes = ["paid", "repaid", "backstepped"];
-                                var txt = data[$buttoncol].split(",");
-                                for(var i = 0; i < txt.length; i++){
-                                    var tmp = (txt[i]==0) ? 0 : 1;
-                                    btns += "<div onclick=\"btnclick(this, '"+classes[i]+"','"+data[0].match(/<a [^>]+>([^<]+)<\/a>/)[1]+"',"+tmp+");\" class='btn btn-"+classes[i]+"-"+tmp+"'>&nbsp;</div>";
-                                }
-
-                                // Store the computed display for speed
-                                data.date_rendered = btns;
-                                return;
-                            }
-                            else if (type === 'display' || type === 'filter') {
-                                return data.date_rendered;
-                            }
-                            // 'sort' and 'type' both just use the raw data
-                            return data[$buttoncol];
-                        }
-                    },
-                    { type: 'dedate', targets: [1,5,6]},
-                    { type: 'link', targets: [0, 2] },
-                    { type: 'prb', targets: $buttoncol },
-                    { targets: 12, visible: false, searchable: false },
-                ],
-                "order": [[ 2, "asc" ]],
-                "orderFixed": [ 12, 'asc' ],
-                "paging": false
-            });
-
-            $('a.toggle-vis').click( function (e) {
-                e.preventDefault();
-
-                // Get the column API object
-                var column = ltab.column( $(this).attr('data-column') );
-
-                // Toggle the visibility
-                column.visible( ! column.visible() );
-            } );
-            $(".edit_bachelor").click( function(){
-                var bid = $(this).text();
-                $.get( "?page=list&ajax=ajax&form=form&hash="+bid, function( data ) {
-                    $("#editForm > p").html(data);
-                });
-
-                $("#editForm").show();
-            });
-
-            $("#editFormTopbar > p").click( function(){
-                $(this).parent().parent().hide();
-            });
-
-
-        });
-
-        function btnclick(that, type, hash, state){
-            var newstate = (((state-1)<0) ? 1 : 0);
-            $.get("index.php?page=list&ajax=ajax&update="+type+"&hash="+hash+"&nstate="+newstate ,"",
-                function(){
-                    if(newstate === 1 && type === "backstepped") {
-                        $('td',$(that).parent().parent()).addClass('list-backstepped');
-                    } else {
-                        $('td',$(that).parent().parent()).removeClass('list-backstepped');
-                    }
-                    that.className="btn btn-"+type+"-"+newstate;
-                    that.setAttribute("onclick", "btnclick(this, '"+type+"', '"+hash+"', "+newstate+")");
-                });
-        }
-    </script>
-END;
 }

@@ -83,14 +83,15 @@ class Bachelor {
         }
     }
 
-    public static function makeFromForm($isNew = true) {
+    public static function makeFromForm($isNew = true, $fahrt = null, $ignoreClosed=false) {
         $tmpEnv = Environment::getEnv();
-        $fahrt = $tmpEnv->getTrip();
+        if(empty($fahrt))
+            $fahrt = $tmpEnv->getTrip();
         $errorBachelor = new Bachelor(null);
 
         if (is_null($fahrt))
             $errorBachelor->validationErrors = ['Ungültige Fahrt!'];
-        elseif ($fahrt->getRegistrationState() == Fahrt::STATUS_IS_CLOSED)
+        elseif ($fahrt->getRegistrationState() == Fahrt::STATUS_IS_CLOSED and !$ignoreClosed)
             $errorBachelor->validationErrors = ['Anmeldung zur Fahrt bereits geschlossen!'];
         else {
             $newBachelor = new Bachelor($fahrt, $isNew);
@@ -244,9 +245,18 @@ class Bachelor {
             if (!$this->environment->isAdmin())
                 return Bachelor::SAVE_ERROR_MISSING_RIGHTS;
 
+            if (!$this->isDataValid())
+                return Bachelor::SAVE_ERROR_INVALID;
+
             $this->data['version']++;
-            $code = $this->environment->database->update('bachelor', $this->data, ['AND' => [
-                'fahrt_id' => $this->fahrt->getID(), 'bachelor_id' => $this->data['bachelor_id']]]);
+
+            if (preg_match('/\d{1,2}\.\d{1,2}\.\d{4}/', $this->data['anday']))
+                $this->data['anday'] = date('Y-m-d', DateTime::createFromFormat('d.m.Y', $this->data['anday'])->getTimestamp());
+            if (preg_match('/\d{1,2}\.\d{1,2}\.\d{4}/', $this->data['abday']))
+                $this->data['abday'] = date('Y-m-d', DateTime::createFromFormat('d.m.Y', $this->data['abday'])->getTimestamp());
+
+            $code = $this->environment->database->update('bachelor', $this->data,
+                ['AND' => ['fahrt_id' => $this->fahrt->getID(), 'bachelor_id' => $this->data['bachelor_id']]]);
 
             if (is_null($code))
                 return Bachelor::SAVE_ERROR_EXCEPTION;
