@@ -153,6 +153,7 @@ class AdminExportPage extends AdminPage {
             '"Hast du schon ein Knicklicht..?"',
             'Borge dir einen Stift von deinem Opfer und gib ihn zurück.',
             'Kannst du mir Mal bitte kurz die Taschenlampe halten?',
+            'Verwechslungsgefahr: Deinem Opfer ein Rad geben zählt, einen Rat geben allerdings nicht.',
             'Leih dir das Telefon deines Opfers um "mamamameine Mutter anzurufen" und gib es zurück.',
             'Sammle die Wimper deines Opfers ein und händige sie über mit der Bitte sich etwas zu wünschen um dein Opfer zu ermorden. Wimper darf nicht ausgerissen werden. Andere pustbare Dinge auch erlaubt. ',
             'Hilf deinem Opfer bei einer Übungsaufgabe und gib den Stift zurück um es umzubringen.'];
