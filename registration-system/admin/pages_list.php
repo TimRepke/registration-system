@@ -19,8 +19,7 @@ class AdminListPage extends AdminPage {
     public function getHeaders() {
         return '<link rel="stylesheet" type="text/css" href="../view/css/DataTables/css/jquery.dataTables.min.css" />
                 <script type="text/javascript" src="../view/js/jquery-1.11.1.min.js"></script>
-                <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.12/datatables.js"></script>
-                <!--script type="text/javascript" src="../view/js/jquery.dataTables.1.10.9.min.js"></script-->
+                <script type="text/javascript" src="../view/js/jquery.dataTables.1.10.12.min.js"></script>
                 <style type="text/css">
                     div.btn{
                         width: 18px;
