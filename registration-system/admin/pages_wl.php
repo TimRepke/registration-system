@@ -29,7 +29,6 @@ class AdminWlPage extends AdminPage {
                 $this->message_err = $e->getMessage();
             }
         }
-
     }
 
     public function getHeaders() {
