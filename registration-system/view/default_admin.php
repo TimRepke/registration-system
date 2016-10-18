@@ -26,7 +26,7 @@ abstract class DefaultAdmin {
         return $this->environment->sysconf['baseURL'] . 'view/' . $resource;
     }
 
-    protected function mysql2german($date) {
+    public static function mysql2german($date) {
         return date('d.m.Y', strtotime($date));
     }
 
