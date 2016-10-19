@@ -168,50 +168,22 @@ h3 {
 }
 
 p { margin: 15px; }
-div.event_info { margin: 0 15px 5px 15px; }
-p.event_date { background: url(event_date_icon.png) left center no-repeat; line-height: 20px; padding-left: 25px; }
-
 a { color: black; text-decoration: none; }
 a:hover { text-decoration: underline; }
-
-a.email_all {
-  margin-left: 70px;
-  padding-left: 30px;
-  line-height: 25px;
-  background: white url(mail_all.jpg) no-repeat left center;
-}
-a.csv_download { margin-left: 70px; padding-left: 30px; line-height: 25px; background: url(csv_icon.gif) no-repeat left center; display: block; }
-
-ul.user_list {
-  list-style-image: url(user_small.gif);
-}
-
-.event_name {
-  background: url(event.jpg) no-repeat left center;
-  padding-left: 40px;
-}
-h2.event_name { line-height: 50px; }
-h3.event_name { line-height: 40px; }
-
-h3.signup {
-  background: url(signup.gif) no-repeat left center;
-  padding-left: 45px;
-  line-height: 45px;
-}
-
-table.fieldset { margin-left: 30px; }
-div.asterisk { margin-left: 30px; font-size: 10px; }
-
-h3.signup_people {
-  background: url(group.jpg) no-repeat left center;
-  padding-left: 55px;
-  line-height: 50px;
-  margin-top: 15px;
-}
 
 table.signups, div.signups { width: 90%; margin: 30px auto;}
 table.signups tr th { }
 table.signups tr th, tr td { text-align: left; padding: 1px 4px 1px 4px; }
+table.signups td {
+    height: 2em;
+    vertical-align: middle;
+    margin:0;
+}
+table.signups {border:none;}
+
+table.signups tbody tr:nth-child(odd) {
+    background-color: #e6e6e6;
+}
 
 p.edit_link {
   padding: 10px;
@@ -376,4 +348,22 @@ ul#method-list a:hover {
 
 #signup-container {
     margin: 2em 0;
+}
+
+.progressbar {
+    height: 5px;
+    position: relative;
+    background: #d4bfc1;
+    -moz-border-radius: 1px;
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    padding: 1px;
+}
+
+.progressbar > span {
+    display: block;
+    height: 100%;
+    background-color: rgb(65, 207, 75);
+    position: relative;
+    overflow: hidden;
 }
