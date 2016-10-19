@@ -267,8 +267,6 @@ Story.prototype.initTravelStart = function()
 	});
 	this.travelStartTypeButtons = this.addTravelTypeButtons(this.travelStart);
 	var travelFormNames = {
-	car:
-		"Auto",
 	bike:
 		"Fahrrad",
 	oeffi:
@@ -298,8 +296,6 @@ Story.prototype.initTravelStart = function()
 Story.prototype.addTravelTypeButtons = function(page)
 {
 	var buttons = {
-	car:
-		$('<div style="position: absolute; border: 1px solid; left: 23px; top: 222px; width: 129px; height: 87px; cursor: pointer;">&nbsp;</div>'),
 	bike:
 		$('<div style="position: absolute; border: 1px solid; left: 177px; top: 366px; width: 90px; height: 73px; cursor: pointer;">&nbsp;</div>'),
 	oeffi:
@@ -308,8 +304,6 @@ Story.prototype.addTravelTypeButtons = function(page)
 		$('<div style="position: absolute; border: 1px solid; left: 461px; top: 114px; width: 78px; height: 71px; cursor: pointer;">&nbsp;</div>')
 	};
 	var tips = {
-	car:
-		$('<div class="storyTip" style="left: 8px; top: 314px; display:none">Anfahrt mit dem Auto</div>'),
 	bike:
 		$('<div class="storyTip" style="left: 127px; top: 444px; display:none">Anfahrt mit dem Fahrrad</div>'),
 	oeffi:
@@ -401,8 +395,6 @@ Story.prototype.initTravelEnd = function()
 	});
 	this.travelEndTypeButtons = this.addTravelTypeButtons(this.travelEnd);
 	var travelFormNames = {
-	car:
-		"Auto",
 	bike:
 		"Fahrrad",
 	oeffi:
@@ -775,8 +767,6 @@ $(function()
 		};
 		Story.travelMapPhp = config_get_travel_types();
 		Story.travelMap = {
-		car:
-			"AUTO",
 		oeffi:
 			"BUSBAHN",
 		bike:
