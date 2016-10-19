@@ -6,7 +6,6 @@ class AdminListPage extends AdminPage {
         parent::__construct($base);
 
         if (isset($_REQUEST['change'])) {
-            echo "change";
             try {
                 $b = Bachelor::makeFromForm(false, $this->fahrt, true, true);
                 $b->set(['bachelor_id' => $_REQUEST['change']]);
@@ -18,7 +17,6 @@ class AdminListPage extends AdminPage {
             } catch (Exception $e) {
                 $this->message_err = $e->getMessage();
             }
-
         }
 
         if (isset($_REQUEST['delete'])) {
@@ -235,8 +233,6 @@ class AdminListPage extends AdminPage {
                 $("#editFormTopbar > p").click( function(){
                     $(this).parent().parent().hide();
                 });
-
-
             });
 
             function btnclick(that, type, hash, state){
