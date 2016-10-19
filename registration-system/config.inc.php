@@ -32,6 +32,11 @@ $config_essen_o = array(
 );
 $config_essen = array_values($config_essen_o);
 
+$config_reisearten_o_short = array(
+    "BUSBAHN" => "Bus/Bahn",
+    "RAD" => "Fahrrad",
+    "INDIVIDUELL" => "Kamel/Individuell"
+);
 $config_reisearten_o = array(
     "BUSBAHN" => "gemeinsam mit Bus/Bahn",
     "RAD" => "gemeinsam mit Rad",
