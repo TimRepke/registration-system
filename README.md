@@ -2,7 +2,7 @@ Registration System
 ===================
 
 [![volkswagen status](https://auchenberg.github.io/volkswagen/volkswargen_ci.svg?v=1)](https://github.com/auchenberg/volkswagen)
-[![Bild passt](https://img.shields.io/badge/Bild-passt-brightgreen.svg)]()
+[![Bild passt](https://img.shields.io/badge/bild-passt-green.svg)]()
 
 This system was developed for the computer science students union at the Humboldt-Universität zu Berlin to organise our
 annual freshers weekend trips. Since the attendance grew over the years, we needed a powerful system that helps managing 
