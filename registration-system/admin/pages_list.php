@@ -6,9 +6,19 @@ class AdminListPage extends AdminPage {
         parent::__construct($base);
 
         if (isset($_REQUEST['change'])) {
-            $b = Bachelor::makeFromForm(false, $this->fahrt, true);
-            $b->set(['bachelor_id' => $_REQUEST['change']]);
-            $b->save();
+            echo "change";
+            try {
+                $b = Bachelor::makeFromForm(false, $this->fahrt, true, true);
+                $b->set(['bachelor_id' => $_REQUEST['change']]);
+                $saveResult = $b->save();
+                if ($saveResult !== Bachelor::SAVE_SUCCESS)
+                    throw new Exception('Fehler beim Speichern mit code ' . $saveResult.'<br />'.implode('<br />', $b->getValidationErrors()));
+                else
+                    $this->message_succ = 'Bachelor mit ID '.$_REQUEST['change'].' Erfolgreich gespeichert';
+            } catch (Exception $e) {
+                $this->message_err = $e->getMessage();
+            }
+
         }
 
         if (isset($_REQUEST['delete'])) {
@@ -121,7 +131,7 @@ class AdminListPage extends AdminPage {
         foreach ($people as $b) {
             $tbody .= '
                 <tr>
-                    <td><a href=\'#\' class=\'edit_bachelor\'>'.$b['bachelor_id'].'</a></td>
+                    <td><a href="#" class="edit_bachelor">'.$b['bachelor_id'].'</a></td>
                     <td>'.$this->mysql2german($b['anm_time']).'</td>
                     <td><a href="mailto:'.$b['mehl'].'?subject=FS-Fahrt">' . $b['forname'] . ' ' . $b['sirname'] . ' (' . $b['pseudo'] . ')</a></td>
                     <td>'.$b['antyp'].'</td>
@@ -137,8 +147,9 @@ class AdminListPage extends AdminPage {
                 </tr>';
         }
         
-        return '<h1>Meldeliste</h1>
-        '.$toggle.'<br />
+        return '<h1>Meldeliste</h1>' .
+        $this->getMessage().'<br />' .
+        $toggle.'<br />
         <br />
         <table id="mlist" class="compact hover">
             <thead>

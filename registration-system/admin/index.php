@@ -187,13 +187,18 @@ abstract class AdminPage {
         return '<div class="' . $mode . '">' . $content . '</div>';
     }
 
-    protected function getMessage() {
+    protected function getMessage($additional = null) {
         $ret = '';
+        $add = '';
+        if (!empty($additional) and is_array($additional))
+            $add = '<br />'.implode('<br />', $add);
+        if (!empty($additional))
+            $add = '<br />'.$additional;
         if (!empty($this->message_succ)) {
-            $ret .= $this->getMessageBox($this->message_succ, 'success');
+            $ret .= $this->getMessageBox($this->message_succ.$add, 'success');
         }
         if (!empty($this->message_err)) {
-            $ret .= $this->getMessageBox($this->message_err, 'error');
+            $ret .= $this->getMessageBox($this->message_err.$add, 'error');
         }
         return $ret;
     }

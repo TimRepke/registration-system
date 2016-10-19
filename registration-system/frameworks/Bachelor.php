@@ -83,7 +83,7 @@ class Bachelor {
         }
     }
 
-    public static function makeFromForm($isNew = true, $fahrt = null, $ignoreClosed=false) {
+    public static function makeFromForm($isNew = true, $fahrt = null, $ignoreClosed=false, $admincheck = false) {
         $tmpEnv = Environment::getEnv();
         if(empty($fahrt))
             $fahrt = $tmpEnv->getTrip();
@@ -95,7 +95,7 @@ class Bachelor {
             $errorBachelor->validationErrors = ['Anmeldung zur Fahrt bereits geschlossen!'];
         else {
             $newBachelor = new Bachelor($fahrt, $isNew);
-            $newBachelor->populateAndValidate();
+            $newBachelor->populateAndValidate($admincheck);
             return $newBachelor;
         }
         return $errorBachelor;
@@ -334,7 +334,7 @@ class Bachelor {
      *
      * @return array (see above)
      */
-    private function populateAndValidate() {
+    private function populateAndValidate($admincheck = false) {
         $possibleDates = $this->fahrt->getPossibleDates();
         $invalidChars = $this->environment->config['invalidChars'];
         $oconf = $this->environment->oconfig;
@@ -355,7 +355,8 @@ class Bachelor {
         $this->validateField('public', 'public', 'Trollololol');
         $this->validateField('virgin', 'virgin', 'Bitte Altersbereich wählen!');
         $this->validateField('comment', 'comment', 'Trollololol');
-        $this->validateField('captcha', 'captcha', 'Captcha falsch eingegeben.');
+        if (!$admincheck)
+            $this->validateField('captcha', 'captcha', 'Captcha falsch eingegeben.');
 
         if ($this->data['anday'] == $this->data['abday'])
             array_push($this->validationErrors, 'Anreisetag = Abreisetag -> Bitte prüfen!');

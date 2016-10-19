@@ -97,7 +97,7 @@ class AdminOverviewPage extends AdminPage {
                         <li>Jungfrauen: '.$this->data['mitfahrer']['virgins'].'</li>
                         <li>Erstis: '.$this->data['mitfahrer']['erstis'].'</li>
                         <li>Hörstis: '.$this->data['mitfahrer']['hoerstis'].'</li>
-                        <li>Tutti:  '.$this->data['mitfahrer']['tuttis'].'</li>
+                        <li>Tuttis:  '.$this->data['mitfahrer']['tuttis'].'</li>
                         <li>= Anteil Erstis: '.$this->data['ratio']['ratio'].'%</li>
                     </ul>
                 </ul>
