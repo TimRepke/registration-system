@@ -23,8 +23,8 @@ class Bachelor {
 
     public static $ALLOWED_FIELDS = ['bachelor_id', 'fahrt_id', 'anm_time', 'forname', 'sirname', 'mehl',
         'pseudo', 'antyp', 'abtyp', 'anday', 'abday', 'comment', 'studityp', 'paid', 'repaid', 'backstepped',
-        'virgin', 'essen', 'on_waitlist', 'transferred', 'public', 'version'];
-    public static $NULLFIELDS = ['paid', 'repaid', 'backstepped', 'transferred', 'on_waitlist'];
+        'virgin', 'essen', 'on_waitlist', 'transferred', 'public', 'version', 'signupstats'];
+    public static $NULLFIELDS = ['paid', 'repaid', 'backstepped', 'transferred', 'on_waitlist', 'signupstats'];
 
     /**
      * Bachelor constructor.
@@ -360,6 +360,10 @@ class Bachelor {
 
         if ($this->data['anday'] == $this->data['abday'])
             array_push($this->validationErrors, 'Anreisetag = Abreisetag -> Bitte prüfen!');
+
+        // try parsing stats
+        if(!is_null(json_decode($_REQUEST['signupstats'],true)))
+            $this->data['signupstats'] = $_REQUEST['signupstats']; // TODO make checks for signupmethods?
     }
 
     /**
