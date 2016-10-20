@@ -85,6 +85,7 @@ abstract class DefaultAdmin {
         <html moznomarginboxes mozdisallowselectionprint>
         <head>
             <title><?php $this->echoTitle() ?></title>
+            <meta charset="UTF-8"/>
             <?php $this->echoHeaders() ?>
             <link href="../view/print_style.css" rel="stylesheet"/>
         </head>
@@ -132,7 +133,8 @@ abstract class DefaultAdmin {
         <html moznomarginboxes mozdisallowselectionprint>
         <head>
             <title><?php $this->echoTitle() ?></title>
-            {headers}
+            <meta charset="UTF-8"/>
+            <?php $this->echoHeaders() ?>
             <link href="<?php $this->resolvePath('print_style.css') ?>" rel="stylesheet"/>
         </head>
         <body>
