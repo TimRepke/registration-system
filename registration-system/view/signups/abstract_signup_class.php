@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../frameworks/Environment.php';
+
 interface SignupMethodStatics {
     /**
      * @return string with humanly readable name of this method
@@ -64,17 +66,25 @@ abstract class SignupMethod implements SignupMethodStatics {
     // available to each signup method
     // =================================================================================================================
 
+    protected static $signupsBasepath = 'signups/';
+    protected $environment;
+
+    public function __construct() {
+        $this->environment = Environment::getEnv();
+    }
+
     /**
      * @return string containing the basic form submit parameters
      */
     protected function getFormSubmitBaseParams() {
         $environment    = Environment::getEnv();
         $waitlist_mode  = $environment->isInWaitlistMode();
-        $bachelor       = $environment->getBachelor();
+        $bachelor       = $environment->getBachelor(false, true, true);
+        $bachelorData   = $bachelor->getData();
 
         return '?fid=' . $environment->getSelectedTripId() .
             '&method=' . SignupMethods::getInstance()->getActiveMethodId() .
-            (isset($bachelor['id']) ? '&bid=' . $bachelor['id'] : '') .
+            (isset($bachelorData['id']) ? '&bid=' . $bachelorData['id'] : '') .
             ($waitlist_mode         ? '&waitlist'               : '');
     }
 

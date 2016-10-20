@@ -1,120 +1,125 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tim
- * Date: 9/17/14
- * Time: 8:04 PM
- */
 
-global $text, $headers, $admin_db, $config_current_fahrt_id, $ajax, $config_reisearten, $config_reisearten_o, $config_studitypen_o, $config_admin_verbose_level, $config_verbose_level, $config_essen;
-$config_admin_verbose_level = 0;
-$config_verbose_level = 0;
-$text .= "<h1>Übersichtsseite</h1>";
+class AdminOverviewPage extends AdminPage {
 
+    private $data;
 
-$mitfahrer['gesam'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id]]);
-$mitfahrer['gesaa'] = $admin_db->count("bachelor", ["fahrt_id"    => $config_current_fahrt_id]);
+    public function __construct($base) {
+        parent::__construct($base);
 
-$mitfahrer['erste'] = $admin_db->query("SELECT date_format(anday, '%j') as anday, COUNT(anday) as anday_cnt FROM bachelor WHERE backstepped is null and fahrt_id=".$config_current_fahrt_id." GROUP BY anday ORDER BY anday ASC LIMIT 1")->fetchAll();
-$mitfahrer['zweit'] = $admin_db->query("SELECT date_format(abday, '%j') as abday, COUNT(abday) as abday_cnt FROM bachelor WHERE backstepped is null and fahrt_id=".$config_current_fahrt_id." GROUP BY abday ORDER BY abday DESC LIMIT 1")->fetchAll();
-$mitfahrer['erste'] = isset($mitfahrer['erste'][0]) ? $mitfahrer['erste'][0]['anday_cnt'] : 0;
-$mitfahrer['zweit'] = isset($mitfahrer['zweit'][0]) ? $mitfahrer['zweit'][0]['abday_cnt'] : 0;;
+        $fid = $this->fahrt->getID();
+        $db = $this->environment->database;
+        // to use in OR
+        $notwaiting = ['on_waitlist' => 0,
+            'AND' => [
+                'transferred[!]' => null,
+                'on_waitlist' => 1
+            ]];
+        $notwaitingQ = '(on_waitlist = 0 OR (transferred IS NOT NULL AND on_waitlist = 1))';
 
-$mitfahrer['veget'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id,
-                                         "essen[!]" => $config_essen[0]]]);
-$mitfahrer['backs'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped[!]" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id]]);
-$mitfahrer['treff'] = $admin_db->count("bachelor", ["AND" =>
-                                        ["antyp"       => $config_reisearten_o["BUSBAHN"],
-                                         "backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id]]);
-$mitfahrer['ersti'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id,
-                                         "studityp" => $config_studitypen_o["ERSTI"]]]);
-$mitfahrer['tutti'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id,
-                                         "studityp" => $config_studitypen_o["TUTTI"]]]);
-$mitfahrer['hoers'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id],
-                                         "LIKE"=>["studityp" => $config_studitypen_o["HOERS"]]]);
-$mitfahrer['virgi'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id,
-                                         "virgin"      => 1]]);
-$warte['ntran'] = $admin_db->count("waitlist", ["AND"=>
-                                        ["transferred" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id]]);
-$warte['gesam'] = $admin_db->count("waitlist", ["fahrt_id"    => $config_current_fahrt_id]);
-$money['erhalten'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id,
-                                         "paid[!]"     => NULL]]);
-$money['aus'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id,
-                                         "paid"     => NULL]]);
-$money['gezahlt'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id,
-                                         "repaid[!]"     => NULL]]);
-$money['ausstehend'] = $admin_db->count("bachelor", ["AND"=>
-                                        ["backstepped" => NULL,
-                                         "fahrt_id"    => $config_current_fahrt_id,
-                                         "repaid"     => NULL]]);
+        $baseW = ['fahrt_id' => $fid, 'OR'=>$notwaiting, 'backstepped'=>null];
 
-$text .= "<div style='float:left; margin-left: 15px'><h2>Mitfahrer</h2>
-        <ul class='list-nodeco'>
-            <li>Gesamt: ".$mitfahrer['gesam']." (".$mitfahrer['gesaa'].")</li>
-            <ul>
-                <li>Erste Nacht: ".$mitfahrer['erste']."</li>
-                <li>Letzte Nacht: ".$mitfahrer['zweit']."</li>
-                <li>Nicht-Allesesser: ".$mitfahrer['veget']."</li>
-                <li>Zurückgetreten: ".$mitfahrer['backs']."</li>
-                <li>Personen am Treffpunkt: ".$mitfahrer['treff']."</li>
-            </ul>
-            <li>Warteliste:</li>
-            <ul>
-                <li>Noch wartend: ".$warte['ntran']."</li>
-                <li>Übertragen: ".($warte['gesam']-$warte['ntran'])."</li>
-                <li>Gesamt: ".$warte['gesam']."</li>
-            </ul>
-            <li>Verteilung</li>
-            <ul>
-                <li>Jungfrauen: ".$mitfahrer['virgi']."</li>
-                <li>Erstis: ".$mitfahrer['ersti']."</li>
-                <li>Hörstis: ".$mitfahrer['hoers']."</li>
-                <li>Tutti:  ".$mitfahrer['tutti']."</li>
-                <li>= Anteil Erstis: ".round(($mitfahrer['ersti']/((($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti']) <=0) ? (($mitfahrer['ersti'] <= 0) ? 1 : $mitfahrer['ersti']) : ($mitfahrer['ersti']+$mitfahrer['hoers']+$mitfahrer['tutti'])))*100,2)."%</li>
-            </ul>
-        </ul></div>";
+        $naechte = [
+            'erste' => $db->query("SELECT date_format(anday, '%j') as anday, COUNT(anday) as anday_cnt FROM bachelor WHERE fahrt_id = ".$fid." AND ".$notwaitingQ." AND backstepped IS NULL GROUP BY anday ORDER BY anday ASC LIMIT 1")->fetchAll(),
+            'zweite' => $db->query("SELECT date_format(abday, '%j') as abday, COUNT(anday) as abday_cnt FROM bachelor WHERE fahrt_id = ".$fid." AND ".$notwaitingQ." AND backstepped IS NULL GROUP BY abday ORDER BY anday ASC LIMIT 1")->fetchAll()
+        ];
 
-$text .= "<div style='float:left; margin-left: 15px'><h2>Zahlungen</h2>
-        <ul>
-            <li>Zahlungen</li>
-            <ul>
-                <li>Erhalten: ".$money['erhalten']."</li>
-                <li>Ausstehende Zahlungen: ".$money['aus']."</li>
-                <li>Ausgezahlt: ".$money['gezahlt']."</li>
-                <li>Ausstehende Rückzahlungen: ".$money['ausstehend']."</li>
-            </ul>
-            <!--li>Einnahmen</li>
-            <ul>
-                <li>Soll:</li>
-                <li>Ist:</li>
-                <li>Differenz:</li>
-            </ul-->
-        </ul></div>";
+        $this->data = [
+            'mitfahrer' => [
+                'gesamt' => $this->fahrt->getNumTakenSpots(),
+                'gesamt_all' => $db->count('bachelor', [
+                    'AND' => ['fahrt_id' => $fid, 'OR' => $notwaiting]]),
+                'erste' => isset($naechte['erste'][0]) ? $naechte['erste'][0]['anday_cnt'] : 0,
+                'zweite' => isset($naechte['zweite'][0]) ? $naechte['zweite'][0]['abday_cnt'] : 0,
+                'vege' =>  $db->count('bachelor', ['AND' =>
+                    ['essen' => 'VEGE', 'fahrt_id'=>$fid, 'backstepped'=>null, 'OR' => $notwaiting]]),
+                'vega' => $db->count('bachelor', ['AND' =>
+                    ['essen' => 'VEGA', 'fahrt_id'=>$fid, 'backstepped'=>null, 'OR' => $notwaiting]]),
+                'backstepped' => $db->count('bachelor', ['AND' => ['fahrt_id' => $fid, 'backstepped[!]' => null]]),
+                'treffpunkt' => $db->count('bachelor', ['AND' => array_merge($baseW, ['antyp' => 'BUSBAHN'])]),
+                'erstis' => $db->count('bachelor', ['AND' => array_merge($baseW, ['studityp' => 'ERSTI'])]),
+                'tuttis' => $db->count('bachelor', ['AND' => array_merge($baseW, ['studityp' => 'TUTTI'])]),
+                'hoerstis' => $db->count('bachelor', ['AND' => array_merge($baseW, ['studityp' => 'HOERS'])]),
+                'virgins' => $db->count('bachelor', ['AND' => array_merge($baseW, ['virgin' => 1])])
+            ],
+            'warte' => [
+                'transferred' => $db->count('bachelor', ['AND' => ['fahrt_id' => $fid, 'transferred[!]' => null, 'on_waitlist' => 1]]),
+                'waiting' => $db->count('bachelor', ['AND' => ['fahrt_id' => $fid, 'transferred' => null, 'on_waitlist' => 1]]),
+                'on_waitlist' => $db->count('bachelor', ['AND' => ['fahrt_id' => $fid, 'on_waitlist' => 1]])
+            ],
+            'money' => [
+                'in_erhalten' => $db->count('bachelor', ['AND' => ['fahrt_id' => $fid, 'paid[!]' => null]]),
+                'in_ausstehend' => $db->count('bachelor', ['AND' => array_merge($baseW, ['paid' => null])]),
+                'out_erhalten' => $db->count('bachelor', ['AND' => array_merge($baseW, ['repaid[!]' => null])]),
+                'out_ausstehend' => $db->count('bachelor', ['AND' => array_merge($baseW, ['repaid' => null])]),
+            ]
+        ];
+        $this->data['ratio'] = ['sum' => ($this->data['mitfahrer']['tuttis']+$this->data['mitfahrer']['erstis']+$this->data['mitfahrer']['hoerstis'])];
+        if ($this->data['ratio']['sum'] > 0)
+            $this->data['ratio']['ratio'] = round($this->data['mitfahrer']['erstis']/$this->data['ratio']['sum']*100, 2);
+        else
+            $this->data['ratio']['ratio'] = round(100, 2);
+    }
 
-$text .= "<p style='clear:both'></p>";
+    public function getHeaders() {
+        return '';
+    }
 
+    public function getHeader() {
+        return '';
+    }
+
+    public function getFooter() {
+        return '';
+    }
+
+    public function getText() {
+        return '<h1>Übersichtsseite</h1>
+            <div style="float:left; margin-left: 15px">
+                <h2>Mitfahrende</h2>
+                <ul class="list-nodeco">
+                    <li>Gesamt: '.$this->data['mitfahrer']['gesamt'].' ('.$this->data['mitfahrer']['gesamt_all'].')</li>
+                    <ul>
+                        <li>Erste Nacht: '.$this->data['mitfahrer']['erste'].'</li>
+                        <li>Letzte Nacht: '.$this->data['mitfahrer']['zweite'].'</li>
+                        <li>Nicht-Allesesser: '.$this->data['mitfahrer']['vege'].' (vegetarisch), '.$this->data['mitfahrer']['vega'].' (vegan)</li>
+                        <li>Zurückgetreten: '.$this->data['mitfahrer']['backstepped'].'</li>
+                        <li>Personen am Treffpunkt: '.$this->data['mitfahrer']['treffpunkt'].'</li>
+                    </ul>
+                    <li>Warteliste:</li>
+                    <ul>
+                        <li>Noch wartend: '.$this->data['warte']['waiting'].'</li>
+                        <li>Übertragen: '.$this->data['warte']['transferred'].'</li>
+                        <li>Gesamt: '.$this->data['warte']['on_waitlist'].'</li>
+                    </ul>
+                    <li>Verteilung:</li>
+                    <ul>
+                        <li>Jungfrauen: '.$this->data['mitfahrer']['virgins'].'</li>
+                        <li>Erstis: '.$this->data['mitfahrer']['erstis'].'</li>
+                        <li>Hörstis: '.$this->data['mitfahrer']['hoerstis'].'</li>
+                        <li>Tuttis:  '.$this->data['mitfahrer']['tuttis'].'</li>
+                        <li>= Anteil Erstis: '.$this->data['ratio']['ratio'].'%</li>
+                    </ul>
+                </ul>
+            </div>
+            <div style="float:left; margin-left: 15px"><h2>Zahlungen</h2>
+                <ul>
+                    <li>Zahlungen</li>
+                    <ul>
+                        <li>Erhalten: '.$this->data['money']['in_erhalten'].'</li>
+                        <li>Ausstehende Zahlungen: '.$this->data['money']['in_ausstehend'].'</li>
+                        <li>Ausgezahlt: '.$this->data['money']['out_erhalten'].'</li>
+                        <li>Ausstehende Rückzahlungen: '.$this->data['money']['out_ausstehend'].'</li>
+                    </ul>
+                </ul>
+            </div>
+            <p style="clear:both"></p>';
+    }
+
+    public function getAjax() {
+        return '';
+    }
+}
 
 /* Vorlage:
  *
