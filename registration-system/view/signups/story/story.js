@@ -229,7 +229,7 @@ Story.prototype.initTravelStart = function()
 
 	var self = this;
 
-	this.travelStart = this.storyImageDiv('travelBegin.png');
+	this.travelStart = this.storyImageSvg('travelBegin.svg');
 	this.travelStart.animate({left:'900px'}, 0);
 	this.storybox.append(this.travelStart);
 	
@@ -358,7 +358,7 @@ Story.prototype.initTravelEnd = function()
 
 	var self = this;
 
-	this.travelEnd = this.storyImageDiv('travelEnd.png');
+	this.travelEnd = this.storyImageSvg('travelEnd.svg');
 	this.travelEnd.animate({left:'900px'}, 0);
 	this.storybox.append(this.travelEnd);
 	
@@ -427,7 +427,7 @@ Story.prototype.initEat = function()
 
 	var self = this;
 
-	this.eat = this.storyImageDiv('eat.png');
+	this.eat = this.storyImageSvg('eat.svg');
 	this.eat.animate({left:'900px'}, 0);
 	this.storybox.append(this.eat);
 
@@ -512,7 +512,7 @@ Story.prototype.initAge = function()
 
 	var self = this;
 
-	this.age = this.storyImageDiv('age.png');
+	this.age = this.storyImageSvg('age.svg');
 	this.age.animate({left:'900px'}, 0);
 	this.storybox.append(this.age);
 
@@ -564,10 +564,10 @@ Story.prototype.initBasicData = function()
 	var self = this;
 
 	// == init view ==
-	this.basicData = this.storyImageDiv('begin.png');
+	this.basicData = this.storyImageSvg('begin.svg');
 	this.storybox.append(this.basicData);
 	this.bd_bell = this.storyImageDiv('bell.png');
-	this.bd_bell.css({position: 'relative', top: '20px', left: '20px', width: '419px', height: '438px'});
+	this.bd_bell.css({position: 'absolute', top: '20px', left: '20px', width: '419px', height: '438px'});
 	this.basicData.append(this.bd_bell);
 	this.bd_bell.fadeOut(0);
 
@@ -631,6 +631,15 @@ Story.prototype.storyImageDiv = function(filename)
 {
 	return $('<div style="position:absolute; width:900px; height:500px; background: url('+FAPI.resolvePath('graphics/'+filename)+');"></div>');
 }
+
+Story.prototype.storyImageSvg = function(filename)
+{
+	var bg = $('<div style="position:absolute; width:900px; height:500px;"></div>');
+	d3.xml(FAPI.resolvePath('graphics/'+filename), 'image/svg+xml', function (xml) {
+		bg[0].appendChild(xml.documentElement);
+	});
+	return bg;
+};
 
 Story.prototype.addComboBox = function(parentNode, label, fieldName, options, x, y)
 {

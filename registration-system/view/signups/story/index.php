@@ -31,7 +31,7 @@ class StorySignupMethod extends SignupMethod {
     }
 
     public function getJSDependencies() {
-        return ['story.js'];
+        return ['story.js','../game1/jslib/d3.min.js'];
     }
 
     public function getCSSDependencies() {
