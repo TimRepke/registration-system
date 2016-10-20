@@ -83,9 +83,9 @@ class Bachelor {
         }
     }
 
-    public static function makeFromForm($isNew = true, $fahrt = null, $ignoreClosed=false, $admincheck = false) {
+    public static function makeFromForm($isNew = true, $fahrt = null, $ignoreClosed = false, $admincheck = false) {
         $tmpEnv = Environment::getEnv();
-        if(empty($fahrt))
+        if (empty($fahrt))
             $fahrt = $tmpEnv->getTrip();
         $errorBachelor = new Bachelor(null);
 
@@ -124,6 +124,13 @@ class Bachelor {
                 throw new Exception('Bachelor hat kein Feld: ' . $key);
             }
         }
+    }
+
+    public function getSignupStats() {
+        if (isset($this->data['signupstats']) and !is_null(json_decode($this->data['signupstats'], true))) {
+            return json_decode($this->data['signupstats'], true);
+        }
+        return null;
     }
 
     public function getData() {
@@ -351,7 +358,7 @@ class Bachelor {
         $this->validateField('antyp', $oconf['reisearten'], 'Trolle hier lang: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
         $this->validateField('abtyp', $oconf['reisearten'], 'Entwicklern Bier geben und: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
         $this->validateField('essen', $oconf['essen'], 'Hat das wirklich nicht gereicht??');
-        $this->validateField('studityp', $oconf['studitypen'], 'Neue Chance, diesmal FS-Ini wählen!');
+        $this->validateField('studityp', $oconf['studitypen'], 'Das bist du ganz bestimmt nicht!');
         $this->validateField('public', 'public', 'Trollololol');
         $this->validateField('virgin', 'virgin', 'Bitte Altersbereich wählen!');
         $this->validateField('comment', 'comment', 'Trollololol');
@@ -362,8 +369,10 @@ class Bachelor {
             array_push($this->validationErrors, 'Anreisetag = Abreisetag -> Bitte prüfen!');
 
         // try parsing stats
-        if(!is_null(json_decode($_REQUEST['signupstats'],true)))
+        if (isset($_REQUEST['signupstats']) and !is_null(json_decode($_REQUEST['signupstats'], true)))
             $this->data['signupstats'] = $_REQUEST['signupstats']; // TODO make checks for signupmethods?
+        else
+            $this->data['signupstats'] = null;
     }
 
     /**

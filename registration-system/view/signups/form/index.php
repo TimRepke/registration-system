@@ -24,7 +24,7 @@ class FormSignupMethod extends SignupMethod {
     }
 
     public static function getScore($stats) {
-        return rand(30,99);
+        return rand(30, 99);
     }
 
     public static function getBadgeDetails($stats) {
@@ -66,21 +66,21 @@ class FormSignupMethod extends SignupMethod {
         echo '<div id="stylized" class="myform">
                 <form id="form" name="form" method="post" action="index.php' . $link_params . '">';
 
-        $this->show_formular_helper_input("Vorname", "forname", $bachelorData["forname"], "");
-        $this->show_formular_helper_input("Nachname", "sirname", $bachelorData["sirname"], "");
-        $this->show_formular_helper_input("Anzeigename", "pseudo", $bachelorData["pseudo"], "");
+        $this->show_formular_helper_hidden_input('signupstats', $bachelorData['signupstats']);
+
+        $this->show_formular_helper_input('Vorname', 'forname', $bachelorData['forname'], '');
+        $this->show_formular_helper_input('Nachname', 'sirname', $bachelorData['sirname'], '');
+        $this->show_formular_helper_input('Anzeigename', 'pseudo', $bachelorData['pseudo'], '');
         echo $soft_prot->add(array('forname', 'sirname', 'pseudo'), $this->environment->config['invalidChars'])->write();
-
-        $this->show_formular_helper_input("E-Mail-Adresse", "mehl", $bachelorData["mehl"], "regelmäßig lesen!");
-
-        $this->show_formular_helper_sel("Du bist", "studityp", $this->environment->oconfig['studitypen'], $bachelorData["studityp"], "");
-        $this->show_formular_helper_sel("Alter 18+?", "virgin", ['UNSET'=>'', 'JA'=>'Ja', 'NEIN' => 'Nein'],
-            isset($bachelorData['virgin']) ? ($bachelorData['virgin'] == 0 ? "JA" : "NEIN") : 'UNSET', "Bist du älter als 18 Jahre?");
-        $this->show_formular_helper_sel("Essenswunsch", "essen", $this->environment->oconfig['essen'], $bachelorData["essen"], "Info für den Koch.");
-        $this->show_formular_helper_sel2("Anreise", "anday", array_slice($possible_dates, 0, -1), $bachelorData["anday"],
-            "antyp", $this->environment->oconfig['reisearten'], $bachelorData["antyp"], "");
-        $this->show_formular_helper_sel2("Abreise", "abday", array_slice($possible_dates, 1), $bachelorData["abday"],
-            "abtyp", $this->environment->oconfig['reisearten'], $bachelorData["abtyp"], "");
+        $this->show_formular_helper_input('E-Mail-Adresse', 'mehl', $bachelorData['mehl'], 'regelmäßig lesen!');
+        $this->show_formular_helper_sel('Du bist', 'studityp', $this->environment->oconfig['studitypen'], $bachelorData['studityp'], '');
+        $this->show_formular_helper_sel('Alter 18+?', 'virgin', ['UNSET' => '', 'JA' => 'Ja', 'NEIN' => 'Nein'],
+            isset($bachelorData['virgin']) ? ($bachelorData['virgin'] == 0 ? 'JA' : 'NEIN') : 'UNSET', 'Bist du älter als 18 Jahre?');
+        $this->show_formular_helper_sel('Essenswunsch', 'essen', $this->environment->oconfig['essen'], $bachelorData['essen'], 'Info für den Koch.');
+        $this->show_formular_helper_sel2('Anreise', 'anday', array_slice($possible_dates, 0, -1), $bachelorData['anday'],
+            'antyp', $this->environment->oconfig['reisearten'], $bachelorData['antyp'], '');
+        $this->show_formular_helper_sel2('Abreise', 'abday', array_slice($possible_dates, 1), $bachelorData['abday'],
+            'abtyp', $this->environment->oconfig['reisearten'], $bachelorData['abtyp'], '');
 
         echo '<label>Anmerkung</label>
             <textarea id="comment" name ="comment" rows="3" cols="50">' . $bachelorData["comment"] . '</textarea>
@@ -154,6 +154,10 @@ class FormSignupMethod extends SignupMethod {
         <span class="small">' . $subtext . '</span>
         </label>
         <input type="text" name="' . $id . '" id="' . $id . '" value="' . $value . '" />';
+    }
+
+    private function show_formular_helper_hidden_input($id, $value) {
+        echo '<textarea style="display:none;"  name="' . $id . '" id="' . $id . '">' . $value . '</textarea>';
     }
 }
 
