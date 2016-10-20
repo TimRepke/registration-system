@@ -1149,10 +1149,7 @@ Story.credits = function () {
 
     function allDone() {
         clearInterval(standbyLoop);
-        Environment.fapi.setValue('signupstats', {
-            'method': 'game1',
-            'methodinfo': {'achievedAchievements': Game.achievements.achievedAchievements}
-        });
+        Environment.fapi.data.setSignupStats('game1', {'achievedAchievements': Game.achievements.achievedAchievements});
         Environment.fapi.submitSignup();
     }
 };

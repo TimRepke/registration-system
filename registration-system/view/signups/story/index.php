@@ -23,7 +23,15 @@ class StorySignupMethod extends SignupMethod {
     }
 
     public static function getScore($stats) {
-        return rand(30,99);
+        $allowedAchievements = ['test','stein','elch2','bagger','ball','ohh','star','park'];
+        if (isset($stats['achievements'])) {
+            $cnt = 0;
+            foreach($stats['achievements'] as $a){
+                if (in_array($a, $allowedAchievements)) $cnt++;
+            }
+            return round($cnt/count($allowedAchievements)*100);
+        }
+        return 0;
     }
 
     public static function getBadgeDetails($stats) {

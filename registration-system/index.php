@@ -421,7 +421,7 @@ class IndexPage extends DefaultIndex {
                 else
                     header("Location: ?fid=" . $fid . "&saveerror=" . $saveResult);
             } else {
-                if (true or !isset($_REQUEST['hideErrors'])) {
+                if (!isset($_REQUEST['hideErrors'])) {
                     $this->showErrors($bachelor->getValidationErrors());
                 }
                 $signup_method->getFallbackMethod()->showInlineHTML();
