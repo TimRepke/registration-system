@@ -35,6 +35,9 @@ class AdminBase extends DefaultAdmin {
     public function __construct() {
         parent::__construct();
 
+        if (is_null($this->environment->getCurrentTripId()))
+            throw new Exception('Error on reading current_trip_id file, contact the webadmin!');
+
         $this->isAdmin = $this->environment->isAdmin();
         $this->isSudo = $this->environment->isSuperAdmin();
 
