@@ -19,6 +19,8 @@ class AdminWlPage extends AdminPage {
         if(isset($_REQUEST['move'])){
             try {
                 $bachelor = Bachelor::makeFromDB($this->fahrt, $_REQUEST['move']);
+                if (empty($bachelor))
+                    throw new Exception('Person nicht vorhanden.');
                 $transferResult = $bachelor->waitlistToRegistration();
                 if ($transferResult == Bachelor::SAVE_SUCCESS) {
                     $this->message_succ = 'Person erfolgreich von Warteliste auf Anmeldeliste übertragen.';
