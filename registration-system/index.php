@@ -6,8 +6,10 @@ require_once __DIR__ . '/view/signups/index.php';
 
 class IndexPage extends DefaultIndex {
 
+    protected $signupMethodDetails;
     public function __construct() {
         parent::__construct();
+        $this->signupMethodDetails = SignupMethods::getInstance()->getSignupMethodsBaseInfo();
     }
 
     // =====================================================================================================================
@@ -317,9 +319,10 @@ class IndexPage extends DefaultIndex {
             echo '<div class="signups">Noch keine (sichtbaren) Anmeldungen!</div>';
         } else {
             echo '
-            <table class="signups">
+            <table class="signups" cellspacing="0" cellpadding="0">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Anzeigename</th>
                         <th>Anreisetag</th>
                         <th>Anreiseart</th>
@@ -330,24 +333,40 @@ class IndexPage extends DefaultIndex {
                 </thead>';
             foreach ($bachelorsData as $d) {
                 echo '<tr>
-                <td>' . $d["pseudo"] . '</td>
-                <td>' . $this->mysql2german($d["anday"]) . '</td>
-                <td>' . $this->translateTravelType($d["antyp"]) . '</td>
-                <td>' . $this->mysql2german($d["abday"]) . '</td>
-                <td>' . $this->translateTravelType($d["abtyp"]) . '</td>
-                <td>' . $d["comment"] . '</td>
-            </tr>';
+                    <td style="width: 58px;">'.$this->makeSignupBadge($d['signupstats']).' </td>
+                    <td>' . $d["pseudo"] . '</td>
+                    <td>' . $this->mysql2german($d["anday"]) . '</td>
+                    <td>' . $this->translateTravelType($d["antyp"]) . '</td>
+                    <td>' . $this->mysql2german($d["abday"]) . '</td>
+                    <td>' . $this->translateTravelType($d["abtyp"]) . '</td>
+                    <td>' . $d["comment"] . '</td>
+                </tr>';
             }
             echo '</table>';
         }
+    }
+
+    private function makeSignupBadge($stats) {
+        $json = (empty($stats)) ? null : json_decode($stats, true);
+        if (empty($json) or !isset($json['method']) or !isset($json['methodinfo']) or !isset($this->signupMethodDetails[$json['method']]))
+            return '';
+
+        $method = $this->signupMethodDetails[$json['method']];
+
+        $logo = 'view/signups/'.$method['id'].'/'.$method['logo'];
+        $score = $method['score']($json['methodinfo']);
+
+        return '<img src="'.$logo.'" style="height: 1.2em;"/>
+                <span style="font-size:0.7em;float:right;margin-top:0.8em;">'.$score.'%</span>
+                <div class="progressbar"><span style="width: '.$score.'%"></span></div>';
     }
 
     private function translateTravelType($anabtyp) {
         if ($anabtyp == 'INDIVIDUELL') {
             return $this->environment->config['reiseartenDestroyed'][array_rand($this->environment->config['reiseartenDestroyed'])];
         }
-        if (isset($this->environment->oconfig['reisearten'][$anabtyp]))
-            return $this->environment->oconfig['reisearten'][$anabtyp];
+        if (isset($this->environment->oconfig['reiseartenShort'][$anabtyp]))
+            return $this->environment->oconfig['reiseartenShort'][$anabtyp];
         // well done, hacked the system, gets props for it :)
         return $anabtyp;
     }

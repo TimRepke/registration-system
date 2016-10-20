@@ -30,12 +30,19 @@ class SignupMethods {
     public function getSignupMethodsBaseInfo() {
         $tmp = [];
         foreach($this->signup_methods as $method) {
-            array_push($tmp, [
+            $tmp[$method['id']] = [
                 'id'           => $method['id'],
                 'name'         => $method['class']::getName(),
                 'description'  => $method['class']::getAltText(),
-                'meta'         => $method['class']::getMetaInfo()
-            ]);
+                'meta'         => $method['class']::getMetaInfo(),
+                'logo'         => $method['class']::getLogo(),
+                'score'    => function($stats) use ($method) {
+                    return $method['class']::getScore($stats);
+                },
+                'badgeDetails'    => function($stats) use ($method) {
+                    return $method['class']::getBadgeDetails($stats);
+                }
+            ];
         }
         return $tmp;
     }

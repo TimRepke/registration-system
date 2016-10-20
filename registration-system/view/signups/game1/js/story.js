@@ -194,7 +194,7 @@ Story.actions = {
                         condition: Environment.progress.inventory_money,
                         action: function () {
                             Environment.progress.inventory_ruestung = true;
-							if (Game.char) Game.char.animate(true); // apply new visuals
+                            if (Game.char) Game.char.animate(true); // apply new visuals
                         }
                     }, {
                         message: 'Was? Spende? Ich hab\' nichts!',
@@ -1149,6 +1149,10 @@ Story.credits = function () {
 
     function allDone() {
         clearInterval(standbyLoop);
+        Environment.fapi.setValue('signupstats', {
+            'method': 'game1',
+            'methodinfo': {'achievedAchievements': Game.achievements.achievedAchievements}
+        });
         Environment.fapi.submitSignup();
     }
 };

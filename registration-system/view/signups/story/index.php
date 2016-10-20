@@ -1,6 +1,7 @@
 <?php
 
 class StorySignupMethod extends SignupMethod {
+
     public static function getName() {
         return "Story Mode";
     }
@@ -15,6 +16,18 @@ class StorySignupMethod extends SignupMethod {
             "date" => '20.09.2014',
             "contributors" => ['Manuel Herrmann <fsfahrt@icetruck.de>']
         ];
+    }
+
+    public static function getLogo() {
+        return 'graphics/hej.svg';
+    }
+
+    public static function getScore($stats) {
+        return rand(30,99);
+    }
+
+    public static function getBadgeDetails($stats) {
+        return 'superspecial <br /> Detials';
     }
 
     public function getJSDependencies() {

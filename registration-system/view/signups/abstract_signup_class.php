@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../frameworks/Environment.php';
 
 interface SignupMethodStatics {
+
     /**
      * @return string with humanly readable name of this method
      */
@@ -25,6 +26,12 @@ interface SignupMethodStatics {
      * @return object containing meta info (see description)
      */
     public static function getMetaInfo();
+
+    public static function getLogo();
+
+    public static function getScore($stats);
+
+    public static function getBadgeDetails($stats);
 }
 
 abstract class SignupMethod implements SignupMethodStatics {

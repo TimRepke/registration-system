@@ -18,6 +18,30 @@ class Game1SignupMethod extends SignupMethod {
         ];
     }
 
+    public static function getLogo() {
+        return 'graphics/bernd_logo.png';
+    }
+
+    public static function getScore($stats) {
+        $allowedAchievements = ['first_step', 'some_water', 'saw_devs1', 'spotted_gorilla', 'hydrant', 'muell',
+            'randomwalk', 'rettich_pick', 'kohl', 'mais', 'rasenmeh', 'moneyboy', 'batteries', 'bierball', 'bild',
+            'hu', 'holz', 'karriereleiter', 'wrong_board', 'hugo_water', 'laptop2', 'laptop1', 'marathon', 'ffa',
+            'stolper', 'fs_chair', 'laser', 'speedrun', 'woman', 'plumber', 'princess', 'stroh', 'blumen', 'maske',
+            'gentzen', 'kacke', 'antler', 'flowers', 'wine', 'chair', 'started_game', 'gameDone', 'achievement42'];
+        if (isset($stats['achievedAchievements'])) {
+            $cnt = 0;
+            foreach($stats['achievedAchievements'] as $a){
+                if (in_array($a, $allowedAchievements)) $cnt++;
+            }
+            return round($cnt/count($allowedAchievements)*100);
+        }
+        return 0;
+    }
+
+    public static function getBadgeDetails($stats) {
+        return 'superspecial <br /> Detials';
+    }
+
     public function getJSDependencies() {
         return ['../../js/jquery-1.11.1.min.js', '../../js/jquery-ui.min.js',
             'jslib/d3.min.js', 'jslib/priority-queue.min.js', 'jslib/checkLineIntersection.js',
@@ -108,5 +132,4 @@ class Game1SignupMethod extends SignupMethod {
                 });
             </script>';
     }
-
 }

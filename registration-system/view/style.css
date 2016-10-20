@@ -171,7 +171,7 @@ p { margin: 15px; }
 a { color: black; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-table.signups, div.signups { width: 90%; margin: 30px auto;}
+table.signups, div.signups { width: 95%; margin: 30px auto;}
 table.signups tr th { }
 table.signups tr th, tr td { text-align: left; padding: 1px 4px 1px 4px; }
 table.signups td {

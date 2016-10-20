@@ -44,7 +44,8 @@ function Bachelor() {
         'public':  null,
         'virgin':  null,
         'studityp':null,
-        'comment': null
+        'comment': null,
+        'signupstats': null
     };
 
     this.getProperties = function () {
@@ -144,16 +145,22 @@ FAPI.prototype.submitSignup = function() {
     for (var key in data) {
         var value = data[key];
         var leaveOut = false;
+        var strEscape = true;
         switch (key) {
             case 'public':
                 if(value === true) value = 'public';
                 else leaveOut = true;
                 break;
+            case 'signupstats':
+                value = JSON.stringify(value);
+                strEscape = false;
+                break;
             default: /* does nothing */
         }
 
         if(!leaveOut) {
-            value = (value||'').replace(/[\r\n]/g, "<br/>").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+            if (strEscape)
+                value = (value||'').replace(/[\r\n]/g, "<br/>").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
             addToForm(key, value||'');
         }
     }

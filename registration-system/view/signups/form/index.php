@@ -19,6 +19,18 @@ class FormSignupMethod extends SignupMethod {
         ];
     }
 
+    public static function getLogo() {
+        return 'graphics/hej.svg';
+    }
+
+    public static function getScore($stats) {
+        return rand(30,99);
+    }
+
+    public static function getBadgeDetails($stats) {
+        return 'superspecial <br /> Detials';
+    }
+
     public function getJSDependencies() {
         return [];
     }
