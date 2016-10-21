@@ -21,8 +21,9 @@ class AdminInfosPage extends AdminPage {
                         'wikilink' => $_REQUEST['wikilink'],
                         'paydeadline' => $_REQUEST['paydeadline'],
                         'payinfo' => $_REQUEST['payinfo'],
-                        'opentime' => $_REQUEST['opentime']]
-                );
+                        'opentime' => $_REQUEST['opentime'],
+                        'disclaimlink' => $_REQUEST['disclaimlink']
+                    ]);
                 $saveResult = $this->fahrt->save();
                 if (empty($saveResult)) {
                     $this->message_err = 'Speichern fehlgeschlagen...';
@@ -117,6 +118,8 @@ class AdminInfosPage extends AdminPage {
                                 <input type="text" name="kontakt" id="kontakt" value="' . $data["kontakt"] . '" /></li>
                             <li><label>Wiki-Link</label>
                                 <input type="text" name="wikilink" id="wikilink" value="' . $data["wikilink"] . '" /></li>
+                            <li><label>Disclaimer-Link</label>
+                                <input type="text" name="wikilink" id="wikilink" value="\' . $data["wikilink"] . \'" /></li>
                             <li><label>Zahlung bis</label>
                                 <input type="text" name="paydeadline" id="paydeadline" value="' . $data["paydeadline"] . '" /></li>
                             <li><label>Zahlungsdetails</label>
