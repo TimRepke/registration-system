@@ -63,6 +63,13 @@ abstract class DefaultIndex {
                  PS: Solltest du es doch geschafft haben, gib' uns bitte Bescheid, damit wir dich wieder löschen.
             -->
 
+            <!--
+                Current Version (git), check out the details on https://github.com/TimRepke/registration-system
+
+                   > <?php echo implode("\n                   > ", $this->environment->sysconf['gitSummary']); ?>
+
+            -->
+
             <title>Fachschaftsfahrt</title>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
             <?php $this->echoHeaders(); ?>
