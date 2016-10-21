@@ -108,15 +108,16 @@ CREATE TABLE `fahrten` (
   `wikilink` varchar(255) NOT NULL DEFAULT 'https://wiki.fachschaft.informatik.hu-berlin.de/wiki/Erstsemesterfahrt',
   `paydeadline` date NOT NULL,
   `payinfo` text NOT NULL,
-  `opentime` int(11) NOT NULL DEFAULT '0'
+  `opentime` int(11) NOT NULL DEFAULT '0',
+  `disclaimlink` varchar(255) NOT NULL DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `fahrten`
 --
 
-INSERT INTO `fahrten` (`fahrt_id`, `titel`, `ziel`, `von`, `bis`, `regopen`, `beschreibung`, `leiter`, `kontakt`, `map_pin`, `max_bachelor`, `wikilink`, `paydeadline`, `payinfo`, `opentime`) VALUES
-  (2, 'Fachschaftsfahrt Winter 2013', 'KiEZ Frauensee bei GrÃ¤bendorf', '2013-10-25', '2013-10-27', 1, 'Erstsemester und Fachschaftsfahrt im Wintersemester 13/14<br>Alle Informationen im <a rel="nofollow" target="_blank" href="http://wiki.fachschaft.informatik.hu-berlin.de/wiki/Fachschaftsfahrt_Winter_2013">Wiki</a>', 'Orga Name', 'organame@mail.com', '52.43893109993363 13.648079039184609', 10, 'https://wiki.fachschaft.informatik.hu-berlin.de/wiki/Erstsemesterfahrt', '2015-09-24', 'Some\r\nPayment\r\nInfo\r\nHere', 1443639637);
+INSERT INTO `fahrten` (`fahrt_id`, `titel`, `ziel`, `von`, `bis`, `regopen`, `beschreibung`, `leiter`, `kontakt`, `map_pin`, `max_bachelor`, `wikilink`, `paydeadline`, `payinfo`, `opentime`, `disclaimlink`) VALUES
+  (2, 'Fachschaftsfahrt Winter 2013', 'KiEZ Frauensee bei GrÃ¤bendorf', '2013-10-25', '2013-10-27', 1, 'Erstsemester und Fachschaftsfahrt im Wintersemester 13/14<br>Alle Informationen im <a rel="nofollow" target="_blank" href="http://wiki.fachschaft.informatik.hu-berlin.de/wiki/Fachschaftsfahrt_Winter_2013">Wiki</a>', 'Orga Name', 'organame@mail.com', '52.43893109993363 13.648079039184609', 10, 'https://wiki.fachschaft.informatik.hu-berlin.de/wiki/Erstsemesterfahrt', '2015-09-24', 'Some\r\nPayment\r\nInfo\r\nHere', 1443639637, 'https://fachschaft.informatik.hu-berlin.de/index.php?title=FachschaftsfahrtDisclaimer&oldid=428');
 
 -- --------------------------------------------------------
 
