@@ -119,7 +119,7 @@ class AdminInfosPage extends AdminPage {
                             <li><label>Wiki-Link</label>
                                 <input type="text" name="wikilink" id="wikilink" value="' . $data["wikilink"] . '" /></li>
                             <li><label>Disclaimer-Link</label>
-                                <input type="text" name="wikilink" id="wikilink" value="\' . $data["wikilink"] . \'" /></li>
+                                <input type="text" name="disclaimlink" id="disclaimlink" value="' . $data["disclaimlink"] . '" /></li>
                             <li><label>Zahlung bis</label>
                                 <input type="text" name="paydeadline" id="paydeadline" value="' . $data["paydeadline"] . '" /></li>
                             <li><label>Zahlungsdetails</label>
