@@ -86,7 +86,7 @@ class FormSignupMethod extends SignupMethod {
             <textarea id="comment" name ="comment" rows="3" cols="50">' . $bachelorData["comment"] . '</textarea>
             <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">Anmeldung verstecken</span><br/>
             <div style="clear:both">
-            <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">
+            <input type="checkbox" name="disclaimer" value="disclaimer" style="width:40px"><span style="float:left">
             <a style="text-decoration:underline;" target="_blank" href="'.$fahrt->get('disclaimlink').'">Disclaimer</a> gelesen und akzeptiert</span><br/>
             <div style="clear:both"></div>';
 
