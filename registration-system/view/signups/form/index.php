@@ -82,20 +82,35 @@ class FormSignupMethod extends SignupMethod {
         $this->show_formular_helper_sel2('Abreise', 'abday', array_slice($possible_dates, 1), $bachelorData['abday'],
             'abtyp', $this->environment->oconfig['reisearten'], $bachelorData['abtyp'], '');
 
-        echo '<label>Anmerkung</label>
+        $this->show_formular_helper_sel("Du bist", "studityp", $this->environment->oconfig['studitypen'], $bachelorData["studityp"],
+            "", 'width:45%; float:left;');
+        $this->show_formular_helper_sel("Alter 18+?", "virgin", ['UNSET'=>'', 'JA'=>'Ja', 'NEIN' => 'Nein'],
+            isset($bachelorData['virgin']) ? ($bachelorData['virgin'] == 0 ? "JA" : "NEIN") : 'UNSET',
+            "Bist du älter als 18 Jahre?", 'width:45%; float:right;margin-right:-6px;');
+        echo '<div style="clear:both;"></div>';
+
+        $this->show_formular_helper_sel("Essenswunsch", "essen", $this->environment->oconfig['essen'], $bachelorData["essen"],
+            "Info für den Koch.", 'width:45%; float:left;');
+        echo '<div style="clear:both;"></div>';
+
+        $this->show_formular_helper_sel2("Anreise", "anday", array_slice($possible_dates, 0, -1), $bachelorData["anday"],
+            "antyp", $this->environment->oconfig['reisearten'], $bachelorData["antyp"], "",'width:45%; float:left;');
+        $this->show_formular_helper_sel2("Abreise", "abday", array_slice($possible_dates, 1), $bachelorData["abday"],
+            "abtyp", $this->environment->oconfig['reisearten'], $bachelorData["abtyp"], "",'width:45%; float:right;margin-right:-6px;');
+        echo '<div style="clear:both;"></div>
+
+            <label>Anmerkung</label>
             <textarea id="comment" name ="comment" rows="3" cols="50">' . $bachelorData["comment"] . '</textarea>
             <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">Anmeldung verstecken</span><br/>
-            <div style="clear:both">
-            <input type="checkbox" name="disclaimer" value="disclaimer" style="width:40px"><span style="float:left">
-            <a style="text-decoration:underline;" target="_blank" href="'.$fahrt->get('disclaimlink').'">Disclaimer</a> gelesen und akzeptiert</span><br/>
+            <input type="checkbox" name="disclaimer" value="disclaimer" style="width:40px">
+			<span style="float:left"><a style="text-decoration:underline;" target="_blank" href="'.$fahrt->get('disclaimlink').'">Disclaimer</a> gelesen und akzeptiert</span><br/> akzeptieren</span><br/>
+
             <div style="clear:both"></div>';
 
-        $this->show_formular_helper_input("Captcha eingeben", "captcha", "", "");
-        echo '<img src="view/captcha.php" /><br/>
+        $this->show_formular_helper_input("Captcha eingeben", "captcha", "", "",'width:45%; float:left;');
+        echo '<img src="view/captcha.php" style="float:right; width: 45%;" /><div style="clear:both"></div>
             <button type="submit" name="submit" id="submit" value="submit">Anmelden!</button>
-            <div class="spacer"></div>';
-
-        echo '</form>
+            </form>
             </div>';
     }
 
@@ -107,9 +122,12 @@ class FormSignupMethod extends SignupMethod {
      * @param $values
      * @param $selected
      * @param $subtext
+     * @param $style
      */
-    private function show_formular_helper_sel($name, $id, $values, $selected, $subtext) {
-        echo '<label>' . $name . '
+    private function show_formular_helper_sel($name, $id, $values, $selected, $subtext, $style = null) {
+        $style = (empty($style) ? '' : 'style="'.$style.'"');
+
+        echo '<div class="fieldbox" '.$style.'><label>' . $name . '
         <span class="small">' . $subtext . '</span>
         </label>
         <select name="' . $id . '" id="' . $id . '">';
@@ -118,7 +136,7 @@ class FormSignupMethod extends SignupMethod {
             if ($val == $selected) echo ' selected';
             echo '>' . $show . '</option>';
         }
-        echo '</select>';
+        echo '</select></div>';
     }
 
     /**
@@ -133,29 +151,32 @@ class FormSignupMethod extends SignupMethod {
      * @param $selected2
      * @param $subtext
      */
-    private function show_formular_helper_sel2($name, $id, $values, $selected, $id2, $values2, $selected2, $subtext) {
-        echo '<label style="text-align:left">' . $name . '
+    private function show_formular_helper_sel2($name, $id, $values, $selected, $id2, $values2, $selected2, $subtext, $style=null) {
+        $style = (empty($style) ? '' : 'style="'.$style.'"');
+
+        echo '<div class="fieldbox" '.$style.'><label style="text-align:left">' . $name . '
         <span class="small">' . $subtext . '</span>
-        </label><table style="float:left"><tr><td>
-        <select name="' . $id . '" id="' . $id . '" style="width:110px; text-align: center">';
+        </label>
+        <select style="margin-bottom:0" name="' . $id . '" id="' . $id . '">';
         foreach ($values as $val) {
             echo '<option value="' . $val . '"';
             if ($val == $selected) echo ' selected';
             echo '>' . $val . '</option>';
         }
-        echo '</select></td><td><select name="' . $id2 . '" id="' . $id2 . '">';
+        echo '</select><select name="' . $id2 . '" id="' . $id2 . '">';
         foreach ($values2 as $val => $show) {
             echo '<option value="' . $val . '"';
             if ($val == $selected2) echo ' selected';
             echo '>' . $show . '</option>';
         }
-        echo '</select></td></tr></table>';
+        echo '</select></div>';
     }
 
-    private function show_formular_helper_input($name, $id, $value, $subtext) {
-        echo '<label>' . $name . '
+    private function show_formular_helper_input($name, $id, $value, $subtext, $style=null) {
+        $style = (empty($style) ? '' : 'style="'.$style.'"');
+        echo '<div class="fieldbox" '.$style.'><label for="'.$id.'">' . $name . '
         <span class="small">' . $subtext . '</span>
-        </label>
+        </label><br />
         <input type="text" name="' . $id . '" id="' . $id . '" value="' . $value . '" />';
     }
 
