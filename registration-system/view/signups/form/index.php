@@ -66,7 +66,7 @@ class FormSignupMethod extends SignupMethod {
         echo '<div id="stylized" class="myform">
                 <form id="form" name="form" method="post" action="index.php' . $link_params . '">';
 
-        $this->show_formular_helper_hidden_input('signupstats', $bachelorData['signupstats']);
+        $this->show_formular_helper_hidden_input('signupstats', (isset($bachelorData['signupstats']) ? $bachelorData['signupstats'] : null));
 
         $this->show_formular_helper_input('Vorname', 'forname', $bachelorData['forname'], '');
         $this->show_formular_helper_input('Nachname', 'sirname', $bachelorData['sirname'], '');
@@ -85,6 +85,9 @@ class FormSignupMethod extends SignupMethod {
         echo '<label>Anmerkung</label>
             <textarea id="comment" name ="comment" rows="3" cols="50">' . $bachelorData["comment"] . '</textarea>
             <input type="checkbox" name="public" value="public" style="width:40px"><span style="float:left">Anmeldung verstecken</span><br/>
+            <div style="clear:both">
+            <input type="checkbox" name="disclaimer" value="disclaimer" style="width:40px"><span style="float:left">
+            <a style="text-decoration:underline;" target="_blank" href="'.$fahrt->get('disclaimlink').'">Disclaimer</a> gelesen und akzeptiert</span><br/>
             <div style="clear:both"></div>';
 
         $this->show_formular_helper_input("Captcha eingeben", "captcha", "", "");

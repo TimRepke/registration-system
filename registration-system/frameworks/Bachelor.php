@@ -359,11 +359,14 @@ class Bachelor {
         $this->validateField('abtyp', $oconf['reisearten'], 'Entwicklern Bier geben und: <a href="https://www.hu-berlin.de/studium/bewerbung/imma/exma">hier klicken!</a>');
         $this->validateField('essen', $oconf['essen'], 'Hat das wirklich nicht gereicht??');
         $this->validateField('studityp', $oconf['studitypen'], 'Das bist du ganz bestimmt nicht!');
-        $this->validateField('public', 'public', 'Trollololol');
+        $this->validateField('public', 'checkbox', 'Trollololol');
         $this->validateField('virgin', 'virgin', 'Bitte Altersbereich wählen!');
         $this->validateField('comment', 'comment', 'Trollololol');
-        if (!$admincheck)
+        if (!$admincheck) {
             $this->validateField('captcha', 'captcha', 'Captcha falsch eingegeben.');
+            if (!isset($_REQUEST['disclaimer']))
+                array_push($this->validationErrors, 'Disclaimer *muss* akzeptiert werden!');
+        }
 
         if ($this->data['anday'] == $this->data['abday'])
             array_push($this->validationErrors, 'Anreisetag = Abreisetag -> Bitte prüfen!');
@@ -373,6 +376,8 @@ class Bachelor {
             $this->data['signupstats'] = $_REQUEST['signupstats']; // TODO make checks for signupmethods?
         else
             $this->data['signupstats'] = null;
+
+        unset($_SESSION['captcha']);
     }
 
     /**
@@ -390,7 +395,7 @@ class Bachelor {
     private function validateField($index, $check, $errmess) {
         try {
             // check that first because if unchecked it doesnt exist
-            if ($check == "public") {
+            if ($check == 'checkbox') {
                 $this->set([$index => (isset($_REQUEST[$index])) ? 0 : 1]);
             } // if index is missing -> error!
             elseif (!isset($_REQUEST[$index])) {
@@ -421,7 +426,6 @@ class Bachelor {
                 elseif ($check == "captcha") {
                     if (!(isset($_SESSION['captcha']) && strtolower($tmp) == strtolower($_SESSION['captcha']))) {
                         array_push($this->validationErrors, $errmess);
-                        unset($_SESSION['captcha']);
                     }
                 } // check mail address
                 elseif ($check == "mail") {

@@ -11,7 +11,7 @@ class Fahrt {
     const STATUS_IS_COUNTDOWN = 3;
 
     public static $ALLOWED_FIELDS = ['fahrt_id', 'titel', 'ziel', 'von', 'bis', 'regopen', 'beschreibung', 'leiter', 'kontakt',
-        'map_pin', 'max_bachelor', 'wikilink', 'paydeadline', 'payinfo', 'opentime'];
+        'map_pin', 'max_bachelor', 'wikilink', 'paydeadline', 'payinfo', 'opentime', 'disclaimlink'];
 
     /** @var Environment */
     private $environment;
