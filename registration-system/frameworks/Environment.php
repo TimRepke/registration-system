@@ -73,7 +73,8 @@ class Environment {
             'impressum' => $config_impressum,
             'databaseDebug' => $config_databse_debug,
             'adminUsersFile' => $config_userfile,
-            'currentFahrtFile' => $config_current_fahrt_file
+            'currentFahrtFile' => $config_current_fahrt_file,
+            'gitSummary' => $this->getGitSummary()
         ];
 
         $this->bachelor = null;
@@ -174,6 +175,13 @@ class Environment {
         header("location: ..");
     }
 
+    private function getGitSummary() {
+        if (isset($this->sysconf['gitSummary']) and !empty($this->sysconf['gitSummary']))
+            return $this->sysconf['gitSummary'];
+
+        exec('git show --quiet HEAD', $output);
+        return $output;
+    }
 
     // ===========================================================================================================
     // Some context based trip getters

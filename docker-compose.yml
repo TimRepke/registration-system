@@ -6,6 +6,7 @@ web:
     - "8080:80"
   volumes:
     - ./registration-system:/var/www/html
+    - ./.git:/var/www/html/.git
 
 pma:
   image: phpmyadmin/phpmyadmin
