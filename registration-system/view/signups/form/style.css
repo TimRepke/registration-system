@@ -1,61 +1,70 @@
 /* ----------- My Form ----------- */
-.myform{
-    margin:0 auto;
-    width:400px;
-    padding:14px;
+.myform {
+    margin: 0 auto;
+    width: 600px;
+    padding: 14px;
 }
 
 /* ----------- stylized ----------- */
-#stylized{
-    border:solid 2px #b7ddf2;
-    background:#ebf4fb;
+#stylized {
+    border: 1px solid #b7ddf2;
+    padding: 30px 50px;
 }
-#stylized h1 {
-    font-size:1.5em;
 
-    color:black;
-    font-weight:bold;
-    margin-bottom:8px;
+#stylized h1 {
+    font-size: 1.5em;
+    color: black;
+    font-weight: bold;
+    margin-bottom: 8px;
 }
-#stylized p{
-    font-size:11px;
-    color:#666666;
-    margin-bottom:20px;
-    border-bottom:solid 1px #b7ddf2;
-    padding-bottom:10px;
+
+#stylized p {
+    font-size: 11px;
+    color: #666666;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #b7ddf2;
+    padding-bottom: 10px;
 }
-#stylized label{
-    display:block;
-    font-weight:bold;
-    text-align:right;
-    width:140px;
-    float:left;
+
+#stylized label {
+    font-weight: bold;
+    text-align: left;
+    width: 140px;
 }
-#stylized .small{
-    color:#666666;
-    display:block;
-    font-size:11px;
-    font-weight:normal;
-    text-align:right;
-    width:140px;
+
+#stylized .small {
+    color: #666666;
+    font-size: 11px;
+    font-weight: normal;
+    text-align: right;
+    width: 140px;
 }
-#stylized input, #stylized select, #stylized textarea{
-    float:left;
-    font-size:12px;
-    padding:4px 2px;
-    border:solid 1px #aacfe4;
-    width:200px;
-    margin:2px 0 20px 10px;
+
+#stylized input, #stylized select, #stylized textarea {
+    font-size: 13px;
+    padding: 10px 0 10px 5px;
+    border: 1px solid #aacfe4;
+    width: 100%;
+    margin: 5px 0 20px 0;
+    background-color: inherit;
 }
-#stylized button{
-    clear:both;
-    margin-left:150px;
-    width:125px;
-    height:31px;
-    background:#666666;
-    text-align:center;
-    line-height:31px;
-    color:#FFFFFF;
-    font-size:11px;
-    font-weight:bold;
+
+#stylized button {
+    display: block;
+    margin: 50px auto 10px auto;
+    width: 250px;
+    height: 50px;
+    background: #da4cad;
+    text-align: center;
+    line-height: 31px;
+    color: #0912bc;
+    font-size: 15px;
+    font-weight: bold;
+    border: 3px solid #39ff00;
+    cursor: pointer;
+}
+
+#stylized .fieldbox {
+    width: 100%;
+    margin: 0 auto;
 }
