@@ -17,17 +17,17 @@ UPDATE `bachelor` SET `abtyp` = 'INDIVIDUELL' WHERE `abtyp` = 'selbst mit Auto';
 UPDATE `bachelor` SET `abtyp` = 'INDIVIDUELL' WHERE `abtyp` = 'Kamel/Individuell';
 
 -- Essenswunsch
---"ALLES" => "Alles",
---"VEGE" => "Vegetarisch",
---"VEGA" => "Vegan"
+-- "ALLES" => "Alles",
+-- "VEGE" => "Vegetarisch",
+-- "VEGA" => "Vegan"
 UPDATE `bachelor` SET `essen` = 'ALLES' WHERE `essen` = 'Alles';
 UPDATE `bachelor` SET `essen` = 'VEGE' WHERE `essen` = 'Vegetarisch';
 UPDATE `bachelor` SET `essen` = 'VEGA' WHERE `essen` = 'Vegan';
 
 -- Studityp
---"ERSTI" => "Ersti",
---"HOERS" => "Hoersti",
---"TUTTI" => "Tutor"
+-- "ERSTI" => "Ersti",
+-- "HOERS" => "Hoersti",
+-- "TUTTI" => "Tutor"
 UPDATE `bachelor` SET `studityp` = 'ERSTI' WHERE `studityp` = 'Ersti';
 UPDATE `bachelor` SET `studityp` = 'HOERS' WHERE `studityp` = 'Hoersti';
 UPDATE `bachelor` SET `studityp` = 'TUTTI' WHERE `studityp` = 'Tutor';
