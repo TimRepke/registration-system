@@ -9,7 +9,14 @@ class AdminAdminPage extends AdminPage {
             if (!isset($_REQUEST['users'])) {
                 $this->message_err = 'Something went wrong with your user file submission!';
             } else {
-                if (preg_match('/^(S|N) \w+ ({SHA-256})[ab-z0-9]+\$[a-z0-9]+ .*$/m', $_REQUEST['users'])) {
+                $formatCorrect = true;
+                foreach(explode(PHP_EOL, $_REQUEST['users']) as $line){
+                    if (!preg_match('/^(S|N) \w+ ({SHA-256})[a-z0-9]+\$[a-z0-9]+ .*$/m', $line)) {
+                        $formatCorrect = false;
+                        break;
+                    }
+                }
+                if ($formatCorrect) {
                     $saveResult = file_put_contents($this->environment->sysconf['adminUsersFile'], $_REQUEST['users']);
                     if (empty($saveResult)) {
                         $this->message_err = 'Tried writing to ' . $this->environment->sysconf['adminUsersFile'] . '<br />
@@ -73,6 +80,7 @@ class AdminAdminPage extends AdminPage {
         return '<h2>Nutzer bearbeiten</h2>
                 ACHTUNG: Tippfehler können Systemfunktionalität beeinträchtigen! <i>Format: {N|S}⎵USERNAME⎵PASSWORD⎵RANDOMSTUFF</i><br />
                 <i>N = Organisator der Fahrt; S = Superadmin (sieht auch diese Seite)</i><br />
+                line regex: "^(S|N) \w+ ({SHA-256})[a-z0-9]+\$[a-z0-9]+ .*$/m" <br />
                 Captain Obvious: "Nutzername darf kein Leerzeichen enthalten!"<br />
                 <a href="../passwd/index.html">Passwort-gen tool</a> (an Organisator weiterleiten, der schickt dann Passwort hash zurück)<br />
                 <form method="POST">
