@@ -92,9 +92,10 @@ class FormSignupMethod extends SignupMethod {
 
             <label>Anmerkung</label>
             <textarea id="comment" name ="comment" rows="3" cols="50">' . $bachelorData["comment"] . '</textarea>
-            <input type="checkbox" name="public" value="public" style="width:40px" /><span>Anmeldung verstecken</span><br/>
+            <input type="checkbox" name="public" value="public" style="width:40px" />
+            <span>Anmeldung verstecken</span><br/>
             <input type="checkbox" name="disclaimer" value="disclaimer" style="width:40px" />
-			<span><a style="text-decoration:underline;" target="_blank" href="'.$fahrt->get('disclaimlink').'">Disclaimer</a> gelesen und akzeptiert</span><br/>
+            <span><a style="text-decoration:underline;" target="_blank" href="'.$fahrt->get('disclaimlink').'">Disclaimer</a> gelesen und akzeptiert</span><br/>
             <div style="clear:both"></div>';
 
         $this->show_formular_helper_input("Captcha eingeben", "captcha", "", "",'width:45%; float:left;');

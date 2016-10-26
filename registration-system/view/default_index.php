@@ -86,13 +86,13 @@ abstract class DefaultIndex {
                 </div>
                 <div id="footerbox">&nbsp;
                     <span style="float:left; margin-left:10px">
-                        &copy;<?php echo date("Y"); ?> Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin.
+                        &copy; <?php echo date("Y"); ?> Fachschaftsinitiative Informatik der Humboldt Universität zu Berlin.
                     </span>
-                    <a href="<?php $this->environment->sysconf['impressum'] ?>" style="float:right; margin-right: 10px">Impressum</a>
+                    <a href="<?php echo $this->environment->sysconf['impressum']; ?>" style="color:white;float:right; margin-right: 10px" target="_blank">Impressum</a>
                 </div>
                 <img id="nyan" alt="O" src="<?php echo $this->resolvePath('graphics/studityp_5.gif') ?>"
                      style="position: fixed;bottom: 5px;left:0"/>
-                <a style="position: fixed;top:5px; right:5px;" href="https://github.com/TimRepke/registration-system">
+                <a style="position: fixed;top:5px; right:5px;" target="_blank" href="https://github.com/TimRepke/registration-system">
                     <img alt="GitHub" title="Auf GitHub gabeln" src="<?php echo $this->resolvePath('graphics/GitHub-Mark-32px.png') ?>"/></a>
             </div>
         </body>
