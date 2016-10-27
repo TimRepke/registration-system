@@ -1,6 +1,7 @@
 *.idea/*
 */.idea*
 */view/signups/game1/tiles
+*/view/signups/game2/tiles*
 *.swp
 **/config_current_fahrt_id
 */passwd/users.txt
