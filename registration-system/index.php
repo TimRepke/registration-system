@@ -339,7 +339,7 @@ class IndexPage extends DefaultIndex {
                     <td>' . $this->translateTravelType($d["antyp"]) . '</td>
                     <td>' . $this->mysql2german($d["abday"]) . '</td>
                     <td>' . $this->translateTravelType($d["abtyp"]) . '</td>
-                    <td>' . $d["comment"] . '</td>
+                    <td style="word-break:break-all;">' . $d["comment"] . '</td>
                 </tr>';
             }
             echo '</table>';
