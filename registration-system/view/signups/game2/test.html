@@ -52,11 +52,12 @@
             </div>
         </div>
         <div class="sidebar-section">
+
+
             <div class="sidebar-section-head">Inventar</div>
-            <div class="sidebar-log" style="padding:2px; height:150px;">
-                <div>
-                    <span class="inventory-elem"><img src="graphics/inventory/key.png" /></span>
-                    <span class="inventory-elem"><img src="graphics/inventory/cheese.png" /></span>
+            <div class="sidebar-log" style="padding:2px; height:150px; overflow: visible">
+                <div id="inventory-bucket">
+
                 </div>
             </div>
         </div>
@@ -73,6 +74,11 @@
 <script>
     g_smallValue = 0.000001; // fun with floats
     Environment.fapi.methodBasepath = '';
+
+    // TODO for testing, remove!
+    var inv = new Inventory();
+    inv.addItem('cheese');
+    inv.addItem('key');
 
     var maps = ['landing'];
     var game = new Game({
