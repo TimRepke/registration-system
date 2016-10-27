@@ -7,9 +7,12 @@ class AdminListPage extends AdminPage {
 
         if (isset($_REQUEST['change'])) {
             try {
-                $b = Bachelor::makeFromForm(false, $this->fahrt, true, true);
-                $b->set(['bachelor_id' => $_REQUEST['change']]);
-                $saveResult = $b->save();
+                $bNew = Bachelor::makeFromForm(false, $this->fahrt, true, true);
+                $bNew->set(['bachelor_id' => $_REQUEST['change']]);
+
+                $bOld = Bachelor::makeFromDB($this->fahrt, $_REQUEST['change']);
+                $bOld->updateBachelor($bNew);
+                $saveResult = $bOld->save();
                 if ($saveResult !== Bachelor::SAVE_SUCCESS)
                     throw new Exception('Fehler beim Speichern mit code ' . $saveResult.'<br />'.implode('<br />', $b->getValidationErrors()));
                 else
