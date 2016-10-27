@@ -182,8 +182,15 @@ class AdminListPage extends AdminPage {
             $(document).ready(function(){
                 ltab = $("#mlist").DataTable({
                     "rowCallback": function (row, data, index) {
-                        if (data['.$buttoncol.'].split(",")[2] != 0) {
+                        var spl = data['.$buttoncol.'].split(",");
+                        if (spl[2] != 0) {
                             $("td", row).addClass("list-backstepped");
+                        } else if (spl[0] != 0 && spl[1] != 0) {
+                            $("td", row).addClass("list-repaid");
+                        } else if (spl[0] != 0) {
+                            $("td", row).addClass("list-paid");
+                        } else if (spl[0] == 0) {
+                            $("td", row).addClass("list-unpaid");
                         }
                     },
                     "columnDefs": [
@@ -242,14 +249,34 @@ class AdminListPage extends AdminPage {
                 var newstate = (((state-1)<0) ? 1 : 0);
                 $.get("index.php?page=list&ajax=ajax&update="+type+"&hash="+hash+"&nstate="+newstate ,"",
                     function(){
-                        if(newstate === 1 && type === "backstepped") {
-                            $("td", $(that).parent().parent()).addClass("list-backstepped");
-                        } else {
-                            $("td", $(that).parent().parent()).removeClass("list-backstepped");
-                        }
                         that.className="btn btn-"+type+"-"+newstate;
                         that.setAttribute("onclick", "btnclick(this, \'"+type+"\', \'"+hash+"\', "+newstate+")");
+
+                        var p = $("div", $(that).parent())[0].className;
+                        var r = $("div", $(that).parent())[1].className;
+                        var b = $("div", $(that).parent())[2].className;
+                        
+                        if (b == "btn btn-backstepped-1") {
+                            updateClass(that, "list-backstepped");
+                        } else if (p == "btn btn-paid-1" && r == "btn btn-repaid-1") {
+                            updateClass(that, "list-repaid");
+                        } else if (p == "btn btn-paid-1") {
+                            updateClass(that, "list-paid");
+                        } else if (p == "btn btn-paid-0") {
+                            updateClass(that, "list-unpaid");
+                        } else {
+                            updateClass(that);
+                        }
                     });
+            }
+
+            function updateClass(that, nClass = null) {
+                $("td", $(that).parent().parent()).removeClass("list-backstepped")
+                    .removeClass("list-repaid")
+                    .removeClass("list-paid")
+                    .removeClass("list-unpaid");
+                if(nClass != null)
+                    $("td", $(that).parent().parent()).addClass(nClass);
             }
         </script>';
     }
