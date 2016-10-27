@@ -71,6 +71,12 @@ function update {
     response=${response,,}    # tolower
     if [[ ! $response =~ ^(yes|y)$ ]] ; then exit 1 ; fi
 
+    if [[ ! -f backups/lastUpdate ]] ; then
+        read -r -p "Last update or install? As 'Y-m-d' " response
+        echo response > backups/lastUpdate
+    fi
+
+
     # change operation dir
     cd "${BASH_SOURCE%/*}"
     mkdir -p backups
@@ -91,7 +97,7 @@ function update {
     echo "creating backup on 'backup' branch"
     git checkout -B backup
     git add --all
-    git commit -m "backup from `date +"%d.%m.%Y"`"
+    git commit --allow-empty -m "backup from `date +"%d.%m.%Y"`"
 
     # pull from origin
     echo "force pulling from $ORIGIN/$BRANCH"
@@ -108,7 +114,7 @@ function update {
 
     # get last update date
     lastUpdate=`cat backups/lastUpdate`
-    today=`date +"%Y%m%d"`
+    today=`date +%F`
 
     # create db backup
     echo "backing up database"
@@ -134,6 +140,9 @@ function update {
     mv backups/config_current_fahrt_id ../
     mv backups/config.local.php ../
     mv backups/users.txt ../passwd/users.txt
+
+    echo "Please check whether the format of config files has changed..."
+    echo "Now get a coffee and add syntactic sugar~!"
 
     exit 0
 }

@@ -265,28 +265,28 @@ class IndexPage extends DefaultIndex {
                     label: 'FS Fahrt',
                     fontname: 'sans',
                     fontcolor: '#ff9818'
-
                 });
                 var hurdur = new HurDur({
-                cats: 10,
-                loopcb: function() {
-                    $('#text, body').stop().animate({color:b?'#ffffff':'#000000'}, 1000);
+                    cats: 10,
+                    loopcb: function() {
+                        $('#text, body').stop().animate({color:b?'#ffffff':'#000000'}, 1000);
 
-                    var now = (Date.now() + ((new Date()).getTimezoneOffset()*60))/1000;
-                    var diff = opentime - now;
-                    var view = '';
-                    if (diff <= 0) {
-                        view = '00:00:00.00';
-                    } else {
-                        view = hurrdurrr(parseInt(diff/60/60/24, 10)) + 'd ' + hurrdurrr(parseInt(diff / 60 / 60 % 24, 10))
-                            + 'h:' + hurrdurrr(parseInt(diff / 60 % 60, 10)) + 'm.' + hurrdurrr(parseInt(diff%60, 10)) + 's';
+                        var now = (Date.now() + ((new Date()).getTimezoneOffset()*60))/1000;
+                        var diff = opentime - now;
+                        var view = '';
+                        if (diff <= 0) {
+                            view = '00:00:00.00';
+                        } else {
+                            view = hurrdurrr(parseInt(diff/60/60/24, 10)) + 'd ' + hurrdurrr(parseInt(diff / 60 / 60 % 24, 10))
+                                + 'h:' + hurrdurrr(parseInt(diff / 60 % 60, 10)) + 'm.' + hurrdurrr(parseInt(diff%60, 10)) + 's';
+                        }
+                        $('#countdown').html(view);
+                        function hurrdurrr(num) {
+                            return ((num < 10) ? '0' : '') + num;
+                        }
+                        b = !b;
                     }
-                    $('#countdown').html(view);
-                    function hurrdurrr(num) {
-                        return ((num < 10) ? '0' : '') + num;
-                    }
-                    b = !b;
-                }});
+                });
                 hurdur.start();
             });
         </script>";
@@ -339,7 +339,7 @@ class IndexPage extends DefaultIndex {
                     <td>' . $this->translateTravelType($d["antyp"]) . '</td>
                     <td>' . $this->mysql2german($d["abday"]) . '</td>
                     <td>' . $this->translateTravelType($d["abtyp"]) . '</td>
-                    <td>' . $d["comment"] . '</td>
+                    <td style="word-break:break-all;">' . $d["comment"] . '</td>
                 </tr>';
             }
             echo '</table>';
