@@ -1,6 +1,6 @@
 <?php
 
-class Game1SignupMethod extends SignupMethod {
+class Game2SignupMethod extends SignupMethod {
 
     public static function getName() {
         return '↠ Nochmal eins drauf setzen v2 ↞';
