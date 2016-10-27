@@ -1,0 +1,7 @@
+- Räume sollten etwa 600(W) x 400(H) px groß sein.
+- Jeder macht einen Raum
+  -> Räume werden dann in ein großes SVG kopiert
+- jemand macht das Gangsystem inkl Platzhalter.
+  -> Höhe pro Etage (Boden zu Boden) etwa 900px
+  -> Gesamtbild ca 2000x5500px
+  -> Ganghöhe ca 150-200px, davon ca 50px Boden (WALK)
