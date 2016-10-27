@@ -19,6 +19,7 @@
     <script src="js/environment.js" type="text/javascript"></script>
     <script src="js/story.js" type="text/javascript"></script>
     <script src="js/game.js" type="text/javascript"></script>
+    <script src="js/inventory.js" type="text/javascript"></script>
 </head>
 <body>
 <script type="text/javascript">
@@ -27,7 +28,7 @@
 <div id="game-root-container">
     <div id="game-sidebar" class="bordered-box">
         <div class="sidebar-section">
-            <div class="sidebar-section-head">Game log</div>
+            <div class="sidebar-section-head">Game Log</div>
             <div class="sidebar-log">
                 <div>
                     <ul id="game-log">
@@ -47,6 +48,15 @@
             <div class="sidebar-log">
                 <div>
                     <ul id="achievement-log"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-head">Inventar</div>
+            <div class="sidebar-log" style="padding:2px; height:150px;">
+                <div>
+                    <span class="inventory-elem"><img src="graphics/inventory/key.png" /></span>
+                    <span class="inventory-elem"><img src="graphics/inventory/cheese.png" /></span>
                 </div>
             </div>
         </div>
