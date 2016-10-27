@@ -72,7 +72,7 @@ function update {
     if [[ ! $response =~ ^(yes|y)$ ]] ; then exit 1 ; fi
 
     if [[ ! -f backups/lastUpdate ]] ; then
-        read -r -p "Last update or install? As 'Y-m-d' " response
+        read -r -p "Last update or install? As 'Ymd' (zero padded)" response
         echo response > backups/lastUpdate
     fi
 
@@ -114,7 +114,7 @@ function update {
 
     # get last update date
     lastUpdate=`cat backups/lastUpdate`
-    today=`date +%F`
+    today=`date +"%Y%m&d"`
 
     # create db backup
     echo "backing up database"
