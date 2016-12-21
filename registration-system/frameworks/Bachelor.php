@@ -459,4 +459,15 @@ class Bachelor {
         }
 
     }
+
+    /**
+     * @param $newBachelor Bachelor
+     */
+    public function updateBachelor($newBachelor) {
+        $nBdata = $newBachelor->getData();
+        foreach ($this->data as $key => $val) {
+            if (isset($nBdata[$key]) and !empty($nBdata[$key]))
+                $this->data[$key] = $nBdata[$key];
+        }
+    }
 }

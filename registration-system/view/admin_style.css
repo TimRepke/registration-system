@@ -63,11 +63,21 @@ form table tr td{
     padding: 0 5px;
 }
 
-.list-backstepped{
+.list-backstepped, .list-backstepped a {
     color: #d3d3d3 !important;
 }
-.list-backstepped a{
-    color: #d3d3d3 !important;
+
+.list-unpaid, .list-unpaid a {
+    background-color: #ffc6c1;
+}
+
+.list-paid, .list-paid a {
+    background-color: #e5ffc7;
+}
+
+.list-repaid, .list-repaid a {
+    background-color: #1bffbe;
+    color: grey !important;
 }
 .cost-table{
     padding: 5px;
