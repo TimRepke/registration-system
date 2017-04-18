@@ -443,7 +443,7 @@ class Bachelor {
                     if (empty($tmp) or $tmp == 'UNSET')
                         array_push($this->validationErrors, $errmess);
                     else
-                        $this->set([$index => ($tmp == 'JA') ? 0 : 1]);
+                        $this->set([$index => (strtoupper($tmp) == 'JA') ? 0 : 1]);
                 } //everything else
                 else {
                     // check with regex
