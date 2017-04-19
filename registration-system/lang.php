@@ -51,8 +51,6 @@ Wie bereits angekündigt sammeln wir zunächst 60,-€ pro Person ein.
 Diesen Betrag bitte bis zum {{paydeadline}} an folgendes Konto überweisen:
 {{payinfo}}
 
-Den Differenzbetrag bekommst du *nach* der Fahrt zusammen mit der Förderung, sofern vorhanden, wieder zurück. Die effektiven Kosten belaufen sich am Ende auf <25€.
-
 Alle Informationen findest du weiterhin hier:
 {{wikilink}}
 
