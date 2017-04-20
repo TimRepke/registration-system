@@ -310,7 +310,7 @@ class Bachelor {
 
         foreach ($mail_langs as $mail_lang) {
             $mail = $this->environment->getLanguageString($mail_lang, [
-                '{{url}}' => $config_baseurl . 'status.php?fid=' . $this->fahrt->getID() . 'hash=' . $hash,
+                '{{url}}' => $config_baseurl . 'status.php?fid=' . $this->fahrt->getID() . '&hash=' . $hash,
                 '{{organisator}}' => $fahrt_details['leiter'],
                 '{{paydeadline}}' => $fahrt_details['paydeadline'],
                 '{{payinfo}}' => $fahrt_details['payinfo'],
