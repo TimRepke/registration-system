@@ -31,5 +31,5 @@ db:
     - "3306"
   volumes:
     - ./mysql_data:/var/lib/mysql
-    - ./registration-system/other/sqlDumps/init_20161020.sql:/dump.sql:ro
+    - ./registration-system/other/sqlDumps/init_20170421.sql:/dump.sql:ro
 
