@@ -307,7 +307,7 @@ class AdminListPage extends AdminPage {
         $possibleDates = $this->fahrt->getPossibleDates();
 
         return '
-            <b>Hash:</b> ' . $bid . '<br/>
+            <b>Hash:</b> <a href="../status.php?fid='.$fid.'&hash='.$bid.'" target="_blank">' . $bid . '</a><br/>
             <b>Fahrt:</b> ID ' . $fid . '<br/>
             <b>Anmeldung:</b> ' . $this->mysql2german($data['anm_time']) . '<br/>
             <b>Bezahlt:</b> ' . $this->nulltime2german($data['paid']) . '<br/>
