@@ -129,7 +129,6 @@ Story.prototype.next = function (bGoBack) {
             this.initSummary();
             this.storycanvas.stop(true, true).animate({height: bGoBack ? '500px' : '680px'}, 1000);
             this.storybox.stop(true, true).animate({height: bGoBack ? '500px' : '680px'}, 1000);
-            this.summary.animate({left: bGoBack ? '-900px' : '0px'}, 1000);
             this.travelEnd.animate({left: bGoBack ? '0px' : '900px'}, 1000);
             break;
         default:
