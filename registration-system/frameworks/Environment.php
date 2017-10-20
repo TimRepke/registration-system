@@ -6,6 +6,7 @@ require_once __DIR__ . '/medoo.php';
 require_once __DIR__ . '/soft_protect.php';
 require_once __DIR__ . '/Fahrt.php';
 require_once __DIR__ . '/Bachelor.php';
+use Medoo\Medoo;
 
 class Environment {
 
@@ -42,7 +43,7 @@ class Environment {
 
         $this->adminEnv = $admin;
 
-        $this->database = new medoo(array(
+        $this->database = new Medoo(array(
             'database_type' => $config_db["type"],
             'database_name' => $config_db["name"],
             'server' => $config_db["host"],
