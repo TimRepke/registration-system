@@ -37,10 +37,11 @@ class AdminMailPage extends AdminPage {
         foreach ($this->environment->oconfig['essen'] as $key => $typ) {
             $essen .= '<option value="' . $key . '">' . $typ . '</option>';
         }
-        $maxtage = $this->fahrt->getLenTage();
+
+        $fahrt_bereich = $this->fahrt->getPossibleDates();
         $tage = '';
-        for ($cnt = $maxtage; $cnt >= 0; $cnt--)
-            $tage .= '<option value="' . $cnt . '">' . $cnt . '</option>';
+        for ($i = 0; $i < sizeof($fahrt_bereich)-1; $i += 1)
+            $tage .= '<option value="' . date('Y-m-d', strtotime($fahrt_bereich[$i])) . '">' . $fahrt_bereich[$i] . '</option>';
 
         return '
             <script type="text/javascript">
@@ -138,7 +139,7 @@ class AdminMailPage extends AdminPage {
     }
 
     private function buildQueryWhere() {
-        $where = ['fahrt_id' => $this->fahrt->getID(), 'OR' => ['on_waitlist' => 0,
+        $where = ['fahrt_id' => $this->fahrt->getID(), 'OR #waitlist' => ['on_waitlist' => 0,
             'AND' => [
                 'transferred[!]' => null,
                 'on_waitlist' => 1
@@ -154,7 +155,12 @@ class AdminMailPage extends AdminPage {
                 $where['abtyp'] = $_REQUEST['val_abtyp'];
             }
             if (isset($_REQUEST['check_nights'])) {
-                // TODO
+                $nights = $_REQUEST['val_nights'];
+                $conditions = [];
+                foreach ($nights as $night)
+                    $conditions['AND #'.$night] = ['anday[<=]' => $night, 'abday[>]' => $night];
+                if (sizeof($conditions) > 0)
+                    $where['OR #nights'] = $conditions;
             }
             if (isset($_REQUEST['check_essen'])) {
                 $where['essen'] = $_REQUEST['val_essen'];
