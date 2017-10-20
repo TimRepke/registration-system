@@ -37,13 +37,11 @@ class AdminMailPage extends AdminPage {
         foreach ($this->environment->oconfig['essen'] as $key => $typ) {
             $essen .= '<option value="' . $key . '">' . $typ . '</option>';
         }
-        $fahrt_bereich = $this->environment->database->select('fahrten', ['von', 'bis'], ['fahrt_id' => $this->fahrt->getID()]);
-        $von = strtotime($fahrt_bereich[0]['von']);
-        $bis = strtotime($fahrt_bereich[0]['bis']);
 
+        $fahrt_bereich = $this->fahrt->getPossibleDates();
         $tage = '';
-        for ($tag = $von; $tag < $bis; $tag += 24*60*60)
-            $tage .= '<option value="' . date('Y-m-d', $tag) . '">' . date('d.m.Y', $tag) . '</option>';
+        for ($i = 0; $i < sizeof($fahrt_bereich)-1; $i += 1)
+            $tage .= '<option value="' . date('Y-m-d', strtotime($fahrt_bereich[$i])) . '">' . $fahrt_bereich[$i] . '</option>';
 
         return '
             <script type="text/javascript">
