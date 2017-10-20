@@ -1,0 +1,7 @@
+FROM richarvey/nginx-php-fpm
+
+RUN apk add --no-cache sysklogd
+ADD run-web.sh /
+RUN chmod 755 /run-web.sh
+
+CMD ["/run-web.sh"]
